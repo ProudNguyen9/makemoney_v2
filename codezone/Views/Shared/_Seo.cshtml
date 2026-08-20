@@ -1,0 +1,6 @@
+@model SharedSeoViewModel?
+<meta name="description" content="@(Model?.Description ?? "Website thu mua phe lieu.")" />
+@if (!string.IsNullOrWhiteSpace(Model?.Keywords))
+{
+    <meta name="keywords" content="@Model.Keywords" />
+}

@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UI Kit — Design System | [TÊN CÔNG TY]</title>
+  <meta name="description" content="Trang design system của template thu mua phế liệu: bảng màu, typography, nút, biểu mẫu, bảng dữ liệu, hình ảnh và thành phần phản hồi — dùng chung cho mọi trang.">
+  <link rel="canonical" href="https://example.com/ui-kit.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="UI Kit — Design System | [TÊN CÔNG TY]">
+  <meta property="og:description" content="Thư viện thành phần giao diện: màu, chữ, nút, form, bảng, feedback — chuẩn dùng chung mọi trang.">
+  <meta property="og:image" content="assets/images/hero/hero-01.svg">
+  <meta property="og:url" content="https://example.com/ui-kit.html">
+  <meta property="og:locale" content="vi_VN">
+
+  <!--
+  STRUCTURED DATA — BACKEND INJECT (không hardcode dữ liệu giả):
+  BreadcrumbList (trang nội bộ, không index)
+  -->
+
+  <link rel="icon" href="assets/images/logo/logo.svg" type="image/svg+xml">
+
+  <!-- Fonts: 2 family, subset tiếng Việt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body class="has-mobilebar">
+
+<!-- TOPBAR + HEADER + OFFCANVAS (partial: partials/_header.html) -->
+<!-- TOPBAR START -->
+<div class="topbar d-none d-md-block">
+  <div class="container">
+    <div class="topbar-inner">
+      <span class="topbar-note">
+        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+        Thu mua phế liệu tận nơi tại Đồng Nai, TP.HCM, Bình Dương…
+      </span>
+      <div class="topbar-meta">
+        <a class="topbar-mail" href="mailto:[EMAIL]"><i class="bi bi-envelope-fill" aria-hidden="true"></i>[EMAIL]</a>
+        <span class="topbar-sep topbar-sep--hours" aria-hidden="true"></span>
+        <span class="topbar-hours"><i class="bi bi-clock-fill" aria-hidden="true"></i>T2–CN: [GIỜ LÀM VIỆC]</span>
+        <span class="topbar-sep" aria-hidden="true"></span>
+        <a href="tel:[HOTLINE]"><i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TOPBAR END -->
+
+<!-- HEADER START -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Trang chủ [TÊN CÔNG TY]">
+        <img class="brand-logo" src="assets/images/logo/logo.svg" alt="Logo [TÊN CÔNG TY]" width="186" height="46">
+      </a>
+
+      <!-- DESKTOP NAV START -->
+      <nav aria-label="Điều hướng chính">
+        <ul class="nav-main list-unstyled mb-0">
+          <li><a class="nav-link active" href="index.html">Trang chủ</a></li>
+          <li class="has-drop">
+            <a class="nav-link" href="about.html" role="button" data-bs-toggle="dropdown" aria-expanded="false">Giới thiệu</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="about.html">Về chúng tôi</a></li>
+              <li><a class="dropdown-item" href="capability.html">Năng lực</a></li>
+              <li><a class="dropdown-item" href="projects.html">Dự án</a></li>
+            </ul>
+          </li>
+          <li class="has-drop">
+            <a class="nav-link" href="scrap.html" role="button" data-bs-toggle="dropdown" aria-expanded="false">Phế liệu thu mua</a>
+            <ul class="dropdown-menu">
+              <li><h2 class="dropdown-header">Theo nhóm chất liệu</h2></li>
+              <li><a class="dropdown-item" href="scrap-category.html">Đồng <span class="drop-count">6 loại</span></a></li>
+              <li><a class="dropdown-item" href="scrap-category.html">Sắt thép <span class="drop-count">4 loại</span></a></li>
+              <li><a class="dropdown-item" href="scrap-category.html">Nhôm <span class="drop-count">3 loại</span></a></li>
+              <li><a class="dropdown-item" href="scrap-category.html">Inox <span class="drop-count">3 loại</span></a></li>
+              <li><a class="dropdown-item" href="scrap-category.html">Điện tử — máy móc <span class="drop-count">5 loại</span></a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item dropdown-item--all" href="scrap.html">Xem tất cả loại phế liệu</a></li>
+            </ul>
+          </li>
+          <li><a class="nav-link" href="services.html">Dịch vụ</a></li>
+          <li><a class="nav-link" href="prices.html">Bảng giá</a></li>
+          <li><a class="nav-link" href="locations.html">Khu vực</a></li>
+          <li><a class="nav-link" href="news.html">Tin tức</a></li>
+          <li><a class="nav-link" href="contact.html">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <!-- DESKTOP NAV END -->
+
+      <div class="header-hotline d-none d-xxl-flex">
+        <a href="tel:[HOTLINE]">
+          <span class="hl-ring"><i class="bi bi-telephone-fill" aria-hidden="true"></i></span>
+          <span class="hl-text">
+            <small>Hotline báo giá</small>
+            <strong>[HOTLINE]</strong>
+          </span>
+        </a>
+      </div>
+
+      <button class="header-cta btn btn-primary d-none d-lg-inline-flex" data-quote-open type="button">
+        <i class="bi bi-camera-fill" aria-hidden="true"></i>Nhận báo giá
+      </button>
+
+      <button class="header-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"
+              aria-controls="mobileMenu" aria-expanded="false" aria-label="Mở menu">
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+<!-- HEADER END -->
+
+<!-- OFFCANVAS MOBILE MENU START -->
+<div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header mobile-menu-head p-0">
+    <span class="d-inline-flex align-items-center gap-2" id="mobileMenuLabel">
+      <img class="brand-logo" src="assets/images/logo/logo.svg" alt="Logo [TÊN CÔNG TY]" width="154" height="38">
+    </span>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng menu"></button>
+  </div>
+  <div class="offcanvas-body mobile-menu-body">
+    <nav aria-label="Menu di động">
+      <ul class="mobile-nav">
+        <li><a class="mobile-link" href="index.html">Trang chủ</a></li>
+        <li>
+          <button class="mobile-link" type="button" data-sub aria-expanded="false">
+            Giới thiệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="mobile-sub">
+            <li><a href="about.html">Về chúng tôi</a></li>
+            <li><a href="capability.html">Năng lực</a></li>
+            <li><a href="projects.html">Dự án</a></li>
+          </ul>
+        </li>
+        <li>
+          <button class="mobile-link" type="button" data-sub aria-expanded="false">
+            Phế liệu thu mua <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="mobile-sub">
+            <li><a href="scrap-category.html">Đồng</a></li>
+            <li><a href="scrap-category.html">Sắt thép</a></li>
+            <li><a href="scrap-category.html">Nhôm</a></li>
+            <li><a href="scrap-category.html">Inox</a></li>
+            <li><a href="scrap.html">Xem tất cả</a></li>
+          </ul>
+        </li>
+        <li><a class="mobile-link" href="services.html">Dịch vụ</a></li>
+        <li><a class="mobile-link" href="prices.html">Bảng giá</a></li>
+        <li><a class="mobile-link" href="locations.html">Khu vực</a></li>
+        <li><a class="mobile-link" href="news.html">Tin tức</a></li>
+        <li><a class="mobile-link" href="contact.html">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="mobile-menu-foot">
+    <a class="mm-hotline" href="tel:[HOTLINE]">
+      <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+      <span>
+        <small>Gọi báo giá ngay</small>
+        <strong>[HOTLINE]</strong>
+      </span>
+    </a>
+    <button class="btn btn-primary w-100" type="button" data-quote-open data-bs-dismiss="offcanvas">
+      <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình — nhận báo giá
+    </button>
+  </div>
+</div>
+<!-- OFFCANVAS MOBILE MENU END -->
+
+<main>
+
+  <!-- ============================ PAGE HERO START ============================ -->
+  <section class="page-hero" aria-labelledby="uikit-hero-title">
+    <div class="page-hero-bg" aria-hidden="true">
+      <img src="assets/images/hero/hero-02.svg" alt="" width="1600" height="900" fetchpriority="high">
+    </div>
+    <div class="container">
+      <div class="page-hero-inner">
+        <span class="tech-label">Tài liệu nội bộ</span>
+        <h1 id="uikit-hero-title">UI Kit — Design System</h1>
+        <p class="page-hero-desc">
+          Thư viện thành phần dùng chung cho mọi trang của template: màu, chữ, nút, biểu mẫu,
+          bảng dữ liệu, hình ảnh và trạng thái phản hồi. Trang chỉ dành cho đội phát triển.
+        </p>
+        <ol class="breadcrumb-line">
+          <li><a href="index.html">Trang chủ</a></li>
+          <li aria-current="page">UI Kit</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ PAGE HERO END ============================ -->
+
+  <!-- ============================ UI KIT START ============================ -->
+  <div class="container">
+
+    <!-- COLORS START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-colors-title">
+      <h2 class="ui-kit-title" id="uikit-colors-title">01 — Colors</h2>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#E4570F"></div>
+          <div class="swatch-info"><strong>Primary</strong><code>#E4570F</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C2410C"></div>
+          <div class="swatch-info"><strong>Primary dark</strong><code>#C2410C</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#16181C"></div>
+          <div class="swatch-info"><strong>Dark</strong><code>#16181C</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#3E4C59"></div>
+          <div class="swatch-info"><strong>Steel</strong><code>#3E4C59</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#F5B301"></div>
+          <div class="swatch-info"><strong>Accent</strong><code>#F5B301</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#F6F5F2"></div>
+          <div class="swatch-info"><strong>Background</strong><code>#F6F5F2</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#E3E1DC"></div>
+          <div class="swatch-info"><strong>Border</strong><code>#E3E1DC</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1C1F24"></div>
+          <div class="swatch-info"><strong>Text</strong><code>#1C1F24</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#66707A"></div>
+          <div class="swatch-info"><strong>Muted</strong><code>#66707A</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1E7E34"></div>
+          <div class="swatch-info"><strong>Success</strong><code>#1E7E34</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C0392B"></div>
+          <div class="swatch-info"><strong>Error</strong><code>#C0392B</code></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#B45309"></div>
+          <div class="swatch-info"><strong>Warning</strong><code>#B45309</code></div>
+        </div>
+      </div>
+    </section>
+    <!-- COLORS END -->
+
+    <!-- TYPOGRAPHY START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-type-title">
+      <h2 class="ui-kit-title" id="uikit-type-title">02 — Typography</h2>
+
+      <p class="h1">Display heading Oswald</p>
+      <p class="h2">Heading cấp 2 — tiêu đề section</p>
+      <p class="h3">Heading cấp 3 — tiêu đề khối nội dung</p>
+      <p class="h4">Heading cấp 4 — tiêu đề phụ, mục nhỏ</p>
+      <p>
+        Đoạn văn thân bài dùng Be Vietnam Pro, cỡ 1rem, giãn dòng 1.7 — đọc thoải mái trên cả
+        desktop lẫn điện thoại. Màu chữ mặc định <code>#1C1F24</code>, chữ phụ dùng class muted.
+      </p>
+      <p><small>Chữ phụ chú nhỏ (small) — dùng cho ghi chú, token placeholder, ngày cập nhật bảng giá.</small></p>
+
+      <span class="tech-label d-block mt-3">Tech label — nhãn kỹ thuật</span>
+
+      <div class="d-flex flex-wrap align-items-end gap-4 mt-3">
+        <span class="num-display">123+</span>
+        <span class="price-value">75.000đ/kg</span>
+      </div>
+
+      <blockquote class="quote-block">
+        Cân minh bạch trước mặt khách — thu gom tận nơi — thanh toán ngay sau khi cân xong.
+      </blockquote>
+    </section>
+    <!-- TYPOGRAPHY END -->
+
+    <!-- BUTTONS START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-buttons-title">
+      <h2 class="ui-kit-title" id="uikit-buttons-title">03 — Buttons</h2>
+
+      <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        <button class="btn btn-primary" type="button">Nút chính</button>
+        <button class="btn btn-primary btn-sm" type="button">Nút nhỏ</button>
+        <button class="btn btn-primary btn-lg" type="button"><i class="bi bi-camera-fill" aria-hidden="true"></i>Nút lớn</button>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        <button class="btn btn-dark" type="button">Nút màu tối</button>
+        <button class="btn btn-outline-primary" type="button">Viền cam</button>
+        <button class="btn btn-outline-dark" type="button">Viền tối</button>
+      </div>
+
+      <div class="bg-coal p-3 d-flex flex-wrap align-items-center gap-3 mb-3">
+        <button class="btn btn-light" type="button">Nút sáng</button>
+        <button class="btn btn-outline-light" type="button">Viền sáng</button>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <a class="link-arrow" href="#uikit-buttons-title">Text link arrow <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <button class="icon-btn" type="button" aria-label="Nút icon thường"><i class="bi bi-telephone-fill" aria-hidden="true"></i></button>
+        <button class="icon-btn icon-btn--dark" type="button" aria-label="Nút icon nền tối"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </section>
+    <!-- BUTTONS END -->
+
+    <!-- FORMS START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-forms-title">
+      <h2 class="ui-kit-title" id="uikit-forms-title">04 — Forms</h2>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-field">
+            <label class="form-label-tech" for="uikit-input">Input thường</label>
+            <input class="form-control" type="text" id="uikit-input" placeholder="Nhập họ tên khách hàng">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-field">
+            <label class="form-label-tech" for="uikit-invalid">Input lỗi <span class="required-mark">*</span></label>
+            <input class="form-control is-invalid" type="tel" id="uikit-invalid" value="09abc" aria-describedby="uikit-invalid-feedback">
+            <div class="invalid-feedback" id="uikit-invalid-feedback">Số điện thoại không hợp lệ.</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-field">
+            <label class="form-label-tech" for="uikit-disabled">Input disabled</label>
+            <input class="form-control" type="text" id="uikit-disabled" value="Đã khóa — chờ xử lý" disabled>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-field">
+            <label class="form-label-tech" for="uikit-select">Select</label>
+            <select class="form-select" id="uikit-select">
+              <option selected>Đồng / dây điện</option>
+              <option>Sắt thép</option>
+              <option>Nhôm</option>
+              <option>Inox</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-field">
+            <label class="form-label-tech" for="uikit-textarea">Textarea</label>
+            <textarea class="form-control" id="uikit-textarea" rows="2" placeholder="Mô tả thêm về lô hàng…"></textarea>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-field">
+            <span class="form-label-tech">Upload dropzone</span>
+            <div class="upload-drop" role="button" tabindex="0" aria-label="Tải ảnh lên">
+              <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+              <p class="upload-title mb-0">Kéo thả ảnh vào đây hoặc bấm chọn file</p>
+              <p class="upload-hint">Hỗ trợ nhiều ảnh JPG/PNG — chụp gần loại phế liệu để báo giá chính xác</p>
+              <input type="file" accept="image/*" multiple hidden>
+            </div>
+            <div class="upload-previews">
+              <div class="upload-thumb">
+                <img src="assets/images/scrap/scrap-copper.svg" alt="Ảnh xem trước — phế liệu đồng" width="86" height="86" loading="lazy">
+                <button class="upload-remove" type="button" aria-label="Xóa ảnh"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+              </div>
+              <div class="upload-thumb">
+                <img src="assets/images/scrap/scrap-cable.svg" alt="Ảnh xem trước — dây cáp đồng" width="86" height="86" loading="lazy">
+                <button class="upload-remove" type="button" aria-label="Xóa ảnh"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="uikit-check1" checked>
+            <label class="form-check-label" for="uikit-check1">Có cần hóa đơn VAT</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="uikit-check2">
+            <label class="form-check-label" for="uikit-check2">Cần tháo dỡ tại chỗ</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="uikit-radio" id="uikit-radio1" checked>
+            <label class="form-check-label" for="uikit-radio1">Thanh toán tiền mặt</label>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- FORMS END -->
+
+    <!-- TABLES START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-tables-title">
+      <h2 class="ui-kit-title" id="uikit-tables-title">05 — Tables</h2>
+
+      <p class="tech-label d-block mb-2">Table cơ bản — .table.table-striped</p>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Loại</th>
+            <th scope="col">Đơn vị</th>
+            <th scope="col">Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Đồng đỏ sạch</td>
+            <td>kg</td>
+            <td>Báo giá theo hình thực tế</td>
+          </tr>
+          <tr>
+            <td>Sắt vụn</td>
+            <td>tấn</td>
+            <td>Cân tại kho khách hàng</td>
+          </tr>
+          <tr>
+            <td>Nhôm thanh</td>
+            <td>kg</td>
+            <td>Phân loại trước khi cân</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="tech-label d-block mb-2 mt-4">Bảng giá — .table-scroll &gt; .table-price</p>
+      <div class="price-board">
+        <div class="table-scroll">
+          <table class="table table-price align-middle">
+            <caption class="visually-hidden">Bảng giá demo dùng trong trang UI Kit</caption>
+            <thead>
+              <tr>
+                <th scope="col">Loại</th>
+                <th scope="col">Phân loại</th>
+                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
+                <th scope="col" class="text-end">Xu hướng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#B87333"></span>Đồng</td>
+                <td class="mat-type">Đồng đỏ sạch</td>
+                <td class="text-end"><span class="price-value">75.000 – 95.000</span></td>
+                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#8B4513"></span>Sắt thép</td>
+                <td class="mat-type">Sắt vụn / sắt công trình</td>
+                <td class="text-end"><span class="price-value">6.000 – 9.000</span></td>
+                <td class="text-end"><span class="price-trend down"><i class="bi bi-graph-down-arrow" aria-hidden="true"></i>-1%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#C0C0C0"></span>Nhôm</td>
+                <td class="mat-type">Nhôm thanh / nhôm vụn</td>
+                <td class="text-end"><span class="price-value">22.000 – 35.000</span></td>
+                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#A8A9AD"></span>Inox</td>
+                <td class="mat-type">Inox 304</td>
+                <td class="text-end"><span class="price-value">13.000 – 18.000</span></td>
+                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="tech-label d-block mb-2 mt-4">Bảng quản trị — .table-admin-wrap &gt; .table-admin (style nằm ở admin.css)</p>
+      <div class="table-admin-wrap">
+        <table class="table table-admin align-middle">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Khách</th>
+              <th scope="col">Trạng thái</th>
+              <th scope="col">Thời gian</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1042</td>
+              <td>Trần Văn Bình</td>
+              <td><span class="badge-status st-new">Mới</span></td>
+              <td>08:32 — [DD/MM/YYYY]</td>
+            </tr>
+            <tr>
+              <td>#1041</td>
+              <td>Cty TNHH Cơ khí Minh Đức</td>
+              <td><span class="badge-status st-new">Mới</span></td>
+              <td>08:15 — [DD/MM/YYYY]</td>
+            </tr>
+            <tr>
+              <td>#1040</td>
+              <td>Phạm Thị Hoa</td>
+              <td><span class="badge-status st-done">Hoàn tất</span></td>
+              <td>17:40 — [DD/MM/YYYY]</td>
+            </tr>
+            <tr>
+              <td>#1039</td>
+              <td>Xưởng gỗ Thành Đạt</td>
+              <td><span class="badge-status st-done">Hoàn tất</span></td>
+              <td>16:05 — [DD/MM/YYYY]</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <!-- TABLES END -->
+
+    <!-- IMAGES START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-images-title">
+      <h2 class="ui-kit-title" id="uikit-images-title">06 — Images</h2>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="tech-label d-block mb-2">4:3 — Danh mục 1200×900</span>
+          <img src="assets/images/scrap/scrap-copper.svg" alt="Ảnh mẫu tỉ lệ 4:3 — phế liệu đồng" width="1200" height="900" loading="lazy" class="img-fluid rounded">
+        </div>
+        <div class="col-md-4">
+          <span class="tech-label d-block mb-2">16:9 — Tin tức 1200×675</span>
+          <img src="assets/images/news/news-01.svg" alt="Ảnh mẫu tỉ lệ 16:9 — bài viết bảng giá" width="1200" height="675" loading="lazy" class="img-fluid rounded">
+        </div>
+        <div class="col-md-4">
+          <span class="tech-label d-block mb-2">16:10 — Dự án 1280×800</span>
+          <img src="assets/images/projects/project-01-cover.svg" alt="Ảnh mẫu tỉ lệ 16:10 — dự án tháo dỡ nhà xưởng" width="1280" height="800" loading="lazy" class="img-fluid rounded">
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <span class="tech-label d-block mb-2">Thumbnail — .upload-thumb 86×86</span>
+        <div class="upload-previews">
+          <div class="upload-thumb">
+            <img src="assets/images/scrap/scrap-copper.svg" alt="Thumbnail mẫu — đồng" width="86" height="86" loading="lazy">
+          </div>
+          <div class="upload-thumb">
+            <img src="assets/images/scrap/scrap-iron.svg" alt="Thumbnail mẫu — sắt" width="86" height="86" loading="lazy">
+          </div>
+          <div class="upload-thumb">
+            <img src="assets/images/scrap/scrap-cable.svg" alt="Thumbnail mẫu — dây cáp" width="86" height="86" loading="lazy">
+          </div>
+          <div class="upload-thumb">
+            <img src="assets/images/scrap/scrap-aluminum.svg" alt="Thumbnail mẫu — nhôm" width="86" height="86" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- IMAGES END -->
+
+    <!-- NAVIGATION START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-nav-title">
+      <h2 class="ui-kit-title" id="uikit-nav-title">07 — Navigation</h2>
+
+      <span class="tech-label d-block mb-2">Breadcrumb — .breadcrumb-line</span>
+      <ol class="breadcrumb-line">
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="prices.html">Bảng giá</a></li>
+        <li aria-current="page">Sắt vụn</li>
+      </ol>
+
+      <span class="tech-label d-block mb-2 mt-4">Pagination — .pagination-industrial</span>
+      <nav aria-label="Demo phân trang">
+        <ul class="pagination-industrial">
+          <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+          <li class="page-item"><a class="page-link" href="#uikit-nav-title">1</a></li>
+          <li class="page-item active"><span class="page-link">2</span></li>
+          <li class="page-item"><a class="page-link" href="#uikit-nav-title">3</a></li>
+          <li class="page-item"><a class="page-link" href="#uikit-nav-title"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
+        </ul>
+      </nav>
+
+      <span class="tech-label d-block mb-2 mt-4">Filter bar — .filter-bar &gt; .filter-link</span>
+      <div class="filter-bar">
+        <span class="filter-label">Lọc:</span>
+        <a class="filter-link active" href="#uikit-nav-title">Tất cả</a>
+        <a class="filter-link" href="#uikit-nav-title">Đồng</a>
+        <a class="filter-link" href="#uikit-nav-title">Sắt thép</a>
+        <a class="filter-link" href="#uikit-nav-title">Nhôm</a>
+      </div>
+
+      <p class="small text-muted-2 mb-0">Main nav (desktop + offcanvas mobile) xem header của chính trang này.</p>
+    </section>
+    <!-- NAVIGATION END -->
+
+    <!-- FEEDBACK START -->
+    <section class="ui-kit-section" aria-labelledby="uikit-feedback-title">
+      <h2 class="ui-kit-title" id="uikit-feedback-title">08 — Feedback</h2>
+
+      <div class="alert alert-success" role="alert">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Đã gửi yêu cầu thành công. Nhân viên gọi lại trong [30 phút].
+      </div>
+      <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> Gửi thất bại — thử lại, hoặc gọi <a href="tel:[HOTLINE]">[HOTLINE]</a>.
+      </div>
+      <div class="alert alert-warning" role="alert">
+        <i class="bi bi-info-circle-fill" aria-hidden="true"></i> Giá chỉ mang tính tham khảo — giá chính xác chốt sau khi xem hình hoặc khảo sát.
+      </div>
+
+      <div class="mt-4">
+        <span class="tech-label d-block mb-2">Toast — .toast.toast-demo</span>
+        <div class="toast show toast-demo" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <strong class="me-auto">Thông báo</strong>
+            <small>[DD/MM/YYYY]</small>
+          </div>
+          <div class="toast-body">Đã nhận yêu cầu báo giá.</div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <span class="tech-label d-block mb-2">Empty state — .empty-state</span>
+        <div class="empty-state">
+          <i class="bi bi-inbox" aria-hidden="true"></i>
+          <h3>Chưa có yêu cầu báo giá</h3>
+          <p>Lead mới sẽ xuất hiện tại đây.</p>
+          <button class="btn btn-outline-dark" type="button"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Tải lại</button>
+        </div>
+      </div>
+    </section>
+    <!-- FEEDBACK END -->
+
+  </div>
+  <!-- ============================ UI KIT END ============================ -->
+
+</main>
+
+<!-- FOOTER + FLOATING + MOBILE BAR + QUOTE MODAL (partial: partials/_footer.html) -->
+<!-- FOOTER START -->
+<footer class="footer-site">
+  <div class="footer-cta-band">
+    <div class="container">
+      <div class="footer-cta-inner">
+        <div class="fcb-text">
+          <i class="bi bi-camera-fill" aria-hidden="true"></i>
+          <span>
+            <strong>Gửi hình — nhận báo giá trong [30 phút]</strong>
+            <small>Chụp ảnh phế liệu, gửi cho chúng tôi để nhận giá thu mua chính xác.</small>
+          </span>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-light" type="button" data-quote-open>
+            <i class="bi bi-upload" aria-hidden="true"></i>Gửi hình
+          </button>
+          <a class="btn btn-outline-light" href="tel:[HOTLINE]">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-top">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6 footer-brand">
+          <img class="brand-logo" src="assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="186" height="44" loading="lazy">
+          <p>Thu mua phế liệu đồng, sắt, nhôm, inox tận nơi cho cá nhân, công trình và doanh nghiệp. Cân đo minh bạch, thanh toán ngay.</p>
+          <div class="footer-cert">
+            <span class="cert-chip"><i class="bi bi-patch-check-fill" aria-hidden="true"></i>MST: [MÃ SỐ THUẾ]</span>
+            <span class="cert-chip"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Kho: [ĐỊA CHỈ KHO]</span>
+          </div>
+        </div>
+
+        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Phế liệu thu mua">
+          <h2 class="footer-col-title">Phế liệu</h2>
+          <ul class="footer-links">
+            <li><a href="scrap-category.html">Phế liệu đồng</a></li>
+            <li><a href="scrap-category.html">Phế liệu sắt thép</a></li>
+            <li><a href="scrap-category.html">Phế liệu nhôm</a></li>
+            <li><a href="scrap-category.html">Phế liệu inox</a></li>
+            <li><a href="scrap-category.html">Dây điện — cáp</a></li>
+            <li><a href="scrap.html">Xem tất cả</a></li>
+          </ul>
+        </nav>
+
+        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Dịch vụ">
+          <h2 class="footer-col-title">Dịch vụ</h2>
+          <ul class="footer-links">
+            <li><a href="service-detail.html">Thu mua tận nơi</a></li>
+            <li><a href="service-detail.html">Thanh lý nhà xưởng</a></li>
+            <li><a href="service-detail.html">Thu mua công trình</a></li>
+            <li><a href="service-detail.html">Thu mua máy móc</a></li>
+            <li><a href="referral.html">Chính sách hoa hồng</a></li>
+          </ul>
+        </nav>
+
+        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Khu vực">
+          <h2 class="footer-col-title">Khu vực</h2>
+          <ul class="footer-links">
+            <li><a href="location-detail.html">Đồng Nai</a></li>
+            <li><a href="location-detail.html">TP. Hồ Chí Minh</a></li>
+            <li><a href="location-detail.html">Bình Dương</a></li>
+            <li><a href="location-detail.html">Bà Rịa – Vũng Tàu</a></li>
+            <li><a href="locations.html">Xem tất cả</a></li>
+          </ul>
+        </nav>
+
+        <div class="col-lg-2 col-md-6 footer-col">
+          <h2 class="footer-col-title">Liên hệ</h2>
+          <ul class="footer-contact">
+            <li>
+              <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+              <span><a href="tel:[HOTLINE]"><strong>[HOTLINE]</strong></a><br><span>Zalo: [ZALO]</span></span>
+            </li>
+            <li>
+              <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+              <span><a href="mailto:[EMAIL]">[EMAIL]</a></span>
+            </li>
+            <li>
+              <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+              <span>[ĐỊA CHỈ]</span>
+            </li>
+          </ul>
+          <div class="footer-hours">
+            <i class="bi bi-clock-fill" aria-hidden="true"></i>
+            Thứ 2 – Chủ nhật: [GIỜ LÀM VIỆC]
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-inner">
+        <span>© <span data-year>2026</span> [TÊN CÔNG TY]. Giữ toàn quyền.</span>
+        <nav aria-label="Liên kết phụ">
+          <a href="referral.html">Chính sách hoa hồng</a> ·
+          <a href="about.html">Giới thiệu</a> ·
+          <a href="contact.html">Liên hệ</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- FOOTER END -->
+
+<!-- FLOATING CONTACT (desktop) START -->
+<div class="floating-contact" aria-label="Liên hệ nhanh">
+  <a class="fc-phone" href="tel:[HOTLINE]" aria-label="Gọi hotline"><i class="bi bi-telephone-fill" aria-hidden="true"></i></a>
+  <a class="fc-zalo" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener" aria-label="Chat Zalo">Zalo</a>
+  <a class="fc-quote" href="#quoteModal" data-quote-open aria-label="Gửi hình nhận báo giá"><i class="bi bi-camera-fill" aria-hidden="true"></i></a>
+</div>
+<!-- FLOATING CONTACT END -->
+
+<!-- MOBILE CONTACT BAR START -->
+<div class="mobile-bar" aria-label="Liên hệ nhanh">
+  <a href="tel:[HOTLINE]"><i class="bi bi-telephone-fill" aria-hidden="true"></i>Gọi ngay</a>
+  <a href="https://zalo.me/[ZALO]" target="_blank" rel="noopener"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Zalo</a>
+  <a class="mobile-bar-cta" href="#quoteModal" data-quote-open><i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình báo giá</a>
+</div>
+<!-- MOBILE CONTACT BAR END -->
+
+<!-- BACK TO TOP START -->
+<button class="back-top" type="button" aria-label="Về đầu trang">
+  <i class="bi bi-arrow-up" aria-hidden="true"></i>
+</button>
+<!-- BACK TO TOP END -->
+
+<!-- QUOTE MODAL START (QuickQuoteForm) -->
+<div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-bottom">
+        <h2 class="modal-title fs-5 text-uppercase" id="quoteModalLabel">Gửi hình — nhận báo giá</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <!-- QUICK QUOTE FORM START -->
+        <form class="js-quote-form" novalidate>
+          <div class="quote-form-body row g-3">
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-name-modal">Họ tên</label>
+                <input class="form-control" type="text" id="qq-name-modal" name="name" placeholder="Nguyễn Văn A">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-phone-modal">Số điện thoại <span class="required-mark">*</span></label>
+                <input class="form-control" type="tel" id="qq-phone-modal" name="phone" placeholder="09xx xxx xxx" required>
+                <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-zalo-modal">Zalo</label>
+                <input class="form-control" type="text" id="qq-zalo-modal" name="zalo" placeholder="Số Zalo (nếu khác)">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-scrap-modal">Loại phế liệu <span class="required-mark">*</span></label>
+                <select class="form-select" id="qq-scrap-modal" name="scrap" required>
+                  <option value="">— Chọn loại phế liệu —</option>
+                  <option>Đồng / dây điện</option>
+                  <option>Sắt thép</option>
+                  <option>Nhôm</option>
+                  <option>Inox</option>
+                  <option>Máy móc — motor</option>
+                  <option>Bo mạch — điện tử</option>
+                  <option>Nhà xưởng — công trình</option>
+                  <option>Khác (ghi rõ ở ghi chú)</option>
+                </select>
+                <div class="invalid-feedback">Vui lòng chọn loại phế liệu.</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-qty-modal">Số lượng (ước tính)</label>
+                <input class="form-control" type="text" id="qq-qty-modal" name="quantity" placeholder="VD: khoảng 2 tấn sắt">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-area-modal">Khu vực <span class="required-mark">*</span></label>
+                <select class="form-select" id="qq-area-modal" name="area" required>
+                  <option value="">— Chọn khu vực —</option>
+                  <option>Đồng Nai</option>
+                  <option>TP. Hồ Chí Minh</option>
+                  <option>Bình Dương</option>
+                  <option>Bà Rịa – Vũng Tàu</option>
+                  <option>Tỉnh khác</option>
+                </select>
+                <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-field">
+                <span class="form-label-tech">Hình ảnh phế liệu</span>
+                <div class="upload-drop" role="button" tabindex="0" aria-label="Tải ảnh phế liệu lên">
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title mb-0">Kéo thả ảnh vào đây hoặc bấm chọn file</p>
+                  <p class="upload-hint">Hỗ trợ nhiều ảnh JPG/PNG — chụp gần loại phế liệu để báo giá chính xác</p>
+                  <input type="file" accept="image/*" multiple hidden>
+                </div>
+                <div class="upload-previews" aria-live="polite"></div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-field">
+                <label class="form-label-tech" for="qq-note-modal">Ghi chú</label>
+                <textarea class="form-control" id="qq-note-modal" name="note" rows="2" placeholder="Mô tả thêm: tình trạng, thời gian mong muốn thu gom…"></textarea>
+              </div>
+            </div>
+            <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+              <button class="btn btn-primary btn-lg" type="submit">
+                <i class="bi bi-send-fill" aria-hidden="true"></i>Gửi nhận báo giá
+              </button>
+              <span class="text-muted-2 small">Hoặc gọi ngay <a href="tel:[HOTLINE]" class="fw-semibold">[HOTLINE]</a></span>
+            </div>
+          </div>
+          <div class="quote-state" aria-live="polite"></div>
+        </form>
+        <!-- QUICK QUOTE FORM END -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- QUOTE MODAL END -->
+
+<!-- SCRIPTS (partial: partials/_scripts.html) -->
+<script src="assets/vendor/bootstrap.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/quote-form.js"></script>
+</body>
+</html>

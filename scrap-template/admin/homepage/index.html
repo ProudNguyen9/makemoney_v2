@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cấu hình trang chủ — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ============================================================================
+       PARTIAL ADMIN: Sidebar + Overlay + Topbar + mở/đóng content
+       Nguồn: partials/_admin-chrome.html — copy nguyên vẹn giữa các trang admin.
+       Convert Razor: Views/Shared/Admin/_Layout.cshtml
+       ======================================================================== -->
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html" class="active"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- Tiêu đề trang + thao tác chính -->
+      <div class="admin-page-head">
+        <h1>Cấu hình trang chủ <small>Bật/tắt và chỉnh nội dung từng section của trang chủ</small></h1>
+        <div class="aph-actions">
+          <!-- backend: PUT /admin/homepage — lưu toàn bộ cấu hình 13 section bên dưới -->
+          <button class="btn btn-primary" type="button"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu cấu hình</button>
+        </div>
+      </div>
+
+      <!-- Ghi chú cách hoạt động -->
+      <div class="admin-panel">
+        <div class="panel-body">
+          <p class="small text-muted mb-0">Các section hiển thị theo thứ tự cột “Thứ tự”. Nội dung để trống sẽ dùng giá trị mặc định của template.</p>
+        </div>
+      </div>
+
+      <!-- backend: GET /admin/homepage/sections — 13 section; mỗi section có: title, subtitle, teaser, image, sortOrder, note, isVisible -->
+      <!-- Nút “Chọn ảnh” mở Thư viện ảnh (media/index.html) — chọn xong điền URL vào trường readonly -->
+
+      <!-- 1. Hero -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Hero</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpHeroShow" checked>
+              <label class="form-check-label" for="hpHeroShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpHeroTitle">Tiêu đề</label>
+              <input class="form-control" id="hpHeroTitle" type="text" value="THU MUA PHẾ LIỆU GIÁ TỐT — TẬN NƠI">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpHeroSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpHeroSubtitle" type="text" value="Khảo sát miễn phí — Cân tại chỗ — Thanh toán ngay trong ngày">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpHeroTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpHeroTeaser" rows="2">Thu mua sắt, đồng, nhôm, inox, giấy, nhựa… tận nhà xưởng theo bảng giá cập nhật hàng ngày. Hỗ trợ vận chuyển, tháo dỡ và thanh toán ngay sau khi cân.</textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpHeroImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpHeroImage" type="text" value="assets/images/hero/hero-main.svg" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpHeroOrder">Thứ tự</label>
+              <input class="form-control" id="hpHeroOrder" type="number" min="1" value="1">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpHeroNote">Ghi chú</label>
+              <input class="form-control" id="hpHeroNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Trust Strip -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Trust Strip</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpTrustShow" checked>
+              <label class="form-check-label" for="hpTrustShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpTrustTitle">Tiêu đề</label>
+              <input class="form-control" id="hpTrustTitle" type="text" value="Cam kết">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpTrustSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpTrustSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpTrustTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpTrustTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpTrustImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpTrustImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpTrustOrder">Thứ tự</label>
+              <input class="form-control" id="hpTrustOrder" type="number" min="1" value="2">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpTrustNote">Ghi chú</label>
+              <input class="form-control" id="hpTrustNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Loại phế liệu nổi bật (Featured Scrap) -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Loại phế liệu nổi bật (Featured Scrap)</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpFeaturedShow" checked>
+              <label class="form-check-label" for="hpFeaturedShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFeaturedTitle">Tiêu đề</label>
+              <input class="form-control" id="hpFeaturedTitle" type="text" value="Các loại phế liệu chúng tôi thu mua">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFeaturedSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpFeaturedSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpFeaturedTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpFeaturedTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFeaturedImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpFeaturedImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpFeaturedOrder">Thứ tự</label>
+              <input class="form-control" id="hpFeaturedOrder" type="number" min="1" value="3">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpFeaturedNote">Ghi chú</label>
+              <input class="form-control" id="hpFeaturedNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Bảng giá -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Bảng giá</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpPriceShow" checked>
+              <label class="form-check-label" for="hpPriceShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpPriceTitle">Tiêu đề</label>
+              <input class="form-control" id="hpPriceTitle" type="text" value="Bảng giá phế liệu hôm nay">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpPriceSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpPriceSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpPriceTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpPriceTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpPriceImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpPriceImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpPriceOrder">Thứ tự</label>
+              <input class="form-control" id="hpPriceOrder" type="number" min="1" value="4">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpPriceNote">Ghi chú</label>
+              <input class="form-control" id="hpPriceNote" type="text" value="Nguồn: admin Bảng giá">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Story -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Story</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpStoryShow" checked>
+              <label class="form-check-label" for="hpStoryShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStoryTitle">Tiêu đề</label>
+              <input class="form-control" id="hpStoryTitle" type="text" value="Chúng tôi không chỉ thu mua phế liệu.">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStorySubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpStorySubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpStoryTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpStoryTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStoryImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpStoryImage" type="text" value="assets/images/company/company-yard.svg" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpStoryOrder">Thứ tự</label>
+              <input class="form-control" id="hpStoryOrder" type="number" min="1" value="5">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpStoryNote">Ghi chú</label>
+              <input class="form-control" id="hpStoryNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Statistics -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Statistics</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpStatsShow" checked>
+              <label class="form-check-label" for="hpStatsShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStatsTitle">Tiêu đề</label>
+              <input class="form-control" id="hpStatsTitle" type="text" value="Năng lực qua số liệu">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStatsSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpStatsSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpStatsTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpStatsTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpStatsImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpStatsImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpStatsOrder">Thứ tự</label>
+              <input class="form-control" id="hpStatsOrder" type="number" min="1" value="6">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpStatsNote">Ghi chú</label>
+              <input class="form-control" id="hpStatsNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Projects -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Projects</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpProjectsShow" checked>
+              <label class="form-check-label" for="hpProjectsShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProjectsTitle">Tiêu đề</label>
+              <input class="form-control" id="hpProjectsTitle" type="text" value="Dự án thu mua gần đây">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProjectsSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpProjectsSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpProjectsTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpProjectsTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProjectsImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpProjectsImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpProjectsOrder">Thứ tự</label>
+              <input class="form-control" id="hpProjectsOrder" type="number" min="1" value="7">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpProjectsNote">Ghi chú</label>
+              <input class="form-control" id="hpProjectsNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Process -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Process</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpProcessShow" checked>
+              <label class="form-check-label" for="hpProcessShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProcessTitle">Tiêu đề</label>
+              <input class="form-control" id="hpProcessTitle" type="text" value="Quy trình 6 bước">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProcessSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpProcessSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpProcessTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpProcessTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpProcessImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpProcessImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpProcessOrder">Thứ tự</label>
+              <input class="form-control" id="hpProcessOrder" type="number" min="1" value="8">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpProcessNote">Ghi chú</label>
+              <input class="form-control" id="hpProcessNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. Locations -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Locations</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpLocationsShow" checked>
+              <label class="form-check-label" for="hpLocationsShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpLocationsTitle">Tiêu đề</label>
+              <input class="form-control" id="hpLocationsTitle" type="text" value="Khu vực hoạt động">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpLocationsSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpLocationsSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpLocationsTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpLocationsTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpLocationsImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpLocationsImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpLocationsOrder">Thứ tự</label>
+              <input class="form-control" id="hpLocationsOrder" type="number" min="1" value="9">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpLocationsNote">Ghi chú</label>
+              <input class="form-control" id="hpLocationsNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Referral — đang ẩn -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Referral</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpReferralShow">
+              <label class="form-check-label" for="hpReferralShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpReferralTitle">Tiêu đề</label>
+              <input class="form-control" id="hpReferralTitle" type="text" value="Có nguồn phế liệu?">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpReferralSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpReferralSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpReferralTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpReferralTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpReferralImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpReferralImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpReferralOrder">Thứ tự</label>
+              <input class="form-control" id="hpReferralOrder" type="number" min="1" value="10">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpReferralNote">Ghi chú</label>
+              <input class="form-control" id="hpReferralNote" type="text" value="Đang ẩn">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. News -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>News</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpNewsShow" checked>
+              <label class="form-check-label" for="hpNewsShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpNewsTitle">Tiêu đề</label>
+              <input class="form-control" id="hpNewsTitle" type="text" value="Tin tức — kiến thức">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpNewsSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpNewsSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpNewsTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpNewsTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpNewsImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpNewsImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpNewsOrder">Thứ tự</label>
+              <input class="form-control" id="hpNewsOrder" type="number" min="1" value="11">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpNewsNote">Ghi chú</label>
+              <input class="form-control" id="hpNewsNote" type="text" value="3 bài mới nhất">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. FAQ -->
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>FAQ</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpFaqShow" checked>
+              <label class="form-check-label" for="hpFaqShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFaqTitle">Tiêu đề</label>
+              <input class="form-control" id="hpFaqTitle" type="text" value="Câu hỏi thường gặp">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFaqSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpFaqSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpFaqTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpFaqTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpFaqImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpFaqImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpFaqOrder">Thứ tự</label>
+              <input class="form-control" id="hpFaqOrder" type="number" min="1" value="12">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpFaqNote">Ghi chú</label>
+              <input class="form-control" id="hpFaqNote" type="text" value="Nguồn: admin FAQ — gán Trang chủ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13. Final CTA -->
+      <section class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Final CTA</h2>
+          <div class="panel-head-actions">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="hpCtaShow" checked>
+              <label class="form-check-label" for="hpCtaShow">Hiển thị</label>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpCtaTitle">Tiêu đề</label>
+              <input class="form-control" id="hpCtaTitle" type="text" value="Bạn đang có phế liệu cần thanh lý?">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpCtaSubtitle">Tiêu đề phụ (Subtitle)</label>
+              <input class="form-control" id="hpCtaSubtitle" type="text" placeholder="Bỏ trống dùng mặc định">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="hpCtaTeaser">Nội dung ngắn</label>
+              <textarea class="form-control" id="hpCtaTeaser" rows="2" placeholder="Bỏ trống dùng mặc định"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="hpCtaImage">Ảnh</label>
+              <div class="input-group">
+                <input class="form-control form-control-sm" id="hpCtaImage" type="text" placeholder="assets/images/…" readonly>
+                <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-image" aria-hidden="true"></i> Chọn ảnh</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpCtaOrder">Thứ tự</label>
+              <input class="form-control" id="hpCtaOrder" type="number" min="1" value="13">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="hpCtaNote">Ghi chú</label>
+              <input class="form-control" id="hpCtaNote" type="text" placeholder="Ghi chú nội bộ">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

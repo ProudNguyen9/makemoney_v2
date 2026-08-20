@@ -1,0 +1,353 @@
+// =============================================================================
+// PAGE — thành phần các trang con: about, capability, services, contact,
+// referral, 404, ui-kit
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// ABOUT — story, mission/vision, timeline
+// -----------------------------------------------------------------------------
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+  border-left: 2px solid $c-border;
+
+  .tl-item {
+    position: relative;
+    padding-bottom: 2.25rem;
+
+    &:last-child { padding-bottom: 0; }
+    &::before {
+      content: "";
+      position: absolute;
+      left: calc(-2rem - 7px);
+      top: .375rem;
+      width: 12px; height: 12px;
+      background: $c-primary;
+      border: 2px solid $c-surface;
+      outline: 2px solid $c-border;
+      border-radius: 2px;
+    }
+    .tl-year {
+      font-family: $font-heading;
+      font-size: 1.375rem;
+      font-weight: $fw-bold;
+      color: $c-primary;
+      display: block;
+      margin-bottom: .25rem;
+    }
+    h3 { font-size: 1.0625rem; margin-bottom: .375rem; }
+    p { color: $c-muted; margin: 0; }
+  }
+}
+
+// Mission / Vision / Values — khối 3 hàng kẻ phân cách, không card đều
+.mvv-block {
+  .mvv-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid $c-border;
+
+    .mvv-icon {
+      display: grid;
+      place-items: center;
+      width: 56px; height: 56px;
+      background: $c-dark;
+      color: $c-accent;
+      font-size: 1.5rem;
+      border-radius: $radius-md;
+    }
+    h3 { font-size: 1.0625rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .375rem; }
+    p { color: $c-muted; margin: 0; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// CAPABILITY — bảng năng lực + đội xe/máy móc dạng hàng kê khai
+// -----------------------------------------------------------------------------
+.fleet-list {
+  .fleet-row {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 1.125rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid $c-border;
+    align-items: center;
+
+    .fleet-media { @include ratio-box(4, 3); border-radius: $radius-sm; overflow: hidden; background: $c-dark-2; }
+    .fleet-body {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+      flex-wrap: wrap;
+
+      h3 { font-size: 1rem; margin-bottom: .25rem; }
+      p { font-size: .875rem; color: $c-muted; margin: 0; }
+      .fleet-qty {
+        font-family: $font-heading;
+        font-size: 1.375rem;
+        font-weight: $fw-semibold;
+        color: $c-primary;
+        white-space: nowrap;
+
+        small { display: block; @extend .tech-label; color: $c-muted; text-align: right; }
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SERVICES — danh sách dịch vụ dạng hàng lớn editorial (không product card)
+// -----------------------------------------------------------------------------
+.service-rows {
+  .service-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem 3rem;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+    border-top: 1px solid $c-border;
+    align-items: center;
+
+    .service-row-copy {
+      .service-no {
+        font-family: $font-heading;
+        font-size: .8125rem;
+        font-weight: $fw-semibold;
+        letter-spacing: .2em;
+        color: $c-primary;
+        display: block;
+        margin-bottom: .5rem;
+      }
+      h2 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); margin-bottom: .75rem; }
+      p { color: $c-muted; margin-bottom: 1.25rem; max-width: 58ch; }
+      .list-dash li { margin-bottom: .4375rem; }
+    }
+    .service-row-media { @include ratio-box(16, 10); border-radius: $radius-md; overflow: hidden; background: $c-dark-2; position: relative;
+      img { transition: transform .5s ease; }
+      &:hover img { transform: scale(1.035); } }
+
+    @include up(lg) {
+      grid-template-columns: 6fr 6fr;
+      &.service-row--flip .service-row-media { order: 2; }
+    }
+  }
+}
+
+// Service scope (trang detail) — bảng phạm vi công việc
+.scope-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: $c-border;
+  border: 1px solid $c-border;
+
+  .scope-item {
+    background: $c-surface;
+    padding: 1.25rem 1.375rem;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      font-size: .9375rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: .5rem;
+
+      i { color: $c-primary; font-size: 1.125rem; }
+    }
+    p { font-size: .875rem; color: $c-muted; margin: 0; }
+  }
+
+  @include up(md) { grid-template-columns: repeat(2, 1fr); }
+  @include up(lg) { grid-template-columns: repeat(3, 1fr); }
+}
+
+// Problem block (service detail) — nỗi đau khách hàng, danh sách dấu tích
+.problem-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    gap: .75rem;
+    padding: .875rem 0;
+    border-bottom: 1px dashed $c-border;
+    align-items: flex-start;
+
+    i { color: $c-error; font-size: 1.0625rem; margin-top: .1875rem; }
+    strong { display: block; margin-bottom: .125rem; }
+    span { color: $c-muted; font-size: .875rem; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// CONTACT
+// -----------------------------------------------------------------------------
+.contact-info-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: 1rem;
+    padding: 1.125rem 0;
+    border-bottom: 1px solid $c-border;
+    align-items: flex-start;
+
+    .ci-icon {
+      display: grid;
+      place-items: center;
+      width: 46px; height: 46px;
+      background: $c-dark;
+      color: $c-accent;
+      font-size: 1.1875rem;
+      border-radius: $radius-md;
+      flex: 0 0 auto;
+    }
+    .ci-body {
+      flex: 1;
+      small { @extend .tech-label; display: block; margin-bottom: .1875rem; }
+      strong { font-family: $font-heading; font-size: 1.0625rem; letter-spacing: .02em; display: block; }
+      a { color: $c-text; &:hover { color: $c-primary; } }
+      span { color: $c-muted; font-size: .875rem; }
+    }
+  }
+}
+
+.map-placeholder {
+  @include ratio-box(16, 9);
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $c-dark-2;
+  position: relative;
+
+  img { opacity: .55; }
+  .map-note {
+    position: absolute;
+    inset: auto 0 0 0;
+    background: rgba($c-dark, .88);
+    color: #fff;
+    padding: .625rem 1rem;
+    font-size: .8125rem;
+
+    i { color: $c-accent; margin-right: .375rem; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// REFERRAL — chính sách hoa hồng
+// -----------------------------------------------------------------------------
+.commission-table {
+  width: 100%;
+  border: 1px solid $c-border;
+  background: $c-surface;
+
+  th {
+    background: $c-dark;
+    color: #fff;
+    font-family: $font-heading;
+    font-size: .8125rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .875rem 1.125rem;
+  }
+  td { padding: .8125rem 1.125rem; border-bottom: 1px solid $c-border; vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .pct { font-family: $font-heading; font-size: 1.125rem; color: $c-primary; font-weight: $fw-semibold; }
+}
+
+// -----------------------------------------------------------------------------
+// 404
+// -----------------------------------------------------------------------------
+.error-404 {
+  background: $c-dark;
+  color: #fff;
+  min-height: 72vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    @include hazard-line(6px);
+  }
+
+  .err-code {
+    font-family: $font-heading;
+    font-weight: $fw-bold;
+    font-size: clamp(6rem, 22vw, 11rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px $c-primary;
+    letter-spacing: .04em;
+  }
+  h1 { color: #fff; margin: .75rem 0 .5rem; }
+  p { color: var(--on-dark-muted); max-width: 52ch; margin: 0 auto 2rem; }
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: .875rem;
+    flex-wrap: wrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// UI KIT — chỉ dùng trong trang mẫu design system
+// -----------------------------------------------------------------------------
+.ui-kit-section {
+  padding: 2.5rem 0;
+  border-top: 1px solid $c-border;
+
+  .ui-kit-title {
+    font-family: $font-heading;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 1.5rem;
+    padding-bottom: .625rem;
+    border-bottom: 2px solid $c-primary;
+    display: inline-block;
+  }
+}
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+
+  .swatch {
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: $c-surface;
+
+    .swatch-color { height: 72px; }
+    .swatch-info {
+      padding: .625rem .75rem;
+      font-size: .75rem;
+
+      strong { display: block; font-size: .8125rem; }
+      code { color: $c-muted; }
+    }
+  }
+
+  @include up(md) { grid-template-columns: repeat(4, 1fr); }
+  @include up(lg) { grid-template-columns: repeat(6, 1fr); }
+}
+
+// Toast demo
+.toast-demo {
+  position: static;
+  opacity: 1;
+  transform: none;
+}

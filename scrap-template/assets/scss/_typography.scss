@@ -1,0 +1,66 @@
+// =============================================================================
+// TYPOGRAPHY — Oswald (heading) + Be Vietnam Pro (body), hỗ trợ tiếng Việt
+// Heading: uppercase, tracking rộng, cảm giác công nghiệp.
+// =============================================================================
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: $font-heading;
+  font-weight: $fw-semibold;
+  line-height: 1.18;
+  letter-spacing: .012em;
+  color: $c-text;
+}
+
+h1, .h1 { @include clamp-font(2.25rem, calc(1.7rem + 2.6vw), 3.75rem); text-transform: uppercase; }
+h2, .h2 { @include clamp-font(1.75rem, calc(1.45rem + 1.5vw), 2.625rem); text-transform: uppercase; }
+h3, .h3 { @include clamp-font(1.3rem, calc(1.2rem + .5vw), 1.625rem); }
+h4, .h4 { font-size: 1.125rem; font-weight: $fw-semibold; }
+h5, .h5 { font-size: 1rem; }
+h6, .h6 { font-size: .875rem; }
+
+// Nhãn kỹ thuật — chữ nhỏ uppercase tracking rộng
+.tech-label {
+  font-family: $font-heading;
+  font-size: .75rem;
+  font-weight: $fw-medium;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: $c-muted;
+}
+
+.lead-2 {
+  font-size: 1.0625rem;
+  color: $c-muted;
+  line-height: 1.8;
+}
+
+// Số liệu lớn — statistics
+.num-display {
+  font-family: $font-heading;
+  font-weight: $fw-bold;
+  @include clamp-font(2.5rem, calc(2rem + 3vw), 4.5rem);
+  line-height: 1;
+  letter-spacing: .01em;
+  color: $c-primary;
+}
+
+// Giá — dùng trong bảng giá, card phế liệu
+.price-value {
+  font-family: $font-heading;
+  font-weight: $fw-semibold;
+  white-space: nowrap;
+}
+
+// Blockquote kiểu biên tập
+.quote-block {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid $c-primary;
+  background: $c-surface;
+  font-size: 1.0625rem;
+  font-style: italic;
+  color: $c-steel;
+}
+
+.section--dark .quote-block { background: $c-dark-2; color: var(--on-dark-text); }

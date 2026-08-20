@@ -1,0 +1,20 @@
+// =============================================================================
+// MAIN.SCSS — entry point public website
+// Build: npm run build  (sass --no-source-map assets/scss/main.scss assets/css/main.css)
+// =============================================================================
+@import 'variables';
+@import 'mixins';
+@import 'base';
+@import 'typography';
+@import 'layout';
+@import 'buttons';
+@import 'forms';
+@import 'header';
+@import 'footer';
+@import 'home';
+@import 'scrap';
+@import 'price';
+@import 'article';
+@import 'location';
+@import 'project';
+@import 'page';

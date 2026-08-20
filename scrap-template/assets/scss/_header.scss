@@ -1,0 +1,462 @@
+// =============================================================================
+// HEADER — Topbar + Header chính + Desktop nav + Offcanvas mobile
+// Cấu trúc: TOPBAR / LOGO | NAV | HOTLINE | NHẬN BÁO GIÁ
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// TOPBAR — thông tin mỏng, tối giản
+// -----------------------------------------------------------------------------
+.topbar {
+  background: $c-dark;
+  color: var(--on-dark-muted);
+  font-size: .8125rem;
+  border-bottom: 1px solid $c-dark-3;
+
+  .topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: $topbar-height;
+  }
+
+  .topbar-note {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    i { color: $c-accent; font-size: .875rem; }
+  }
+
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+
+    a, span {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      color: var(--on-dark-muted);
+      &:hover { color: #fff; }
+    }
+    .topbar-sep { width: 1px; height: 14px; background: $c-dark-3; }
+  }
+
+  @include down(md) {
+    .topbar-meta .topbar-hours, .topbar-meta .topbar-sep--hours { display: none; }
+    .topbar-note { font-size: .75rem; }
+  }
+  @include down(sm) { .topbar-meta .topbar-mail { display: none; } }
+}
+
+// -----------------------------------------------------------------------------
+// HEADER CHÍNH
+// -----------------------------------------------------------------------------
+.site-header {
+  background: $c-surface;
+  border-bottom: 1px solid $c-border;
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: $header-height;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    flex: 0 0 auto;
+
+    .brand-logo {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    .brand-text {
+      font-family: $font-heading;
+      font-weight: $fw-semibold;
+      font-size: 1.0625rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: $c-text;
+      small {
+        display: block;
+        font-family: $font-body;
+        font-size: .6875rem;
+        font-weight: $fw-medium;
+        letter-spacing: .14em;
+        color: $c-muted;
+      }
+    }
+    &:hover { opacity: .85; }
+  }
+
+  // Hotline ở phải (desktop)
+  .header-hotline {
+    margin-left: auto;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: .625rem;
+      color: $c-text;
+
+      .hl-ring {
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 42px;
+        border: 1px solid $c-border;
+        border-radius: $radius-sm;
+        color: $c-primary;
+        font-size: 1.125rem;
+      }
+      .hl-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.3;
+        small {
+          font-size: .6875rem;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+          color: $c-muted;
+        }
+        strong {
+          font-family: $font-heading;
+          font-size: 1.125rem;
+          letter-spacing: .03em;
+        }
+      }
+      &:hover { .hl-ring { border-color: $c-primary; } }
+    }
+  }
+
+  .header-cta { flex: 0 0 auto; }
+
+  .header-toggle {
+    margin-left: auto;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    width: 46px; height: 46px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 1.375rem;
+    color: $c-text;
+    &:hover { border-color: $c-primary; color: $c-primary; }
+  }
+
+  // Thu nhỏ khi scroll (JS thêm .is-stuck)
+  &.is-stuck {
+    box-shadow: $shadow-md;
+
+    .header-inner { min-height: 62px; }
+    .brand .brand-logo { height: 38px; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// DESKTOP NAV — nav chính, uppercase, dropdown 2 cấp
+// -----------------------------------------------------------------------------
+.nav-main {
+  display: none;
+
+  @include up(lg) {
+    display: flex;
+    align-items: center;
+    gap: .125rem;
+  }
+
+  > li {
+    > .nav-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: 1.5rem .8125rem; // cao theo header — giữ tổng ≤ $header-height mọi breakpoint
+      font-family: $font-heading;
+      font-size: .875rem;
+      font-weight: $fw-medium;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: $c-text;
+      white-space: nowrap;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: .8125rem;
+        right: .8125rem;
+        bottom: 14px;
+        height: 3px;
+        background: $c-primary;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform $t-base;
+      }
+      &:hover, &.active {
+        color: $c-primary;
+        &::after { transform: scaleX(1); }
+      }
+    }
+
+    &.has-drop > .nav-link::before {
+      content: "\F282"; // caret-down
+      font-family: 'bootstrap-icons';
+      font-size: .625rem;
+      color: $c-muted;
+    }
+  }
+
+  // Dropdown —面板 phẳng, không shadow lớn
+  .dropdown-menu {
+    --bs-dropdown-min-width: 264px;
+    margin: 0;
+    padding: .5rem 0;
+    border: 1px solid $c-border;
+    border-top: 3px solid $c-primary;
+    border-radius: 0 0 $radius-md $radius-md;
+    box-shadow: $shadow-md;
+    background: $c-surface;
+
+    .dropdown-item {
+      padding: .5625rem 1.25rem;
+      font-size: .875rem;
+      color: $c-text;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &:hover, &:focus {
+        background: $c-bg;
+        color: $c-primary;
+      }
+      .drop-count {
+        font-family: $font-heading;
+        font-size: .6875rem;
+        color: $c-muted;
+      }
+    }
+    .dropdown-divider { border-color: $c-border; margin: .375rem 0; }
+    .dropdown-header {
+      font-family: $font-heading;
+      font-size: .6875rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: $c-muted;
+      padding: .5rem 1.25rem .375rem;
+    }
+    .dropdown-item--all {
+      color: $c-primary-dark;
+      font-weight: $fw-semibold;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// OFFCANVAS MENU (mobile)
+// -----------------------------------------------------------------------------
+.mobile-menu {
+  .mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $c-border;
+
+    .brand-logo { height: 38px; }
+    .btn-close { box-shadow: none; }
+  }
+
+  .mobile-menu-body { padding: .75rem 0 1.5rem; overflow-y: auto; }
+
+  .mobile-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    > li { border-bottom: 1px solid $c-border; }
+    .mobile-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: .9375rem 1.25rem;
+      font-family: $font-heading;
+      font-size: .9375rem;
+      font-weight: $fw-medium;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: $c-text;
+      background: none;
+      border: 0;
+      text-align: left;
+
+      &:hover { color: $c-primary; }
+      .mi-caret {
+        transition: transform $t-fast;
+        color: $c-muted;
+        font-size: .75rem;
+      }
+    }
+    li.open .mobile-link {
+      color: $c-primary;
+      .mi-caret { transform: rotate(180deg); }
+    }
+    .mobile-sub {
+      list-style: none;
+      margin: 0;
+      padding: 0 0 .5rem;
+      display: none;
+      background: $c-bg;
+
+      li a {
+        display: block;
+        padding: .5rem 1.25rem .5rem 2rem;
+        font-size: .875rem;
+        color: $c-muted;
+        &:hover { color: $c-primary; }
+      }
+    }
+    li.open .mobile-sub { display: block; }
+  }
+
+  .mobile-menu-foot {
+    padding: 1.25rem;
+    border-top: 1px solid $c-border;
+    display: grid;
+    gap: .625rem;
+
+    .mm-hotline {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+
+      i {
+        display: grid; place-items: center;
+        width: 42px; height: 42px;
+        background: $c-dark;
+        color: $c-accent;
+        font-size: 1.125rem;
+        border-radius: $radius-sm;
+      }
+      small { display: block; font-size: .6875rem; text-transform: uppercase; letter-spacing: .1em; color: $c-muted; }
+      strong { font-family: $font-heading; font-size: 1.125rem; letter-spacing: .02em; color: $c-text; }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MOBILE CONTACT BAR — fixed bottom: GỌI | ZALO | BÁO GIÁ
+// -----------------------------------------------------------------------------
+.mobile-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: $z-mobilebar;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  background: $c-dark;
+  border-top: 2px solid $c-primary;
+
+  a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .125rem;
+    padding: .5rem .25rem .4375rem;
+    color: #E8EAED;
+    font-size: .6875rem;
+    font-weight: $fw-medium;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+
+    i { font-size: 1.125rem; color: $c-accent; }
+    &:active { background: $c-dark-2; }
+  }
+  .mobile-bar-cta {
+    background: $c-primary;
+    color: #fff;
+    i { color: #fff; }
+    &:active { background: $c-primary-dark; }
+  }
+
+  @include up(lg) { display: none; }
+}
+
+// -----------------------------------------------------------------------------
+// FLOATING CONTACT — desktop, bên phải: GỌI (ripple) | ZALO | GỬI HÌNH
+// Nút tròn kiểu hotline Việt: gọi to nhất + vòng sóng lan tỏa, Zalo xanh brand.
+// -----------------------------------------------------------------------------
+.floating-contact {
+  position: fixed;
+  right: 20px;
+  top: 40%;
+  z-index: $z-floating;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .625rem;
+
+  @include up(lg) { display: flex; }
+
+  a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.25rem;
+    box-shadow: 0 6px 18px rgba($c-dark, .22);
+    transition: transform $t-fast, box-shadow $t-fast, background $t-fast;
+    @include focus-ring(#fff);
+
+    &:hover  { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 24px rgba($c-dark, .3); }
+    &:active { transform: translateY(-1px) scale(1); }
+  }
+
+  // Nút gọi — to nhất, nền cam chủ đạo, 2 vòng sóng lan tỏa liên tục
+  .fc-phone {
+    width: 58px;
+    height: 58px;
+    background: $c-primary;
+    font-size: 1.375rem;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid $c-primary;
+      animation: fc-ripple 2s cubic-bezier(.2, .6, .2, 1) infinite;
+      pointer-events: none;
+    }
+    &::after { animation-delay: 1s; }
+
+    &:hover { background: $c-primary-dark; }
+  }
+
+  .fc-zalo {
+    background: #0068FF; // xanh thương hiệu Zalo
+    font-family: $font-heading;
+    font-size: .8125rem;
+    font-weight: $fw-bold;
+    letter-spacing: .02em;
+
+    &:hover { background: #0056D6; }
+  }
+
+  .fc-quote { background: $c-dark; }
+}
+
+@keyframes fc-ripple {
+  0%   { transform: scale(1);    opacity: .75; }
+  100% { transform: scale(1.75); opacity: 0; }
+}

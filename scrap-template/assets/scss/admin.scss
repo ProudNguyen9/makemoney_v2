@@ -1,0 +1,881 @@
+// =============================================================================
+// ADMIN.SCSS — entry point khu vực quản trị (admin.css)
+// Cùng design token với public, mật độ hiển thị cao hơn, desktop-first.
+// =============================================================================
+@import 'variables';
+@import 'mixins';
+@import 'typography';
+@import 'buttons';
+@import 'forms';
+@import 'base';
+
+// ----- Nền admin sáng dịt hơn, chữ hơi nhỏ -----
+body.admin-body {
+  font-family: $font-body;
+  font-size: .9375rem;
+  background: #EDECE8;
+  color: $c-text;
+}
+
+// -----------------------------------------------------------------------------
+// LAYOUT: sidebar trái + topbar + content
+// -----------------------------------------------------------------------------
+.admin-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+
+  @include up(lg) { grid-template-columns: 248px 1fr; }
+}
+
+.admin-sidebar {
+  background: $c-dark;
+  color: var(--on-dark-muted);
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  max-height: 100vh;
+  overflow-y: auto;
+  display: none;
+
+  @include up(lg) { display: block; }
+
+  &.is-open {
+    display: block;
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(300px, 84vw);
+    z-index: $z-floating; // nổi trên .admin-overlay khi mở trên mobile
+    box-shadow: $shadow-md;
+  }
+
+  &.is-collapsed {
+    @include up(lg) { width: 72px; }
+
+    .sidebar-brand {
+      align-items: center;
+      justify-content: center;
+      gap: .25rem;
+      padding: 1rem .35rem .8rem;
+      text-align: center;
+
+      .sidebar-brand-main {
+        align-items: center;
+        justify-content: center;
+      }
+      img { height: 28px; width: 28px; object-fit: contain; }
+      strong { display: none; }
+      .sidebar-collapse-toggle {
+        margin-top: .15rem;
+      }
+    }
+
+    .sidebar-nav {
+      padding: .5rem .35rem 1rem;
+
+      .nav-sec,
+      .nav-group-btn span,
+      a .nav-badge,
+      .nav-group-btn .nav-badge,
+      .nav-group-btn .mi-caret {
+        display: none !important;
+      }
+
+      a, .nav-group-btn {
+        justify-content: center;
+        gap: 0;
+        width: 100%;
+        height: 44px;
+        padding: 0;
+        border-radius: $radius-sm;
+        overflow: hidden;
+        font-size: 0;
+        line-height: 0;
+
+        i {
+          margin: 0;
+          width: auto;
+          font-size: 1.15rem;
+          line-height: 1;
+        }
+      }
+
+      li.open .sidebar-sub { display: none; }
+    }
+
+    .sidebar-foot {
+      padding: .75rem .35rem 1rem;
+
+      a {
+        justify-content: center;
+        font-size: 0;
+        gap: 0;
+        width: 100%;
+        height: 40px;
+
+        i { font-size: 1rem; margin: 0; }
+      }
+    }
+  }
+
+  .sidebar-brand {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "main btn";
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem 1rem .9rem 1rem;
+    border-bottom: 1px solid $c-dark-3;
+
+    .sidebar-brand-main {
+      grid-area: main;
+      display: flex;
+      flex-direction: column;
+      gap: .125rem;
+      align-items: flex-start;
+      min-width: 0;
+    }
+
+    img { height: 42px; width: auto; max-width: 100%; }
+    strong {
+      display: flex;
+      flex-direction: column;
+      gap: .125rem;
+      align-items: flex-start;
+      min-width: 0;
+      font-family: $font-heading;
+      color: #fff;
+      font-size: .9375rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      line-height: 1.05;
+      small {
+        display: block;
+        color: var(--on-dark-muted);
+        font-family: $font-body;
+        font-size: .6875rem;
+        letter-spacing: .12em;
+      }
+    }
+
+    .sidebar-collapse-toggle {
+      grid-area: btn;
+      position: relative;
+      top: auto;
+      right: auto;
+      transform: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      justify-self: end;
+    }
+  }
+
+  .sidebar-collapse-toggle,
+  .sidebar-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 1px solid $c-dark-3;
+    border-radius: 8px;
+    background: $c-dark-2;
+    color: #fff;
+    font-size: .8rem;
+    box-shadow: $shadow-sm;
+    z-index: 2;
+
+    &:hover { border-color: $c-primary; color: $c-accent; }
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    margin: 0;
+    padding: .75rem .625rem 1.5rem;
+
+    .nav-sec {
+      font-family: $font-heading;
+      font-size: .6875rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #6E7680;
+      padding: 1rem .625rem .375rem;
+    }
+
+    a, .nav-group-btn {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      width: 100%;
+      padding: .5625rem .625rem;
+      margin-bottom: 2px;
+      border-radius: $radius-sm;
+      border: 0;
+      background: none;
+      color: var(--on-dark-muted);
+      font-size: .875rem;
+      font-weight: $fw-medium;
+      text-align: left;
+      transition: all $t-fast;
+
+      i { font-size: 1.0625rem; width: 22px; text-align: center; }
+      .nav-badge {
+        margin-left: auto;
+        background: $c-primary;
+        color: #fff;
+        font-size: .6875rem;
+        font-weight: $fw-semibold;
+        padding: .0625rem .4375rem;
+        border-radius: 2px;
+      }
+      .mi-caret { margin-left: auto; font-size: .6875rem; transition: transform $t-fast; }
+
+      &:hover { background: $c-dark-2; color: #fff; }
+      &.active {
+        background: $c-primary;
+        color: #fff;
+      }
+    }
+
+    li.open {
+      .nav-group-btn { color: #fff; .mi-caret { transform: rotate(180deg); } }
+      .sidebar-sub {
+        display: block;
+        list-style: none;
+        margin: 2px 0 .375rem;
+        padding: 0 0 0 1.75rem;
+
+        a {
+          padding: .375rem .625rem;
+          font-size: .8125rem;
+          &.active { background: none; color: $c-accent; }
+        }
+      }
+    }
+    .sidebar-sub { display: none; }
+  }
+
+  .sidebar-foot {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid $c-dark-3;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      color: var(--on-dark-muted);
+      font-size: .8125rem;
+      &:hover { color: $c-error; }
+    }
+  }
+}
+
+// Overlay khi mở sidebar mobile
+.admin-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba($c-dark, .55);
+  z-index: $z-offcanvas;
+
+  &.show { display: block; }
+  @include up(lg) { display: none !important; }
+}
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// -----------------------------------------------------------------------------
+// ADMIN TOPBAR
+// -----------------------------------------------------------------------------
+.admin-topbar {
+  background: $c-surface;
+  border-bottom: 1px solid $c-border;
+  padding: .625rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+
+  .at-toggle {
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    width: 40px; height: 40px;
+    display: none;
+    place-items: center;
+    font-size: 1.125rem;
+    background: none;
+
+    @include down(lg) { display: inline-grid; }
+  }
+
+  .at-search {
+    flex: 1 1 auto;
+    max-width: 420px;
+    position: relative;
+
+    i { position: absolute; left: .875rem; top: 50%; transform: translateY(-50%); color: $c-muted; }
+    .form-control { padding-left: 2.375rem; background: $c-bg; border-color: transparent;
+      &:focus { background: $c-surface; border-color: $c-primary; } }
+  }
+
+  .at-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+
+    .at-icon {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 40px; height: 40px;
+      border: 1px solid $c-border;
+      border-radius: $radius-sm;
+      color: $c-steel;
+      background: none;
+
+      &:hover { border-color: $c-primary; color: $c-primary; }
+      .dot {
+        position: absolute; top: 6px; right: 6px;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: $c-primary;
+        border: 2px solid $c-surface;
+      }
+    }
+
+    .at-user {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      padding: .25rem .625rem .25rem .25rem;
+      border: 1px solid $c-border;
+      border-radius: $radius-sm;
+      background: none;
+
+      .at-avatar {
+        width: 32px; height: 32px;
+        display: grid;
+        place-items: center;
+        background: $c-dark;
+        color: $c-accent;
+        border-radius: 2px;
+        font-family: $font-heading;
+        font-weight: $fw-semibold;
+      }
+      .at-name {
+        text-align: left;
+        line-height: 1.25;
+        strong { display: block; font-size: .8125rem; }
+        small { font-size: .6875rem; color: $c-muted; }
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ADMIN CONTENT — page header, metric, panel, table
+// -----------------------------------------------------------------------------
+.admin-content { padding: 1.5rem 1.25rem 3rem; @include up(md) { padding: 1.75rem 1.75rem 3.5rem; } }
+
+.admin-page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    font-size: 1.375rem;
+    margin: 0;
+    small { display: block; font-family: $font-body; font-size: .8125rem; font-weight: $fw-medium; color: $c-muted; text-transform: none; letter-spacing: 0; margin-top: .25rem; }
+  }
+  .aph-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+}
+
+// Metric row — card phẳng có gạch trái
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .875rem;
+  margin-bottom: 1.5rem;
+
+  @include up(md) { grid-template-columns: repeat(4, 1fr); }
+
+  .metric-card {
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-left: 4px solid $c-primary;
+    border-radius: $radius-sm;
+    padding: 1.125rem 1.25rem;
+
+    .mc-label { @extend .tech-label; display: block; margin-bottom: .375rem; }
+    .mc-value { font-family: $font-heading; font-size: 1.75rem; font-weight: $fw-semibold; line-height: 1.1; }
+    .mc-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      font-size: .75rem;
+      font-weight: $fw-medium;
+      margin-top: .375rem;
+
+      &.up { color: $c-success; }
+      &.down { color: $c-error; }
+      &.flat { color: $c-muted; }
+    }
+    &.metric--dark { border-left-color: $c-dark; }
+    &.metric--accent { border-left-color: $c-accent; }
+    &.metric--success { border-left-color: $c-success; }
+  }
+}
+
+.admin-panel {
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  margin-bottom: 1.5rem;
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .875rem 1.25rem;
+    border-bottom: 1px solid $c-border;
+
+    h2 {
+      font-size: .9375rem;
+      letter-spacing: .05em;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    .panel-head-actions { display: flex; gap: .5rem; align-items: center; }
+  }
+  .panel-body { padding: 1.25rem; }
+  .panel-foot {
+    padding: .875rem 1.25rem;
+    border-top: 1px solid $c-border;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+.seo-pages-panel {
+  .panel-head {
+    align-items: center;
+  }
+
+  .panel-foot {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+  }
+}
+
+.seo-pages-wrap {
+  max-height: 56vh;
+}
+
+.seo-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+
+  @include up(lg) { grid-template-columns: 1.1fr .9fr; align-items: start; }
+}
+
+.seo-compact-panel {
+  .panel-body {
+    padding-bottom: 1rem;
+  }
+}
+
+.upload-drop--compact {
+  padding: 1.25rem 1rem;
+  min-height: 0;
+
+  i { font-size: 1.5rem; }
+  .upload-title { margin-top: .35rem; }
+  .upload-hint { margin-bottom: 0; }
+}
+
+// -----------------------------------------------------------------------------
+// DATA TABLE admin
+// -----------------------------------------------------------------------------
+.table-admin {
+  width: 100%;
+  font-size: .875rem;
+  margin: 0;
+
+  thead th {
+    background: $c-bg;
+    border-bottom: 1px solid $c-border;
+    font-family: $font-heading;
+    font-size: .75rem;
+    font-weight: $fw-semibold;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: $c-steel;
+    padding: .6875rem .875rem;
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: .6875rem .875rem;
+    border-bottom: 1px solid #EDEBE6;
+    vertical-align: middle;
+  }
+  tbody tr:hover { background: rgba($c-primary, .035); }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  .ta-title {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    font-weight: $fw-semibold;
+
+    img { width: 40px; height: 30px; object-fit: cover; border-radius: 2px; border: 1px solid $c-border; flex: 0 0 auto; }
+  }
+  .ta-actions {
+    display: flex;
+    gap: .375rem;
+    white-space: nowrap;
+
+    a, button {
+      display: grid;
+      place-items: center;
+      width: 30px; height: 30px;
+      border: 1px solid $c-border;
+      border-radius: 2px;
+      background: none;
+      color: $c-steel;
+      font-size: .875rem;
+
+      &:hover { border-color: $c-primary; color: $c-primary; }
+      &.act-danger:hover { border-color: $c-error; color: $c-error; }
+    }
+  }
+}
+
+// Bọc table cho scroll ngang mobile + chống grid làm vỡ layout
+.admin-main, .admin-content, .admin-panel { min-width: 0; } // chống vỡ layout
+.admin-form-grid > * { min-width: 0; }
+.table-admin-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.table-admin { min-width: 520px; }
+
+// -----------------------------------------------------------------------------
+// STATUS BADGE — trạng thái lead / bài viết
+// -----------------------------------------------------------------------------
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  font-size: .75rem;
+  font-weight: $fw-semibold;
+  padding: .25rem .5625rem;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  &::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  &.st-new { color: $c-info; border-color: rgba($c-info, .4); background: rgba($c-info, .07); }
+  &.st-processing { color: $c-warning; border-color: rgba($c-warning, .4); background: rgba($c-warning, .07); }
+  &.st-done { color: $c-success; border-color: rgba($c-success, .4); background: rgba($c-success, .07); }
+  &.st-cancel { color: $c-error; border-color: rgba($c-error, .4); background: rgba($c-error, .07); }
+  &.st-draft { color: $c-muted; border-color: $c-border; background: $c-bg; }
+  &.st-published { color: $c-success; border-color: rgba($c-success, .4); background: rgba($c-success, .07); }
+}
+
+// -----------------------------------------------------------------------------
+// ADMIN FORM — form tạo/sửa, 2 cột (form + sidebar info)
+// -----------------------------------------------------------------------------
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @include up(lg) { grid-template-columns: 8fr 4fr; align-items: start; }
+}
+
+.form-section-title {
+  font-family: $font-heading;
+  font-size: .875rem;
+  font-weight: $fw-semibold;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding-bottom: .5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid $c-border;
+
+  &::before { content: ""; display: inline-block; width: 8px; height: 8px; background: $c-primary; margin-right: .5rem; }
+}
+
+// Editor placeholder — vùng rich text
+.editor-placeholder {
+  min-height: 260px;
+  border: 1px dashed #C9C7C1;
+  border-radius: $radius-sm;
+  background: $c-bg;
+  display: grid;
+  place-items: center;
+  color: $c-muted;
+  font-size: .875rem;
+
+  i { display: block; text-align: center; font-size: 1.5rem; margin-bottom: .5rem; }
+}
+
+// Input kèm gợi ý (slug)
+.input-with-suffix {
+  display: flex;
+
+  .form-control { border-radius: $radius-sm 0 0 $radius-sm; }
+  .input-suffix {
+    display: grid;
+    place-items: center;
+    padding: 0 .75rem;
+    background: $c-bg;
+    border: 1px solid #D6D4CE;
+    border-left: 0;
+    border-radius: 0 $radius-sm $radius-sm 0;
+    color: $c-muted;
+    font-size: .8125rem;
+  }
+}
+
+// Switch bật/tắt section
+.form-switch .form-check-input {
+  width: 2.5em;
+  cursor: pointer;
+  &:checked { background-color: $c-primary; border-color: $c-primary; }
+}
+
+// -----------------------------------------------------------------------------
+// MEDIA LIBRARY
+// -----------------------------------------------------------------------------
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .875rem;
+
+  @include up(sm) { grid-template-columns: repeat(3, 1fr); }
+  @include up(md) { grid-template-columns: repeat(4, 1fr); }
+  @include up(xl) { grid-template-columns: repeat(6, 1fr); }
+
+  &.media-list-view { grid-template-columns: 1fr; }
+}
+
+.media-item {
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $c-surface;
+  transition: border-color $t-fast;
+
+  .media-thumb { background: $c-dark-2; display: block; @include ratio-box(4, 3); }
+  .media-meta {
+    padding: .5rem .625rem;
+    font-size: .6875rem;
+    color: $c-muted;
+
+    strong { display: block; color: $c-text; font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .media-actions { display: flex; gap: .375rem; margin-top: .375rem; }
+  }
+  &:hover { border-color: $c-primary; }
+  &.is-selected { border-color: $c-primary; box-shadow: 0 0 0 2px rgba($c-primary, .25); }
+}
+
+// -----------------------------------------------------------------------------
+// LOGIN
+// -----------------------------------------------------------------------------
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: $c-dark;
+
+  @include up(lg) { grid-template-columns: 5fr 7fr; }
+
+  .login-form-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+    background: $c-surface;
+
+    .login-box { width: 100%; max-width: 400px; margin: 0 auto; }
+    .login-logo { height: 44px; margin-bottom: 2rem; }
+    h1 { font-size: 1.5rem; margin-bottom: .375rem; }
+    .login-sub { color: $c-muted; margin-bottom: 2rem; }
+    .login-foot {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: .8125rem;
+      color: $c-muted;
+      a { color: $c-primary-dark; }
+    }
+  }
+
+  .login-brand-col {
+    position: relative;
+    overflow: hidden;
+    display: none;
+
+    @include up(lg) { display: block; }
+
+    .login-brand-bg { position: absolute; inset: 0; img { width: 100%; height: 100%; object-fit: cover; opacity: .25; } }
+    .login-brand-content {
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+      color: #fff;
+
+      h2 { color: #fff; font-size: 1.75rem; margin-bottom: .75rem; }
+      p { color: var(--on-dark-muted); max-width: 46ch; }
+      &::before { content: ""; position: absolute; top: 0; left: 0; right: 0; @include hazard-line(6px); }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// HOẠT ĐỘNG GẦN ĐÂY (dashboard)
+// -----------------------------------------------------------------------------
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: .875rem;
+    padding: .875rem 0;
+    border-bottom: 1px dashed $c-border;
+    align-items: flex-start;
+
+    &:last-child { border-bottom: 0; }
+    .act-ico {
+      display: grid;
+      place-items: center;
+      width: 34px; height: 34px;
+      border-radius: 2px;
+      background: $c-bg;
+      color: $c-primary;
+      font-size: .875rem;
+      flex: 0 0 auto;
+    }
+    p { margin: 0; font-size: .875rem; line-height: 1.5;
+      strong { font-weight: $fw-semibold; } }
+    small { color: $c-muted; font-size: .75rem; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ADMIN FILTER BAR
+// -----------------------------------------------------------------------------
+.admin-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding: .875rem 1.25rem;
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  margin-bottom: 1.25rem;
+  align-items: center;
+
+  .form-control, .form-select { width: auto; min-width: 150px; font-size: .875rem; padding: .4375rem .625rem; }
+  .admin-filter-label { @extend .tech-label; }
+  .spacer { flex: 1 1 auto; }
+}
+
+// Pagination admin
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .8125rem;
+  color: $c-muted;
+}
+
+// -----------------------------------------------------------------------------
+// LEAD DETAIL
+// -----------------------------------------------------------------------------
+.lead-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .lead-id {
+    font-family: $font-heading;
+    color: $c-muted;
+    font-size: 1rem;
+    letter-spacing: .04em;
+  }
+}
+
+.lead-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+
+  a {
+    width: 96px;
+    aspect-ratio: 4/3;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+}
+
+.status-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    gap: .875rem;
+    padding: .75rem 0;
+    border-bottom: 1px dashed $c-border;
+    align-items: flex-start;
+
+    .sh-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      margin-top: .4375rem;
+      flex: 0 0 auto;
+      background: $c-primary;
+
+      &.sh-dot--done { background: $c-success; }
+      &.sh-dot--cancel { background: $c-error; }
+    }
+    strong { display: block; font-size: .875rem; }
+    span { font-size: .75rem; color: $c-muted; }
+  }
+}
+
+// Confirmation modal — giữ vuông
+.modal-content { border-radius: $radius-md; border: 0; border-top: 4px solid $c-primary; }
+
+.visually-hidden { left: 0; top: 0; }

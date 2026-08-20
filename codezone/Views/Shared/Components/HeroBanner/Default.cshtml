@@ -1,0 +1,10 @@
+@model Banner
+<section class="hero">
+    <div>
+        <p class="eyebrow">ASP.NET Core MVC 10</p>
+        <h1>@Model.Title</h1>
+        <p>@Model.Subtitle</p>
+        <a class="btn btn-success" href="@(Model.PrimaryButtonUrl ?? "/Contact")">@(Model.PrimaryButtonText ?? "Lien he")</a>
+    </div>
+    <img src="@AssetHelper.NormalizePath(Model.ImageUrl)" alt="@Model.Title" />
+</section>

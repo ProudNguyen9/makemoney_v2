@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thêm khu vực — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html" class="active"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: POST /admin/locations — tạo khu vực thu mua mới -->
+      <div class="admin-page-head">
+        <h1>Thêm khu vực<small>Tạo trang landing riêng cho một huyện / thành phố (local SEO)</small></h1>
+        <div class="aph-actions">
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="../../location-detail.html" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="locationForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+        </div>
+      </div>
+
+      <form id="locationForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Thông tin khu vực -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thông tin khu vực</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locProvince">Tỉnh / Thành phố<span class="required-mark">*</span></label>
+                    <select class="form-select" id="locProvince" required>
+                      <option value="dong-nai" selected>Đồng Nai</option>
+                      <option value="tp-hcm">TP.HCM</option>
+                      <option value="binh-duong">Bình Dương</option>
+                      <option value="ba-ria-vung-tau">Bà Rịa – Vũng Tàu</option>
+                      <option value="long-an">Long An</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locDistrict">Huyện / Thành phố<span class="required-mark">*</span></label>
+                    <input class="form-control" id="locDistrict" type="text" value="Biên Hòa" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="locSlug">Slug</label>
+                    <div class="input-with-suffix">
+                      <input class="form-control" id="locSlug" type="text" value="thu-mua-phe-lieu-bien-hoa">
+                      <span class="input-suffix">.html</span>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="locTeaser">Giới thiệu ngắn</label>
+                    <textarea class="form-control" id="locTeaser" rows="2">Thu mua phế liệu giá cao tại Biên Hòa — cân tận nơi, thanh toán ngay trong ngày. Phục vụ các KCN Biên Hòa 1, Biên Hòa 2, Tam Phước.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung trang</span>
+                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung SEO -->
+                    <div class="editor-placeholder">
+                      <div>
+                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
+                        <span>Rich editor — nội dung SEO riêng cho khu vực: KCN, quy trình, gallery…</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ khu vực -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>FAQ khu vực</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locFaqQ1">Câu hỏi 1</label>
+                    <textarea class="form-control" id="locFaqQ1" rows="2">Thu mua phế liệu tại Biên Hòa có mất phí vận chuyển không?</textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locFaqA1">Câu trả lời 1</label>
+                    <textarea class="form-control" id="locFaqA1" rows="2">Hoàn toàn miễn phí vận chuyển và cân tại chỗ cho đơn từ 50 kg trở lên trong khu vực TP. Biên Hòa.</textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locFaqQ2">Câu hỏi 2</label>
+                    <textarea class="form-control" id="locFaqQ2" rows="2">Khu vực thu mua bao phủ những phường, xã nào?</textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="locFaqA2">Câu trả lời 2</label>
+                    <textarea class="form-control" id="locFaqA2" rows="2">Toàn bộ TP. Biên Hòa và vùng lân cận: Long Bình, Tân Biên, Hố Nai, Trảng Dài, Bửu Hòa.</textarea>
+                  </div>
+                </div>
+                <!-- backend: nhân bản cặp câu hỏi / câu trả lời mới -->
+                <button class="btn btn-outline-dark btn-sm mt-3" type="button"><i class="bi bi-plus" aria-hidden="true"></i> Thêm câu hỏi</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ảnh đại diện -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Ảnh đại diện (16:9)</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload — trả về URL ảnh gắn vào trường thumbnail -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh lên</p>
+                  <p class="upload-hint">JPG, PNG — tối thiểu 1600×900</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- Loại phế liệu thu mua tại khu vực -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Loại phế liệu thu mua tại khu vực</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: render danh sách loại phế liệu đang hoạt động -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap1" checked>
+                  <label class="form-check-label" for="locScrap1">Đồng</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap2" checked>
+                  <label class="form-check-label" for="locScrap2">Sắt thép</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap3" checked>
+                  <label class="form-check-label" for="locScrap3">Nhôm</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap4" checked>
+                  <label class="form-check-label" for="locScrap4">Inox</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap5">
+                  <label class="form-check-label" for="locScrap5">Máy móc</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="locScrap6">
+                  <label class="form-check-label" for="locScrap6">Nhà xưởng</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cấu hình -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Cấu hình</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="locStatus">Trạng thái</label>
+                <select class="form-select" id="locStatus">
+                  <option value="published" selected>Đã xuất bản</option>
+                  <option value="draft">Bản nháp</option>
+                </select>
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="locShowList" checked>
+                  <label class="form-check-label" for="locShowList">Hiển thị ở trang khu vực</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="locSeoTitle">SEO Title</label>
+                <input class="form-control" id="locSeoTitle" type="text" value="Thu mua phế liệu Biên Hòa giá cao — [TÊN CÔNG TY]">
+                <p class="small text-muted mt-1 mb-3">46/70 ký tự</p>
+                <label class="form-label-tech" for="locSeoMeta">Meta description</label>
+                <textarea class="form-control" id="locSeoMeta" rows="3">Thu mua phế liệu tại Biên Hòa, Đồng Nai giá cao theo bảng giá mới nhất — cân tận nơi, thanh toán ngay. Gọi [HOTLINE] để báo giá nhanh.</textarea>
+                <p class="small text-muted mt-1 mb-3">Tối đa 160 ký tự</p>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="locSeoIndex" checked>
+                  <label class="form-check-label" for="locSeoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="locSeoFollow" checked>
+                  <label class="form-check-label" for="locSeoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

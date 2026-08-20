@@ -1,0 +1,145 @@
+body {
+    background: #f7f8f6;
+    color: #1f2a24;
+}
+
+a {
+    color: #167447;
+}
+
+.site-header,
+.site-footer {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e8e2;
+}
+
+.site-footer {
+    border-bottom: 0;
+    border-top: 1px solid #e5e8e2;
+    padding: 24px 0;
+}
+
+.site-header__inner {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    min-height: 72px;
+}
+
+.site-brand {
+    color: #133d2a;
+    font-size: 22px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.site-nav a {
+    color: #26352d;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.hero {
+    align-items: center;
+    display: grid;
+    gap: 32px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+    padding: 56px 0 36px;
+}
+
+.hero h1 {
+    color: #133d2a;
+    font-size: 44px;
+    font-weight: 800;
+}
+
+.hero img,
+.content-card img,
+.detail-image {
+    background: #dce6dc;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.hero img {
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
+
+.eyebrow {
+    color: #167447;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.section-block {
+    padding: 36px 0;
+}
+
+.section-title {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.card-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.content-card {
+    background: #ffffff;
+    border: 1px solid #e2e8df;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.content-card img {
+    aspect-ratio: 16 / 10;
+    margin-bottom: 14px;
+    object-fit: cover;
+}
+
+.content-card h2,
+.content-card h3 {
+    color: #153d2c;
+    font-size: 20px;
+}
+
+.contact-cta {
+    align-items: center;
+    background: #e9f5ed;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    margin: 36px 0;
+    padding: 24px;
+}
+
+.contact-form {
+    display: grid;
+    gap: 16px;
+    max-width: 680px;
+}
+
+@media (max-width: 768px) {
+    .site-header__inner,
+    .contact-cta,
+    .hero {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+}

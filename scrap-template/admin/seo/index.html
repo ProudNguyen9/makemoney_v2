@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SEO — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ============================================================================
+       PARTIAL ADMIN: Sidebar + Overlay + Topbar + mở/đóng content
+       Nguồn: partials/_admin-chrome.html — copy nguyên vẹn giữa các trang admin.
+       Convert Razor: Views/Shared/Admin/_Layout.cshtml
+       ======================================================================== -->
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html" class="active"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- Tiêu đề trang + thao tác chính -->
+      <div class="admin-page-head">
+        <h1>SEO <small>Cấu hình SEO toàn site và theo từng trang</small></h1>
+        <div class="aph-actions">
+          <!-- backend: PUT /admin/seo — lưu cấu hình toàn site + trạng thái index/follow từng trang -->
+          <button class="btn btn-primary" type="button"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+        </div>
+      </div>
+
+      <div class="admin-panel seo-pages-panel">
+        <div class="panel-head">
+          <h2>SEO theo trang</h2>
+          <div class="panel-head-actions">
+            <span class="small text-muted">Ưu tiên chỉnh ở đây trước, để không phải cuộn sâu.</span>
+          </div>
+        </div>
+        <div class="table-admin-wrap seo-pages-wrap">
+          <!-- BACKEND: 6 trang tĩnh — GET/PUT /admin/seo/pages/{slug} -->
+          <table class="table table-admin align-middle">
+            <thead>
+              <tr>
+                <th scope="col">Trang</th>
+                <th scope="col">SEO Title</th>
+                <th scope="col">Slug</th>
+                <th scope="col">Index</th>
+                <th scope="col">Follow</th>
+                <th scope="col"><span class="visually-hidden">Thao tác</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Trang chủ</strong><br><small class="text-muted">index.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Thu mua phế liệu [TÊN CÔNG TY] — Giá cao tận nơi" aria-label="SEO title trang Trang chủ"></td>
+                <td><input class="form-control form-control-sm" type="text" placeholder="/" aria-label="Slug trang Trang chủ"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoHomeIndex" checked><label class="form-check-label" for="seoHomeIndex"><span class="visually-hidden">Index trang Trang chủ</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoHomeFollow" checked><label class="form-check-label" for="seoHomeFollow"><span class="visually-hidden">Follow trang Trang chủ</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Trang chủ"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Bảng giá</strong><br><small class="text-muted">prices.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Bảng giá phế liệu hôm nay — [TÊN CÔNG TY]" aria-label="SEO title trang Bảng giá"></td>
+                <td><input class="form-control form-control-sm" type="text" value="bang-gia" aria-label="Slug trang Bảng giá"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoPriceIndex"><label class="form-check-label" for="seoPriceIndex"><span class="visually-hidden">Index trang Bảng giá</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoPriceFollow"><label class="form-check-label" for="seoPriceFollow"><span class="visually-hidden">Follow trang Bảng giá</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Bảng giá"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Phế liệu</strong><br><small class="text-muted">scrap.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Phế liệu thu mua — [TÊN CÔNG TY]" aria-label="SEO title trang Phế liệu"></td>
+                <td><input class="form-control form-control-sm" type="text" value="phe-lieu" aria-label="Slug trang Phế liệu"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoScrapIndex"><label class="form-check-label" for="seoScrapIndex"><span class="visually-hidden">Index trang Phế liệu</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoScrapFollow"><label class="form-check-label" for="seoScrapFollow"><span class="visually-hidden">Follow trang Phế liệu</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Phế liệu"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Khu vực</strong><br><small class="text-muted">locations.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Khu vực thu mua phế liệu — [TÊN CÔNG TY]" aria-label="SEO title trang Khu vực"></td>
+                <td><input class="form-control form-control-sm" type="text" value="khu-vuc" aria-label="Slug trang Khu vực"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoLocationIndex"><label class="form-check-label" for="seoLocationIndex"><span class="visually-hidden">Index trang Khu vực</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoLocationFollow"><label class="form-check-label" for="seoLocationFollow"><span class="visually-hidden">Follow trang Khu vực</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Khu vực"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Tin tức</strong><br><small class="text-muted">news.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Tin tức — kiến thức phế liệu — [TÊN CÔNG TY]" aria-label="SEO title trang Tin tức"></td>
+                <td><input class="form-control form-control-sm" type="text" value="tin-tuc" aria-label="Slug trang Tin tức"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoNewsIndex"><label class="form-check-label" for="seoNewsIndex"><span class="visually-hidden">Index trang Tin tức</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoNewsFollow"><label class="form-check-label" for="seoNewsFollow"><span class="visually-hidden">Follow trang Tin tức</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Tin tức"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Liên hệ</strong><br><small class="text-muted">contact.html</small></td>
+                <td><input class="form-control form-control-sm" type="text" value="Liên hệ thu mua phế liệu — [TÊN CÔNG TY]" aria-label="SEO title trang Liên hệ"></td>
+                <td><input class="form-control form-control-sm" type="text" value="lien-he" aria-label="Slug trang Liên hệ"></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoContactIndex"><label class="form-check-label" for="seoContactIndex"><span class="visually-hidden">Index trang Liên hệ</span></label></div></td>
+                <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="seoContactFollow"><label class="form-check-label" for="seoContactFollow"><span class="visually-hidden">Follow trang Liên hệ</span></label></div></td>
+                <td><div class="ta-actions"><button type="button" aria-label="Sửa SEO trang Liên hệ"><i class="bi bi-pencil" aria-hidden="true"></i></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-foot">
+          <span class="small text-muted">Bấm bút chì để mở form SEO đầy đủ của trang (meta, canonical, OG).</span>
+        </div>
+      </div>
+
+      <div class="seo-meta-grid">
+        <div class="admin-panel seo-compact-panel">
+          <div class="panel-head">
+            <h2>Cấu hình toàn site</h2>
+          </div>
+          <div class="panel-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label-tech" for="seoSiteTitle">Site title</label>
+                <input class="form-control" id="seoSiteTitle" type="text" value="Thu mua phế liệu [TÊN CÔNG TY] — Giá cao tận nơi">
+              </div>
+              <div class="col-12">
+                <label class="form-label-tech" for="seoMetaDefault">Meta description mặc định</label>
+                <textarea class="form-control" id="seoMetaDefault" rows="2">Thu mua phế liệu tận nơi giá cao: sắt, đồng, nhôm, inox, giấy, nhựa. Khảo sát miễn phí, cân tại chỗ, thanh toán ngay — phục vụ TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                <p class="small text-muted mb-0 mt-1">Tối đa 160 ký tự — các trang không cấu hình riêng sẽ dùng mặc định này.</p>
+              </div>
+              <div class="col-12">
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="seoGoogleVerify">Google Search Verification</label>
+                    <input class="form-control" id="seoGoogleVerify" type="text" placeholder="google-site-verification">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="seoBingVerify">Bing Verification</label>
+                    <input class="form-control" id="seoBingVerify" type="text" placeholder="msvalidate.01">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="seoGa4">Google Analytics 4 — Measurement ID</label>
+                    <input class="form-control" id="seoGa4" type="text" placeholder="G-XXXXXXX">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="seoGtm">Google Tag Manager</label>
+                    <input class="form-control" id="seoGtm" type="text" placeholder="GTM-XXXXXX">
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <span class="form-label-tech">Ảnh OG mặc định</span>
+                <label class="upload-drop upload-drop--compact">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh OG lên</p>
+                  <p class="upload-hint">JPG, PNG — 1200×630</p>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-panel mb-0">
+          <div class="panel-head">
+            <h2>Sitemap &amp; kiểm tra</h2>
+          </div>
+          <div class="panel-body">
+            <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+              <p class="mb-0">Sitemap.xml<small class="d-block text-muted">Sinh tự động từ các trang và bài viết đang xuất bản</small></p>
+              <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-download" aria-hidden="true"></i> Tải sitemap</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+              <p class="mb-0">Robots.txt<small class="d-block text-muted">Quy tắc chặn và trỏ tới sitemap</small></p>
+              <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-eye" aria-hidden="true"></i> Xem robots.txt</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center gap-2 py-2">
+              <p class="mb-0">Kiểm tra structured data<small class="d-block text-muted">Kiểm tra JSON-LD LocalBusiness, Article, FAQ</small></p>
+              <button class="btn btn-outline-dark btn-sm" type="button"><i class="bi bi-check2-square" aria-hidden="true"></i> Chạy kiểm tra schema</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

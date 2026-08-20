@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html" class="active"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: POST /admin/menu-items — thêm mục menu; PUT /admin/menu-items/{id} — sửa thứ tự / menu cha -->
+      <div class="admin-page-head">
+        <h1>Menu<small>Cấu trúc menu header &amp; footer</small></h1>
+        <div class="aph-actions">
+          <button class="btn btn-primary" type="submit" form="menuForm"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm mục menu</button>
+        </div>
+      </div>
+
+      <form id="menuForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Menu Header -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Menu Header</h2>
+                <div class="panel-head-actions">
+                  <span class="small text-muted">6 mục</span>
+                </div>
+              </div>
+              <div class="table-admin-wrap">
+                <table class="table table-admin align-middle">
+                  <thead>
+                    <tr>
+                      <th>Nhãn</th>
+                      <th>Link</th>
+                      <th>Menu cha</th>
+                      <th>Thứ tự</th>
+                      <th><span class="visually-hidden">Thao tác</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Trang chủ</strong></td>
+                      <td><code>index.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Trang chủ">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="1" aria-label="Thứ tự mục Trang chủ"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Trang chủ"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Trang chủ"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Giới thiệu</strong></td>
+                      <td><code>about.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Giới thiệu">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="2" aria-label="Thứ tự mục Giới thiệu"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Giới thiệu"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Giới thiệu"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Phế liệu thu mua</strong></td>
+                      <td><code>scrap.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Phế liệu thu mua">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="3" aria-label="Thứ tự mục Phế liệu thu mua"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Phế liệu thu mua"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Phế liệu thu mua"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Dịch vụ</strong></td>
+                      <td><code>services.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Dịch vụ">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="4" aria-label="Thứ tự mục Dịch vụ"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Dịch vụ"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Dịch vụ"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Bảng giá</strong></td>
+                      <td><code>prices.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Bảng giá">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="5" aria-label="Thứ tự mục Bảng giá"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Bảng giá"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Bảng giá"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Liên hệ</strong></td>
+                      <td><code>contact.html</code></td>
+                      <td>
+                        <select class="form-select form-select-sm" aria-label="Menu cha của Liên hệ">
+                          <option selected>—</option>
+                          <option>Giới thiệu</option>
+                          <option>Phế liệu thu mua</option>
+                        </select>
+                      </td>
+                      <td><input class="form-control form-control-sm" type="number" min="0" value="6" aria-label="Thứ tự mục Liên hệ"></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Liên hệ"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Liên hệ"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Menu Footer -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Menu Footer</h2>
+                <div class="panel-head-actions">
+                  <span class="small text-muted">3 mục</span>
+                </div>
+              </div>
+              <div class="table-admin-wrap">
+                <table class="table table-admin align-middle">
+                  <thead>
+                    <tr>
+                      <th>Nhãn</th>
+                      <th>Link</th>
+                      <th><span class="visually-hidden">Thao tác</span></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Phế liệu</strong></td>
+                      <td><code>scrap.html</code></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Phế liệu"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Phế liệu"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Dịch vụ</strong></td>
+                      <td><code>services.html</code></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Dịch vụ footer"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Dịch vụ footer"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Khu vực</strong></td>
+                      <td><code>locations.html</code></td>
+                      <td>
+                        <div class="ta-actions">
+                          <button type="button" aria-label="Sửa mục Khu vực"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                          <button class="act-danger" type="button" aria-label="Xóa mục Khu vực"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Thêm mục mới -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thêm mục mới</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="menuItemLabel">Nhãn<span class="required-mark">*</span></label>
+                <input class="form-control" id="menuItemLabel" type="text" placeholder="VD: Dự án" required>
+                <label class="form-label-tech mt-3" for="menuItemLink">Link<span class="required-mark">*</span></label>
+                <input class="form-control" id="menuItemLink" type="text" placeholder="VD: projects.html" required>
+                <label class="form-label-tech mt-3" for="menuPosition">Vị trí</label>
+                <select class="form-select" id="menuPosition">
+                  <option value="header" selected>Header</option>
+                  <option value="footer">Footer</option>
+                </select>
+                <label class="form-label-tech mt-3" for="menuParent">Menu cha</label>
+                <select class="form-select" id="menuParent">
+                  <option selected>—</option>
+                  <option>Trang chủ</option>
+                  <option>Giới thiệu</option>
+                  <option>Phế liệu thu mua</option>
+                  <option>Dịch vụ</option>
+                  <option>Bảng giá</option>
+                  <option>Liên hệ</option>
+                </select>
+                <label class="form-label-tech mt-3" for="menuOrder">Thứ tự</label>
+                <input class="form-control" id="menuOrder" type="number" min="0" value="7">
+                <button class="btn btn-primary w-100 mt-4" type="submit"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm vào menu</button>
+              </div>
+            </div>
+
+            <!-- Ghi chú -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Ghi chú</h2>
+              </div>
+              <div class="panel-body">
+                <p class="small text-muted mb-0">Menu 2 cấp hỗ trợ dropdown — kéo thả sắp xếp sẽ bổ sung khi tích hợp backend.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

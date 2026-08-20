@@ -1,0 +1,414 @@
+@{
+    ViewData["Title"] = "Năng lực";
+}
+
+<main>
+
+  <!-- ============================ PAGE HERO START ============================ -->
+  <section class="page-hero" aria-labelledby="capability-hero-title">
+    <div class="page-hero-bg" aria-hidden="true">
+      <img src="~/assets/images/company/company-truck.svg" alt="" width="1600" height="900" fetchpriority="high">
+    </div>
+    <div class="container">
+      <div class="page-hero-inner">
+        <span class="tech-label">Năng lực</span>
+        <h1 id="capability-hero-title">Năng lực thu mua phế liệu quy mô doanh nghiệp</h1>
+        <p class="page-hero-desc">
+          Đội xe nhiều tải trọng, thiết bị nâng hạ, nhân sự kỹ thuật — đủ sức nhận các lô hàng lớn:
+          thanh lý nhà xưởng, dây chuyền sản xuất, kết cấu công trình.
+        </p>
+        <ol class="breadcrumb-line">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/gioi-thieu">Giới thiệu</a></li>
+          <li aria-current="page">Năng lực</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ PAGE HERO END ============================ -->
+
+  <!-- ============================ STATS BAND START ============================ -->
+  <section class="section--dark section section--md section--bordered stats-band" aria-label="Năng lực qua số liệu">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <span class="num-display" data-count="15" data-count-suffix="">[15]</span>
+          <span class="stat-label">Phương tiện vận tải</span>
+          <span class="stat-desc">Xe tải 1–15 tấn, có xe cẩu đi cùng</span>
+        </div>
+        <div class="stat-cell">
+          <span class="num-display">[XX]</span>
+          <span class="stat-label">Nhân sự vận hành</span>
+          <span class="stat-desc">Tài xế, thợ tháo dỡ, nhân viên mua hàng</span>
+        </div>
+        <div class="stat-cell">
+          <span class="num-display" data-count="500" data-count-suffix="+">[500+]</span>
+          <span class="stat-label">Dự án đã thực hiện</span>
+          <span class="stat-desc">Nhà xưởng, công trình, dây chuyền</span>
+        </div>
+        <div class="stat-cell">
+          <span class="num-display" data-count="40" data-count-suffix=" tấn">[40]</span>
+          <span class="stat-label">Khối lượng thu gom mỗi ngày</span>
+          <span class="stat-desc">Nhiều xe chạy luân phiên trong ngày</span>
+        </div>
+      </div>
+      <p class="text-center small mt-4 mb-0 text-white-50">
+        * Số liệu placeholder — backend thay bằng số thật của doanh nghiệp.
+      </p>
+    </div>
+  </section>
+  <!-- ============================ STATS BAND END ============================ -->
+
+  <!-- ============================ FLEET START ============================ -->
+  <section class="section section--surface" aria-labelledby="fleet-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Đội xe vận tải</span>
+        <h2 class="sec-title" id="fleet-title">Bốn dòng xe cho bốn kiểu lô hàng</h2>
+        <p class="sec-desc">Điều xe theo lượng hàng và địa hình công trình — không bắt khách chờ ghép chuyến.</p>
+      </div>
+      <div class="fleet-list reveal">
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/company/company-truck.svg" alt="Xe tải nhẹ chạy khu vực nội thành" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Xe tải nhẹ 1–3 tấn</h3>
+              <p>Linh hoạt trong nội thành, nhận cả lô xé lẻ vài trăm ký — hợp với nhà xưởng dọn kho đột xuất.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>xe</small></span>
+          </div>
+        </div>
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/hero/hero-01.svg" alt="Xe tải trung tải lấy hàng tại nhà xưởng" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Xe tải 5–8 tấn</h3>
+              <p>Chuyên lấy lô hàng nhà xưởng: sắt vụn, nhôm thanh, dây điện, giấy carton sau sản xuất.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>xe</small></span>
+          </div>
+        </div>
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/company/company-truck.svg" alt="Xe tải trọng lớn chở sắt thép công trình" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Xe tải 10–15 tấn</h3>
+              <p>Chạy công trình và khu công nghiệp, chở sắt thép dài, hàng quá khổ theo giấy phép.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>xe</small></span>
+          </div>
+        </div>
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/hero/hero-01.svg" alt="Xe cẩu nâng hạ máy móc tại công trường" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Xe cẩu</h3>
+              <p>Nâng hạ máy móc, thùng hàng, kết cấu thép — đi cùng đội tháo dỡ trong các hợp đồng lớn.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>xe</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ FLEET END ============================ -->
+
+  <!-- ============================ EQUIPMENT START ============================ -->
+  <section class="section section--paper section--bordered" aria-labelledby="equipment-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Máy móc — thiết bị</span>
+        <h2 class="sec-title" id="equipment-title">Thiết bị đi cùng trong các hợp đồng lớn</h2>
+      </div>
+      <div class="fleet-list reveal">
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/hero/hero-01.svg" alt="Xe cẩu hạ máy móc tại mặt bằng nhà xưởng" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Xe cẩu 15 tấn</h3>
+              <p>Nâng hạ máy móc nặng, container, cột thép ngay tại mặt bằng của khách hàng.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>chiếc</small></span>
+          </div>
+        </div>
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/projects/project-03-cover.svg" alt="Tháo cắt kết cấu thép bằng máy cắt plasma" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Máy cắt plasma</h3>
+              <p>Cắt chia kết cấu thép theo kích thước vận chuyển — nhanh, an toàn, mặt cắt sạch.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>máy</small></span>
+          </div>
+        </div>
+        <div class="fleet-row">
+          <div class="fleet-media">
+            <img src="~/assets/images/projects/project-05-cover.svg" alt="Đồ nghề tháo lắp tủ điện và dây chuyền công nghiệp" width="1200" height="800" loading="lazy">
+          </div>
+          <div class="fleet-body">
+            <div>
+              <h3>Đồ nghề tháo lắp công nghiệp</h3>
+              <p>Bộ dụng cụ đầy đủ để tháo tủ điện, dây chuyền, đường ống — tháo nguyên vẹn chi tiết, bán đúng giá.</p>
+            </div>
+            <span class="fleet-qty">[XX]<small>bộ</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ EQUIPMENT END ============================ -->
+
+  <!-- ============================ SCALE START ============================ -->
+  <section class="section section--surface" aria-labelledby="scale-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Quy mô thu mua</span>
+        <h2 class="sec-title" id="scale-title">Những con số doanh nghiệp thường hỏi trước khi ký</h2>
+      </div>
+      <div class="row row-editorial">
+        <div class="col-lg-6">
+          <table class="spec-table reveal">
+            <caption class="visually-hidden">Quy mô thu mua và cam kết vận hành của [TÊN CÔNG TY]</caption>
+            <tbody>
+              <tr>
+                <th scope="row">Khối lượng nhận / tháng</th>
+                <td>[XX] tấn phế liệu các loại</td>
+              </tr>
+              <tr>
+                <th scope="row">Giá trị hợp đồng lớn nhất</th>
+                <td>[XX] tỷ đồng — thanh lý trọn nhà xưởng</td>
+              </tr>
+              <tr>
+                <th scope="row">Hợp đồng định kỳ đang chạy</th>
+                <td>[XX] doanh nghiệp tại [5] tỉnh thành</td>
+              </tr>
+              <tr>
+                <th scope="row">Thời gian đến khảo sát</th>
+                <td>Trong [24] giờ kể từ khi nhận lịch hẹn</td>
+              </tr>
+              <tr>
+                <th scope="row">Thanh toán</th>
+                <td>Tiền mặt hoặc chuyển khoản trong ngày</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-6">
+          <div class="article-body reveal">
+            <p>
+              Với hợp đồng thanh lý nhà xưởng, chúng tôi phân bổ nhiều xe chạy luân phiên trong ngày —
+              xưởng lớn vẫn giải phóng được mặt bằng trong [XX] ngày làm việc. Lịch vào làm sắp xếp theo
+              giờ giấc sản xuất của khách: cuối tuần, ca đêm hoặc lúc dừng chuyền, không làm gián đoạn hoạt động của xưởng.
+            </p>
+            <p>
+              Mỗi lô hàng đều có phiếu cân từng chuyến, chụp ảnh hiện trạng trước và sau khi thu gom.
+              Doanh nghiệp cần đối chiếu số liệu, xuất hóa đơn hay thanh toán qua công ty — bộ phận nghiệp vụ
+              của chúng tôi xử lý trọn gói trong ngày.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SCALE END ============================ -->
+
+  <!-- ============================ DEMOLITION SCOPE START ============================ -->
+  <section class="section section--paper" aria-labelledby="scope-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Khả năng tháo dỡ</span>
+        <h2 class="sec-title" id="scope-title">Nhận giải phóng mặt bằng trọn gói</h2>
+        <p class="sec-desc">Tháo xong là mặt bằng sạch — phế liệu phát sinh được phân loại, cân và thanh toán luôn trong cùng một hợp đồng.</p>
+      </div>
+      <div class="scope-grid reveal">
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Tháo dỡ nhà xưởng mái tôn, khung thép</h3>
+          <p>Lập phương án thi công theo tiến độ trả mặt bằng của khách.</p>
+        </div>
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Tháo dây chuyền sản xuất</h3>
+          <p>Tháo máy, băng tải, đường ống — giữ nguyên vẹn linh kiện có giá trị cao.</p>
+        </div>
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Tháo tủ điện, hạ điện an toàn</h3>
+          <p>Chỉ tác động sau khi nguồn đã ngắt và có xác nhận của bên nhà xưởng.</p>
+        </div>
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Phá dỡ công trình phụ</h3>
+          <p>Nhà cấp 4, tường rào, bồn nước… trong khuôn viên nhà xưởng.</p>
+        </div>
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Cắt chia kết cấu theo yêu cầu</h3>
+          <p>Chia kích thước phù hợp cổng hẹp, container và xe chở hàng dài.</p>
+        </div>
+        <div class="scope-item">
+          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Vệ sinh mặt bằng sau thu gom</h3>
+          <p>Dọn phế liệu vụn, gom rác thi công — giao mặt bằng sạch sẽ.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ DEMOLITION SCOPE END ============================ -->
+
+  <!-- ============================ SAFETY PROCESS START ============================ -->
+  <section class="section section--surface" aria-labelledby="safety-title">
+    <div class="container">
+      <div class="row row-editorial">
+        <div class="col-lg-4 reveal">
+          <div class="sec-head">
+            <span class="sec-label">An toàn thi công</span>
+            <h2 class="sec-title" id="safety-title">Bốn nguyên tắc an toàn bắt buộc</h2>
+            <p class="sec-desc">Vào mặt bằng của khách là làm theo quy trình — không có ngoại lệ, dù lô hàng lớn hay nhỏ.</p>
+          </div>
+          <a class="link-arrow" href="/dich-vu">Xem dịch vụ tháo dỡ <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="col-lg-8">
+          <div class="why-list reveal">
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">01</span>
+              <div class="why-body">
+                <h3>Khảo sát an toàn trước khi vào mặt bằng</h3>
+                <p>Rà hiện trạng điện, khí, kết cấu mong manh trước khi xếp lịch vào làm việc.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">02</span>
+              <div class="why-body">
+                <h3>Ngắt nguồn điện có kỹ thuật viên xác nhận</h3>
+                <p>Chỉ tháo tủ điện, dây dẫn khi bên nhà xưởng xác nhận đã ngắt và khóa nguồn.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">03</span>
+              <div class="why-body">
+                <h3>Trang bị bảo hộ đầy đủ</h3>
+                <p>Mũ, giày, găng và dây đai cho toàn bộ nhân sự làm trên cao hoặc gần vùng cắt.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">04</span>
+              <div class="why-body">
+                <h3>Bảo hiểm trách nhiệm cho mỗi hợp đồng [nếu có]</h3>
+                <p>Rủi ro phát sinh trong quá trình thu gom được ràng buộc rõ ràng trong hợp đồng.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SAFETY PROCESS END ============================ -->
+
+  <!-- ============================ GALLERY START ============================ -->
+  <section class="section section--paper section--bordered" aria-labelledby="gallery-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Hình ảnh thực tế</span>
+        <h2 class="sec-title" id="gallery-title">Công trường và kho hàng đang vận hành</h2>
+      </div>
+      <div class="loc-gallery reveal">
+        <div class="loc-gitem loc-gitem-wide">
+          <img src="~/assets/images/company/company-yard.svg" alt="Sân kho phân loại phế liệu của công ty" width="1200" height="800" loading="lazy">
+        </div>
+        <div class="loc-gitem">
+          <img src="~/assets/images/projects/project-01-cover.svg" alt="Tháo dỡ nhà xưởng tại Biên Hòa" width="1200" height="800" loading="lazy">
+        </div>
+        <div class="loc-gitem">
+          <img src="~/assets/images/projects/project-04-cover.svg" alt="Thu gom phế liệu tại công trình" width="1200" height="800" loading="lazy">
+        </div>
+        <div class="loc-gitem loc-gitem-wide">
+          <img src="~/assets/images/hero/hero-02.svg" alt="Công nhân phân loại và đóng kiện phế liệu" width="1200" height="800" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ GALLERY END ============================ -->
+
+  <!-- ============================ PROJECT SHOWCASE START ============================ -->
+  <section class="section section--surface" aria-labelledby="showcase-title">
+    <div class="container">
+      <div class="sec-head sec-head--row reveal">
+        <div>
+          <span class="sec-label">Dự án tiêu biểu</span>
+          <h2 class="sec-title" id="showcase-title">Một số hợp đồng đã hoàn tất</h2>
+        </div>
+        <a class="link-arrow" href="/du-an">Xem tất cả dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
+
+      <div class="showcase-grid reveal">
+        <a class="show-item show-main" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+          <img src="~/assets/images/projects/project-01-cover.svg" alt="Tháo dỡ và thu mua nhà xưởng 2.000m² tại Biên Hòa" width="1280" height="800" loading="lazy">
+          <span class="show-overlay"></span>
+          <span class="show-info">
+            <span class="show-cat">Nhà xưởng</span>
+            <h3>Tháo dỡ — thanh lý nhà xưởng 2.000m²</h3>
+            <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Biên Hòa, Đồng Nai</span>
+            <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+          </span>
+        </a>
+        <div class="show-col">
+          <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+            <img src="~/assets/images/projects/project-03-cover.svg" alt="Mua lại dây chuyền máy móc sản xuất tại Dĩ An" width="1280" height="800" loading="lazy">
+            <span class="show-overlay"></span>
+            <span class="show-info">
+              <span class="show-cat">Máy móc</span>
+              <h3>Mua dây chuyền sản xuất đã qua sử dụng</h3>
+              <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Dĩ An, Bình Dương</span>
+              <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+            <img src="~/assets/images/projects/project-06-cover.svg" alt="Thu gom kết cấu thép nhà máy tại Nhơn Trạch" width="1280" height="800" loading="lazy">
+            <span class="show-overlay"></span>
+            <span class="show-info">
+              <span class="show-cat">Công trình</span>
+              <h3>Thu gom kết cấu thép nhà máy [XX] tấn</h3>
+              <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Nhơn Trạch, Đồng Nai</span>
+              <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ PROJECT SHOWCASE END ============================ -->
+
+  <!-- ============================ SURVEY CTA START ============================ -->
+  <section class="cta-final" aria-labelledby="cta-title">
+    <div class="cta-final-bg" aria-hidden="true">
+      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
+    </div>
+    <div class="container">
+      <div class="cta-final-inner">
+        <span class="tech-label">Dành cho doanh nghiệp</span>
+        <h2 id="cta-title">Cần khảo sát nhà xưởng, dây chuyền?</h2>
+        <p>Gửi hình hoặc lịch hẹn — kỹ thuật viên đến khảo sát trong [24] giờ.</p>
+        <div class="cta-actions">
+          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
+          </button>
+          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+          </a>
+          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
+            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SURVEY CTA END ============================ -->
+
+</main>

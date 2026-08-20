@@ -1,0 +1,158 @@
+// =============================================================================
+// PROJECT — danh sách dự án editorial + chi tiết dự án + gallery Swiper
+// =============================================================================
+
+// Danh sách dự án — hàng editorial so le (ảnh to trái/phải xen kẽ)
+.project-rows {
+  .project-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem 2.5rem;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+    border-top: 1px solid $c-border;
+    align-items: center;
+
+    &:first-child { border-top: 0; }
+
+    .project-row-media {
+      @include ratio-box(16, 10);
+      border-radius: $radius-md;
+      overflow: hidden;
+      background: $c-dark-2;
+      position: relative;
+
+      img { transition: transform .5s cubic-bezier(.2, .6, .2, 1); }
+      .pr-badge {
+        position: absolute;
+        top: 12px; left: 12px;
+        z-index: 2;
+      }
+      &:hover img { transform: scale(1.035); }
+    }
+
+    .project-row-body {
+      .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: .75rem;
+        font-size: .8125rem;
+        color: $c-muted;
+
+        span { display: inline-flex; align-items: center; gap: .375rem; i { color: $c-primary; } }
+      }
+      h2 {
+        font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+        margin-bottom: .625rem;
+      }
+      p { color: $c-muted; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+      .project-specs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 2.5rem;
+        margin-bottom: 1.25rem;
+        padding: .875rem 1.125rem;
+        background: $c-surface;
+        border: 1px solid $c-border;
+        border-radius: $radius-sm;
+
+        .ps-item {
+          strong {
+            display: block;
+            font-family: $font-heading;
+            font-size: 1.125rem;
+            letter-spacing: .02em;
+          }
+          small { @extend .tech-label; }
+        }
+      }
+    }
+
+    // Xen kẽ trái/phải ở desktop
+    @include up(lg) {
+      grid-template-columns: 6fr 6fr;
+      &.project-row--flip .project-row-media { order: 2; }
+    }
+  }
+}
+
+// Chi tiết dự án — thông tin nhanh dưới cover
+.project-info-bar {
+  background: $c-dark;
+  color: #fff;
+  border-bottom: 4px solid $c-primary;
+
+  .pib-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: $c-dark-3;
+  }
+  .pib-item {
+    background: $c-dark;
+    padding: 1.125rem 1.25rem;
+
+    small {
+      display: block;
+      @extend .tech-label;
+      color: var(--on-dark-muted);
+      margin-bottom: .25rem;
+    }
+    strong { font-family: $font-heading; font-size: 1.0625rem; letter-spacing: .02em; }
+  }
+
+  @include up(lg) { .pib-grid { grid-template-columns: repeat(4, 1fr); } }
+}
+
+// Gallery Swiper trong project-detail
+.gallery-swiper {
+  .swiper-slide {
+    @include ratio-box(16, 10);
+    border-radius: $radius-md;
+    overflow: hidden;
+    background: $c-dark-2;
+  }
+  .swiper-button-next, .swiper-button-prev {
+    width: 44px; height: 44px;
+    border-radius: $radius-sm;
+    background: rgba($c-dark, .85);
+    color: #fff;
+    transition: background $t-fast;
+
+    &::after { font-size: 1.125rem; font-weight: $fw-bold; }
+    &:hover { background: $c-primary; }
+  }
+  .swiper-pagination-bullet-active { background: $c-primary; }
+}
+
+// Challenge / Solution — 2 cột đối lập
+.cs-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  .cs-col {
+    padding: 1.5rem 1.75rem;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-top: 4px solid $c-dark;
+    border-radius: $radius-md;
+
+    &.cs-col--solution { border-top-color: $c-success; }
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      font-size: 1.0625rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 1rem;
+
+      i { font-size: 1.25rem; color: $c-steel; }
+    }
+    &.cs-col--solution h3 i { color: $c-success; }
+  }
+
+  @include up(lg) { grid-template-columns: 1fr 1fr; }
+}

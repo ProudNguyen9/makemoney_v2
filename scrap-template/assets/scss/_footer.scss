@@ -1,0 +1,149 @@
+// =============================================================================
+// FOOTER — 5 cột desktop / stacked mobile, hierarchy rõ
+// =============================================================================
+
+.footer-site {
+  background: $c-dark;
+  color: var(--on-dark-muted);
+  font-size: .9375rem;
+
+  .footer-top {
+    padding: clamp(3rem, 6vw, 4.5rem) 0 2.5rem;
+  }
+
+  .footer-brand {
+    .brand-logo { height: 44px; width: auto; margin-bottom: 1rem; }
+    p { max-width: 36ch; }
+    .footer-cert {
+      margin-top: 1.25rem;
+      display: flex;
+      gap: .625rem;
+      flex-wrap: wrap;
+
+      .cert-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .375rem;
+        padding: .3rem .625rem;
+        border: 1px solid $c-dark-3;
+        border-radius: $radius-sm;
+        font-size: .75rem;
+        i { color: $c-accent; }
+      }
+    }
+  }
+
+  .footer-col-title {
+    font-family: $font-heading;
+    font-size: .875rem;
+    font-weight: $fw-semibold;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 1.125rem;
+    padding-bottom: .625rem;
+    border-bottom: 2px solid $c-primary;
+    display: inline-block;
+  }
+
+  .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li { margin-bottom: .5rem; }
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      color: var(--on-dark-muted);
+      &:hover { color: $c-accent; }
+      &::before {
+        content: "";
+        width: 6px; height: 2px;
+        background: $c-primary;
+        flex: 0 0 auto;
+      }
+    }
+  }
+
+  .footer-contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+      gap: .75rem;
+      margin-bottom: .875rem;
+
+      i {
+        color: $c-primary;
+        font-size: 1.0625rem;
+        margin-top: .1875rem;
+      }
+      a { color: var(--on-dark-muted); &:hover { color: $c-accent; } }
+      strong { color: #fff; font-weight: $fw-semibold; }
+    }
+  }
+
+  .footer-hours {
+    margin-top: 1rem;
+    padding: .75rem 1rem;
+    background: $c-dark-2;
+    border-left: 3px solid $c-accent;
+    font-size: .8125rem;
+  }
+
+  // Dải CTA nằm trên mép footer — tăng chuyển đổi cuối trang
+  .footer-cta-band {
+    background: $c-primary;
+
+    .footer-cta-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      padding: 1.125rem 0;
+    }
+    .fcb-text {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      color: #fff;
+
+      i { font-size: 1.75rem; }
+      strong {
+        display: block;
+        font-family: $font-heading;
+        font-size: 1.125rem;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+      }
+      small { font-size: .8125rem; opacity: .85; }
+    }
+  }
+
+  .footer-bottom {
+    border-top: 1px solid $c-dark-3;
+    padding: 1.125rem 0;
+    font-size: .8125rem;
+
+    .footer-bottom-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    a { color: var(--on-dark-muted); &:hover { color: $c-accent; } }
+  }
+}
+
+// Mobile: cột footer stacked, gọn
+@include down(lg) {
+  .footer-site {
+    .footer-col { margin-bottom: 1.75rem; }
+  }
+}

@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Tìm kiếm";
+}
+
+<main>
+
+  <!-- ============================ SEARCH BAND START ============================ -->
+  <section class="search-form-band" aria-labelledby="search-title">
+    <div class="container">
+      <h1 id="search-title">Tìm kiếm</h1>
+      <form class="search-input-wrap mt-3" role="search" action="search.html" method="get">
+        <label class="visually-hidden" for="search-keyword">Từ khóa tìm kiếm</label>
+        <input class="form-control" type="search" id="search-keyword" name="q" value="đồng đỏ"
+               placeholder="Nhập từ khóa: đồng, sắt, nhôm, nhà xưởng…">
+        <button class="btn btn-primary" type="submit">
+          <i class="bi bi-search" aria-hidden="true"></i>Tìm lại
+        </button>
+      </form>
+      <p class="text-muted-2 small mt-3 mb-0">
+        Kết quả cho từ khóa: <strong>đồng đỏ</strong> — [X] kết quả
+      </p>
+    </div>
+  </section>
+  <!-- ============================ SEARCH BAND END ============================ -->
+
+  <!-- ============================ SEARCH RESULTS START ============================ -->
+  <section class="section section--paper" aria-label="Kết quả tìm kiếm">
+    <div class="container">
+      <div class="search-results">
+
+        <!-- GROUP: PHẾ LIỆU START -->
+        <div class="result-group">
+          <h2 class="result-group-title">Phế liệu <small>2 kết quả</small></h2>
+          <div class="news-rows">
+            <a class="news-row" href="/phe-lieu/danh-muc">
+              <span class="news-row-media">
+                <img src="~/assets/images/scrap/scrap-copper.svg" alt="Phế liệu đồng đỏ sạch chuẩn bị cân" width="600" height="338" loading="lazy">
+              </span>
+              <span class="news-row-body">
+                <span class="news-meta">
+                  <span class="news-cat">Đồng</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Thu mua tận nơi</span>
+                </span>
+                <h3>Thu mua đồng đỏ</h3>
+                <p>Đồng đỏ bóc vỏ, không lẫn chì thiếc — giá thu mua cao nhất nhóm phế liệu thông thường. Xem mức giá hôm nay và cách phân loại hàng sạch.</p>
+              </span>
+            </a>
+            <a class="news-row" href="/phe-lieu/danh-muc">
+              <span class="news-row-media">
+                <img src="~/assets/images/scrap/scrap-cable.svg" alt="Dây điện và cáp đồng cũ xếp thành cuộn" width="600" height="338" loading="lazy">
+              </span>
+              <span class="news-row-body">
+                <span class="news-meta">
+                  <span class="news-cat">Dây điện — cáp</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Thu mua tận nơi</span>
+                </span>
+                <h3>Thu mua dây điện đồng</h3>
+                <p>Nhận dây điện bọc nhựa nguyên trạng hoặc đã bóc vỏ, cáp đồng đa sợi. Báo giá theo ký ngay qua hình ảnh Zalo.</p>
+              </span>
+            </a>
+          </div>
+        </div>
+        <!-- GROUP: PHẾ LIỆU END -->
+
+        <!-- GROUP: DỊCH VỤ START -->
+        <div class="result-group">
+          <h2 class="result-group-title">Dịch vụ <small>1 kết quả</small></h2>
+          <div class="link-blocks">
+            <a href="/dich-vu"><i class="bi bi-truck" aria-hidden="true"></i>Thu mua phế liệu tận nơi</a>
+          </div>
+        </div>
+        <!-- GROUP: DỊCH VỤ END -->
+
+        <!-- GROUP: TIN TỨC START -->
+        <div class="result-group">
+          <h2 class="result-group-title">Tin tức <small>2 kết quả</small></h2>
+          <div class="news-rows">
+            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
+              <span class="news-row-media">
+                <img src="~/assets/images/news/news-01.svg" alt="Bảng giá phế liệu tuần — ảnh minh họa" width="600" height="338" loading="lazy">
+              </span>
+              <span class="news-row-body">
+                <span class="news-meta">
+                  <span class="news-cat">Bảng giá</span>
+                  <span aria-hidden="true">·</span>
+                  <time datetime="2026-08-16">[DD/MM/YYYY]</time>
+                </span>
+                <h3>Bảng giá phế liệu tuần này: đồng giữ đà tăng, sắt đi ngang</h3>
+                <p>Giá đồng đỏ 75–95 nghìn/kg tiếp tục tăng nhờ thị trường thế giới, sắt vụn giao dịch quanh mốc 6–9 nghìn/kg sau đợt điều chỉnh.</p>
+              </span>
+            </a>
+            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
+              <span class="news-row-media">
+                <img src="~/assets/images/news/news-02.svg" alt="Dây điện đồng được phân loại trước khi bán" width="600" height="338" loading="lazy">
+              </span>
+              <span class="news-row-body">
+                <span class="news-meta">
+                  <span class="news-cat">Kiến thức</span>
+                  <span aria-hidden="true">·</span>
+                  <time datetime="2026-08-14">[DD/MM/YYYY]</time>
+                </span>
+                <h3>Cách phân loại dây điện đồng để bán được giá cao</h3>
+                <p>Bóc vỏ sẵn, nguyên trạng hay đã qua đốt — mỗi loại dây đồng một mức giá. Phân loại đúng trước khi bán giúp chênh lệch vài chục nghìn mỗi ký.</p>
+              </span>
+            </a>
+          </div>
+        </div>
+        <!-- GROUP: TIN TỨC END -->
+
+        <!-- GROUP: KHU VỰC START -->
+        <div class="result-group">
+          <h2 class="result-group-title">Khu vực <small>0 kết quả</small></h2>
+          <div class="empty-state">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <h3>Không tìm thấy nội dung phù hợp</h3>
+            <p>Thử từ khóa khác như "đồng", "sắt", "nhà xưởng" hoặc gọi [HOTLINE] để được tư vấn nhanh.</p>
+            <a class="btn btn-outline-dark" href="tel:[HOTLINE]">
+              <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+            </a>
+          </div>
+        </div>
+        <!-- GROUP: KHU VỰC END -->
+
+        <!-- PAGINATION START -->
+        <nav aria-label="Phân trang kết quả tìm kiếm">
+          <ul class="pagination-industrial">
+            <li class="page-item disabled"><span class="page-link" aria-label="Trang trước"><i class="bi bi-chevron-left" aria-hidden="true"></i></span></li>
+            <li class="page-item active"><span class="page-link" aria-current="page">1</span></li>
+            <li class="page-item"><a class="page-link" href="/tim-kiem">2</a></li>
+            <li class="page-item">
+              <a class="page-link" href="/tim-kiem" aria-label="Trang sau"><i class="bi bi-chevron-right" aria-hidden="true"></i></a>
+            </li>
+          </ul>
+        </nav>
+        <!-- PAGINATION END -->
+
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SEARCH RESULTS END ============================ -->
+
+  <!-- ============================ FINAL CTA START ============================ -->
+  <section class="cta-final" aria-labelledby="cta-title">
+    <div class="cta-final-bg" aria-hidden="true">
+      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
+    </div>
+    <div class="container">
+      <div class="cta-final-inner">
+        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
+        <h2 id="cta-title">Bạn đang có phế liệu cần thanh lý?</h2>
+        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
+        <div class="cta-actions">
+          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
+          </button>
+          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+          </a>
+          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
+            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ FINAL CTA END ============================ -->
+
+</main>

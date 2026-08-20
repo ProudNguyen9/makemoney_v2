@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thư viện ảnh — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html" class="active"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: GET /admin/media/stats — tổng số file, dung lượng đã dùng -->
+      <div class="admin-page-head">
+        <h1>Thư viện ảnh<small>124 file · dung lượng đã dùng 86,4 MB</small></h1>
+        <div class="aph-actions">
+          <button class="btn btn-primary" type="button"><i class="bi bi-cloud-arrow-up" aria-hidden="true"></i> Tải lên</button>
+        </div>
+      </div>
+
+      <!-- backend: GET /admin/media?folder=&q=&view= -->
+      <form class="admin-filter" action="#" method="get">
+        <input class="form-control" type="search" placeholder="Tìm theo tên file…" aria-label="Tìm theo tên file">
+        <span class="admin-filter-label">Thư mục</span>
+        <select class="form-select" aria-label="Lọc theo thư mục">
+          <option value="" selected>Tất cả</option>
+          <option value="scrap">scrap</option>
+          <option value="projects">projects</option>
+          <option value="news">news</option>
+          <option value="company">company</option>
+          <option value="hero">hero</option>
+        </select>
+        <div class="spacer"></div>
+        <div class="btn-group" role="group" aria-label="Chế độ hiển thị thư viện">
+          <button class="btn btn-outline-dark btn-sm active" type="button" data-media-view="grid" aria-pressed="true">
+            <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i><span class="visually-hidden">Xem dạng lưới</span>
+          </button>
+          <button class="btn btn-outline-dark btn-sm" type="button" data-media-view="list" aria-pressed="false">
+            <i class="bi bi-list-ul" aria-hidden="true"></i><span class="visually-hidden">Xem dạng danh sách</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Vùng tải lên -->
+      <div class="admin-panel">
+        <div class="panel-body">
+          <!-- backend: POST /admin/media/upload — nhận multi-file, giới hạn 5MB/ảnh -->
+          <label class="upload-drop">
+            <input type="file" accept="image/*" multiple hidden>
+            <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+            <p class="upload-title">Kéo thả file vào đây hoặc bấm chọn</p>
+            <p class="upload-hint">JPG/PNG/WebP, tối đa 5MB/ảnh</p>
+          </label>
+        </div>
+      </div>
+
+      <!-- Lưới thư viện -->
+      <div class="admin-panel mb-0">
+        <div class="panel-body">
+          <!-- backend: GET /admin/media?page=1&folder= — 12 file đầu tiên -->
+          <div class="media-grid">
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-copper.svg" alt="scrap-copper.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-copper.svg</strong>
+                <small>1200×900 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-copper.svg" aria-label="Copy URL scrap-copper.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-copper.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-copper.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-iron.svg" alt="scrap-iron.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-iron.svg</strong>
+                <small>1200×900 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-iron.svg" aria-label="Copy URL scrap-iron.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-iron.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-iron.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-aluminum.svg" alt="scrap-aluminum.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-aluminum.svg</strong>
+                <small>1200×900 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-aluminum.svg" aria-label="Copy URL scrap-aluminum.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-aluminum.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-aluminum.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-stainless.svg" alt="scrap-stainless.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-stainless.svg</strong>
+                <small>1200×900 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-stainless.svg" aria-label="Copy URL scrap-stainless.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-stainless.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-stainless.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-cable.svg" alt="scrap-cable.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-cable.svg</strong>
+                <small>800×600 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-cable.svg" aria-label="Copy URL scrap-cable.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-cable.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-cable.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-motor.svg" alt="scrap-motor.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-motor.svg</strong>
+                <small>800×600 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-motor.svg" aria-label="Copy URL scrap-motor.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-motor.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-motor.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/scrap/scrap-board.svg" alt="scrap-board.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>scrap-board.svg</strong>
+                <small>800×600 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/scrap/scrap-board.svg" aria-label="Copy URL scrap-board.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt scrap-board.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa scrap-board.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/projects/project-01-cover.svg" alt="project-01-cover.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>project-01-cover.svg</strong>
+                <small>1600×1000 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/projects/project-01-cover.svg" aria-label="Copy URL project-01-cover.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt project-01-cover.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa project-01-cover.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/projects/project-02-cover.svg" alt="project-02-cover.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>project-02-cover.svg</strong>
+                <small>1600×1000 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/projects/project-02-cover.svg" aria-label="Copy URL project-02-cover.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt project-02-cover.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa project-02-cover.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/news/news-01.svg" alt="news-01.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>news-01.svg</strong>
+                <small>1200×800 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/news/news-01.svg" aria-label="Copy URL news-01.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt news-01.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa news-01.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/news/news-02.svg" alt="news-02.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>news-02.svg</strong>
+                <small>1200×800 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/news/news-02.svg" aria-label="Copy URL news-02.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt news-02.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa news-02.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+            <div class="media-item">
+              <span class="media-thumb"><img src="../../assets/images/company/company-yard.svg" alt="company-yard.svg" loading="lazy"></span>
+              <div class="media-meta">
+                <strong>company-yard.svg</strong>
+                <small>1600×1200 · [DD/MM/YYYY]</small>
+                <div class="media-actions">
+                  <button class="btn btn-sm" type="button" data-copy="/assets/images/company/company-yard.svg" aria-label="Copy URL company-yard.svg"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Sửa alt company-yard.svg"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+                  <button class="btn btn-sm" type="button" aria-label="Xóa company-yard.svg"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-foot">
+          <div class="admin-pagination">Hiển thị 12 / 124</div>
+          <!-- backend: phân trang server-side, ?page=n -->
+          <nav aria-label="Phân trang thư viện ảnh">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Trang trước">«</a></li>
+              <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">…</a></li>
+              <li class="page-item"><a class="page-link" href="#">11</a></li>
+              <li class="page-item"><a class="page-link" href="#" aria-label="Trang sau">»</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

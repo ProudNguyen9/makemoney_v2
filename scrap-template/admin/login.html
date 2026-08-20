@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập — Quản trị [TÊN CÔNG TY]</title>
+  <link rel="icon" href="../assets/images/logo/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- Trang đăng nhập: KHÔNG dùng sidebar / topbar / admin-shell -->
+  <div class="login-page">
+
+    <!-- Cột form đăng nhập -->
+    <div class="login-form-col">
+      <div class="login-box">
+        <img class="login-logo" src="../assets/images/logo/logo.svg" alt="Logo [TÊN CÔNG TY]" width="180" height="44">
+        <h1>Đăng nhập quản trị</h1>
+        <p class="login-sub">Hệ thống quản lý website thu mua phế liệu [TÊN CÔNG TY].</p>
+
+        <!-- BACKEND: POST /admin/login — thay action bằng endpoint xác thực thực tế -->
+        <form action="dashboard.html" method="post" novalidate>
+          <div class="mb-3">
+            <label class="form-label-tech" for="login-email">Tài khoản email<span class="required-mark">*</span></label>
+            <input type="email" class="form-control" id="login-email" name="email" autocomplete="username" placeholder="admin@congty.vn" required>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <label class="form-label-tech mb-0" for="login-password">Mật khẩu<span class="required-mark">*</span></label>
+              <a class="small" href="login.html"><!-- BACKEND: link đặt lại mật khẩu -->Quên mật khẩu?</a>
+            </div>
+            <input type="password" class="form-control" id="login-password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="login-remember" name="remember">
+            <label class="form-check-label" for="login-remember">Ghi nhớ đăng nhập</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+        </form>
+
+        <p class="small text-muted text-center mt-3 mb-0">Tài khoản demo: admin / admin (backend wire)</p>
+
+        <p class="login-foot">© [NĂM] [TÊN CÔNG TY] · <a href="../index.html">Về trang chủ</a></p>
+      </div>
+    </div>
+
+    <!-- Cột thương hiệu: chỉ hiển thị từ lg -->
+    <div class="login-brand-col">
+      <div class="login-brand-bg">
+        <img src="../assets/images/hero/hero-main.svg" alt="">
+      </div>
+      <div class="login-brand-content">
+        <h2>Quản lý toàn bộ hoạt động thu mua</h2>
+        <p>Tiếp nhận lead, cập nhật bảng giá, đăng bài viết — một nơi duy nhất.</p>
+
+        <ul class="activity-list mt-4 mb-0">
+          <li>
+            <span class="act-ico"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+            <p>Yêu cầu báo giá về ngay trên dashboard</p>
+          </li>
+          <li>
+            <span class="act-ico"><i class="bi bi-table" aria-hidden="true"></i></span>
+            <p>Bảng giá thu mua cập nhật theo tuần</p>
+          </li>
+          <li>
+            <span class="act-ico"><i class="bi bi-newspaper" aria-hidden="true"></i></span>
+            <p>Bài viết, thư viện ảnh trong cùng một nơi</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../assets/vendor/bootstrap.min.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>
+
+

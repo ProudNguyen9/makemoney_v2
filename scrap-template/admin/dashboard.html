@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Quản trị [TÊN CÔNG TY]</title>
+  <link rel="icon" href="../assets/images/logo/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ============================================================================
+       PARTIAL ADMIN: Sidebar + Overlay + Topbar + mở/đóng content
+       Nguồn: partials/_admin-chrome.html — copy nguyên vẹn giữa các trang admin.
+       Convert Razor: Views/Shared/Admin/_Layout.cshtml
+       ============================================================================ -->
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-main">
+        <img src="../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+        <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      </div>
+      <button class="sidebar-collapse-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="dashboard.html" class="active"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="scrap/index.html">Danh sách</a></li>
+            <li><a href="scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- Tiêu đề trang + thao tác chính -->
+      <div class="admin-page-head">
+        <div>
+          <h1>Dashboard <small>Tổng quan hoạt động thu mua hôm nay — [DD/MM/YYYY]</small></h1>
+        </div>
+        <div class="aph-actions">
+          <a class="btn btn-primary" href="leads/index.html"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Lead mới</a>
+        </div>
+      </div>
+
+      <!-- BACKEND: 4 số liệu tổng quan (7 ngày gần nhất) -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="mc-label">Lead mới tuần này</span>
+          <span class="mc-value">12</span>
+          <span class="mc-delta up"><i class="bi bi-arrow-up-right" aria-hidden="true"></i>+8% so với tuần trước</span>
+        </div>
+        <div class="metric-card metric--accent">
+          <span class="mc-label">Lead chưa xử lý</span>
+          <span class="mc-value">5</span>
+          <span class="mc-delta flat"><i class="bi bi-dash" aria-hidden="true"></i>Cần xử lý hôm nay</span>
+        </div>
+        <div class="metric-card">
+          <span class="mc-label">Lead hôm nay</span>
+          <span class="mc-value">3</span>
+          <span class="mc-delta up"><i class="bi bi-arrow-up-right" aria-hidden="true"></i>+1 so với hôm qua</span>
+        </div>
+        <div class="metric-card metric--success">
+          <span class="mc-label">Bảng giá cập nhật</span>
+          <span class="mc-value"><small>[DD/MM/YYYY]</small></span>
+          <span class="mc-delta flat"><i class="bi bi-clock-history" aria-hidden="true"></i>Cập nhật cách đây [X] ngày</span>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Yêu cầu báo giá gần đây -->
+        <div class="col-lg-8">
+          <section class="admin-panel">
+            <div class="panel-head">
+              <h2>Yêu cầu báo giá gần đây</h2>
+              <div class="panel-head-actions">
+                <a class="small" href="leads/index.html">Xem tất cả <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a>
+              </div>
+            </div>
+            <!-- BACKEND: 5 lead mới nhất, sắp theo Ngày giảm dần -->
+            <div class="table-admin-wrap">
+              <table class="table-admin">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Khách hàng</th>
+                    <th scope="col">Phế liệu</th>
+                    <th scope="col">Khu vực</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ngày</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>LE-0248</strong></td>
+                    <td>Nguyễn Văn A</td>
+                    <td>Đồng đỏ</td>
+                    <td>Biên Hòa</td>
+                    <td><span class="badge-status st-new">Mới</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY] 09:24</td>
+                  </tr>
+                  <tr>
+                    <td><strong>LE-0247</strong></td>
+                    <td>Trần Thị B</td>
+                    <td>Sắt vụn</td>
+                    <td>Thủ Đức</td>
+                    <td><span class="badge-status st-processing">Đang xử lý</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY] 08:10</td>
+                  </tr>
+                  <tr>
+                    <td><strong>LE-0246</strong></td>
+                    <td>Lê Văn C</td>
+                    <td>Nhôm thanh</td>
+                    <td>Dĩ An</td>
+                    <td><span class="badge-status st-done">Hoàn tất</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                  <tr>
+                    <td><strong>LE-0245</strong></td>
+                    <td>Phạm Văn D</td>
+                    <td>Inox 304</td>
+                    <td>Long Thành</td>
+                    <td><span class="badge-status st-done">Hoàn tất</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                  <tr>
+                    <td><strong>LE-0244</strong></td>
+                    <td>Nguyễn Thị E</td>
+                    <td>Dây điện</td>
+                    <td>Bình Thạnh</td>
+                    <td><span class="badge-status st-cancel">Đã hủy</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel-foot">
+              <span class="admin-pagination">Hiển thị 5 / 240</span>
+              <nav aria-label="Phân trang yêu cầu báo giá">
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
+                  <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
+                </ul>
+              </nav>
+            </div>
+          </section>
+        </div>
+
+        <!-- Hoạt động gần đây -->
+        <div class="col-lg-4">
+          <section class="admin-panel">
+            <div class="panel-head">
+              <h2>Hoạt động gần đây</h2>
+            </div>
+            <div class="panel-body">
+              <!-- BACKEND: 5 hoạt động mới nhất của [QUẢN TRỊ VIÊN] -->
+              <ul class="activity-list">
+                <li>
+                  <span class="act-ico"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+                  <p><strong>Lead mới từ website</strong> — LE-0248<br><small>5 phút trước</small></p>
+                </li>
+                <li>
+                  <span class="act-ico"><i class="bi bi-pencil-square" aria-hidden="true"></i></span>
+                  <p><strong>Đã cập nhật bảng giá Đồng</strong><br><small>1 giờ trước</small></p>
+                </li>
+                <li>
+                  <span class="act-ico"><i class="bi bi-image" aria-hidden="true"></i></span>
+                  <p><strong>Tải lên 4 ảnh dự án</strong><br><small>2 giờ trước</small></p>
+                </li>
+                <li>
+                  <span class="act-ico"><i class="bi bi-newspaper" aria-hidden="true"></i></span>
+                  <p>Xuất bản bài <strong>“Bảng giá tuần này”</strong><br><small>hôm qua</small></p>
+                </li>
+                <li>
+                  <span class="act-ico"><i class="bi bi-gear" aria-hidden="true"></i></span>
+                  <p><strong>Cập nhật giờ làm việc</strong><br><small>hôm qua</small></p>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Bài viết gần đây -->
+        <div class="col-lg-7">
+          <section class="admin-panel">
+            <div class="panel-head">
+              <h2>Bài viết gần đây</h2>
+              <div class="panel-head-actions">
+                <a class="small" href="articles/index.html">Xem tất cả <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a>
+              </div>
+            </div>
+            <!-- BACKEND: 4 bài viết mới nhất -->
+            <div class="table-admin-wrap">
+              <table class="table-admin">
+                <thead>
+                  <tr>
+                    <th scope="col">Ảnh</th>
+                    <th scope="col">Tiêu đề</th>
+                    <th scope="col">Chuyên mục</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ngày</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="ta-title"><img src="../assets/images/news/news-01.svg" alt="Ảnh bài viết" width="40" height="30"></span>
+                    </td>
+                    <td><a href="articles/form.html">Bảng giá thu mua phế liệu tuần này</a></td>
+                    <td>Bảng giá</td>
+                    <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="ta-title"><img src="../assets/images/news/news-02.svg" alt="Ảnh bài viết" width="40" height="30"></span>
+                    </td>
+                    <td><a href="articles/form.html">Quy trình thu mua sắt vụn tại nhà xưởng</a></td>
+                    <td>Quy trình</td>
+                    <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="ta-title"><img src="../assets/images/news/news-03.svg" alt="Ảnh bài viết" width="40" height="30"></span>
+                    </td>
+                    <td><a href="articles/form.html">Phân biệt đồng đỏ và đồng cáu</a></td>
+                    <td>Kiến thức</td>
+                    <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="ta-title"><img src="../assets/images/news/news-04.svg" alt="Ảnh bài viết" width="40" height="30"></span>
+                    </td>
+                    <td><a href="articles/form.html">5 lưu ý khi phân loại nhôm thanh phế liệu</a></td>
+                    <td>Kiến thức</td>
+                    <td><span class="badge-status st-draft">Bản nháp</span></td>
+                    <td class="text-nowrap">[DD/MM/YYYY]</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- Thao tác nhanh -->
+        <div class="col-lg-5">
+          <section class="admin-panel">
+            <div class="panel-head">
+              <h2>Thao tác nhanh</h2>
+            </div>
+            <div class="panel-body">
+              <div class="row row-cols-2 g-2">
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="prices/index.html"><i class="bi bi-table me-2" aria-hidden="true"></i>Cập nhật bảng giá</a>
+                </div>
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="scrap/form.html"><i class="bi bi-plus-square me-2" aria-hidden="true"></i>Thêm loại phế liệu</a>
+                </div>
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="articles/form.html"><i class="bi bi-pencil-square me-2" aria-hidden="true"></i>Viết bài mới</a>
+                </div>
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="media/index.html"><i class="bi bi-images me-2" aria-hidden="true"></i>Media</a>
+                </div>
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="settings/index.html"><i class="bi bi-gear me-2" aria-hidden="true"></i>Cài đặt công ty</a>
+                </div>
+                <div class="col">
+                  <a class="btn btn-outline-dark w-100" href="seo/index.html"><i class="bi bi-search me-2" aria-hidden="true"></i>SEO</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../assets/vendor/bootstrap.min.js"></script>
+<script src="../assets/js/admin.js"></script>
+</body>
+</html>
+
+

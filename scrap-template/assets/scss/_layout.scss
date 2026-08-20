@@ -1,0 +1,192 @@
+// =============================================================================
+// LAYOUT — container, breadcrumb, pagination, filter bar
+// =============================================================================
+
+// Container chuẩn của template — fluid từ xl: lề hai bên cố định ~2cm
+// (calc(100% - 128px)), floor 1140px cho laptop nhỏ, cap $container-max cho 2K/4K.
+.container, .container-lg {
+  @include up(xl) { max-width: clamp(1140px, calc(100% - 128px), $container-max); }
+}
+
+// -----------------------------------------------------------------------------
+// BREADCRUMB — gạch chân phân cấp rõ, chuẩn SEO
+// -----------------------------------------------------------------------------
+.breadcrumb-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  font-size: .8125rem;
+  color: $c-muted;
+  margin: 0;
+  padding: .75rem 0;
+  border-bottom: 1px solid $c-border;
+  list-style: none;
+
+  li { display: inline-flex; align-items: center; gap: .375rem; }
+  li + li::before {
+    content: "\F285"; // bootstrap-icons: chevron-right
+    font-family: 'bootstrap-icons';
+    font-size: .625rem;
+    color: $c-border;
+  }
+  a { color: $c-muted; &:hover { color: $c-primary; } }
+  [aria-current="page"] { color: $c-text; font-weight: $fw-medium; }
+}
+
+// -----------------------------------------------------------------------------
+// PAGE HERO — hero trang con (không phải home): nền tối + tiêu đề + breadcrumb
+// -----------------------------------------------------------------------------
+.page-hero {
+  background: $c-dark;
+  color: #fff;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  position: relative;
+  overflow: hidden;
+
+  // Ảnh nền mờ bên phải (backend thay)
+  .page-hero-bg {
+    position: absolute;
+    inset: 0;
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: .18;
+    }
+  }
+  .page-hero-inner { position: relative; }
+
+  .tech-label { color: $c-accent; }
+  h1 { color: #fff; margin: .5rem 0 .75rem; }
+  .page-hero-desc { color: var(--on-dark-muted); max-width: 62ch; margin: 0; }
+
+  .breadcrumb-line {
+    border-bottom: 0;
+    padding: 1.25rem 0 0;
+    margin-top: 1rem;
+    color: var(--on-dark-muted);
+    a { color: var(--on-dark-muted); &:hover { color: $c-accent; } }
+    [aria-current="page"] { color: #fff; }
+    li + li::before { color: $c-dark-3; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// PAGINATION — vuông vức, không bo tròn
+// -----------------------------------------------------------------------------
+.pagination-industrial {
+  display: flex;
+  gap: .375rem;
+  list-style: none;
+  padding: 0;
+  margin: 2.5rem 0 0;
+  justify-content: center;
+
+  .page-item {
+    .page-link {
+      display: grid;
+      place-items: center;
+      min-width: 42px;
+      height: 42px;
+      padding: 0 .625rem;
+      border: 1px solid $c-border;
+      border-radius: $radius-sm;
+      background: $c-surface;
+      color: $c-text;
+      font-weight: $fw-medium;
+      transition: all $t-fast;
+      @include focus-ring;
+
+      &:hover { border-color: $c-primary; color: $c-primary; }
+    }
+    &.active .page-link {
+      background: $c-dark;
+      border-color: $c-dark;
+      color: #fff;
+      pointer-events: none;
+    }
+    &.disabled .page-link {
+      color: $c-border;
+      pointer-events: none;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FILTER BAR — thanh lọc (projects, news, admin list)
+// -----------------------------------------------------------------------------
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  padding: .875rem 1rem;
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+  margin-bottom: 2rem;
+
+  .filter-label { @extend .tech-label; margin-right: .25rem; }
+
+  .filter-link {
+    display: inline-block;
+    padding: .4rem .875rem;
+    font-size: .875rem;
+    font-weight: $fw-medium;
+    color: $c-muted;
+    background: $c-bg;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+    transition: all $t-fast;
+    @include focus-ring;
+
+    &:hover { color: $c-primary; border-color: $c-primary; }
+    &.active {
+      background: $c-dark;
+      border-color: $c-dark;
+      color: #fff;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// STICKY NAV (prices page) — điều hướng neo giữa trang
+// -----------------------------------------------------------------------------
+.anchor-nav {
+  position: sticky;
+  top: $header-height;
+  z-index: $z-sticky;
+  background: $c-surface;
+  border-block: 1px solid $c-border;
+
+  .nav-scroll {
+    display: flex;
+    gap: .25rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  a {
+    flex: 0 0 auto;
+    padding: .875rem 1rem;
+    font-family: $font-heading;
+    font-size: .8125rem;
+    font-weight: $fw-medium;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: $c-muted;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    @include focus-ring;
+
+    &:hover { color: $c-text; }
+    &.active { color: $c-primary; border-bottom-color: $c-primary; }
+  }
+}
+
+// Grid 2 cột editorial chuẩn
+.row-editorial {
+  --bs-gutter-x: clamp(1.5rem, 4vw, 4rem);
+  --bs-gutter-y: clamp(1.5rem, 3vw, 3rem);
+}

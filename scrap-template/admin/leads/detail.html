@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yêu cầu báo giá #LE-0248 — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html" class="active"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: GET /admin/leads/LE-0248 — chi tiết một lead -->
+      <div class="admin-page-head">
+        <h1>Yêu cầu báo giá #LE-0248<small>Tiếp nhận 12/08/2026 09:24 · Nguồn: Website — form báo giá</small></h1>
+        <div class="aph-actions">
+          <a class="btn btn-primary" href="tel:0908625341"><i class="bi bi-telephone-fill" aria-hidden="true"></i> Gọi khách</a>
+          <a class="btn btn-outline-dark" href="https://zalo.me/0908625341" target="_blank" rel="noopener"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mở Zalo</a>
+          <!-- backend: POST /admin/leads/LE-0248/status — mở modal đổi trạng thái lead -->
+          <button class="btn btn-outline-dark" type="button"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Đổi trạng thái</button>
+        </div>
+      </div>
+
+      <div class="admin-form-grid">
+        <div>
+          <!-- Thông tin khách hàng -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h2>Thông tin khách hàng</h2>
+            </div>
+            <div class="panel-body">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="leadName">Họ tên</label>
+                  <input class="form-control" id="leadName" type="text" value="Nguyễn Văn A" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="leadPhone">Số điện thoại</label>
+                  <input class="form-control" id="leadPhone" type="tel" value="0908.625.341" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="leadZalo">Zalo</label>
+                  <input class="form-control" id="leadZalo" type="tel" value="0908.625.341" readonly>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="leadArea">Khu vực</label>
+                  <input class="form-control" id="leadArea" type="text" value="Biên Hòa, Đồng Nai" readonly>
+                </div>
+                <div class="col-12">
+                  <label class="form-label-tech" for="leadAddress">Địa chỉ cụ thể</label>
+                  <textarea class="form-control" id="leadAddress" rows="2" readonly>KCN Biên Hòa 2, phường Long Bình, TP. Biên Hòa, Đồng Nai</textarea>
+                </div>
+                <div class="col-12">
+                  <label class="form-label-tech" for="leadNoteCustomer">Ghi chú khách</label>
+                  <textarea class="form-control" id="leadNoteCustomer" rows="2" readonly>Có khoảng 300kg dây điện + 50kg đồng đỏ, gọi trước 17h để tiện hướng dẫn xe vào xưởng.</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hình ảnh khách gửi -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h2>Hình ảnh khách gửi</h2>
+              <div class="panel-head-actions">
+                <span class="admin-pagination">4 ảnh</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <!-- backend: gắn lightbox xem ảnh gốc khi click -->
+              <div class="lead-gallery">
+                <a href="../../assets/images/scrap/scrap-copper.svg" target="_blank" rel="noopener">
+                  <img src="../../assets/images/scrap/scrap-copper.svg" alt="Ảnh 1 — đồng đỏ khách chụp gửi" width="96" height="72" loading="lazy">
+                </a>
+                <a href="../../assets/images/scrap/scrap-cable.svg" target="_blank" rel="noopener">
+                  <img src="../../assets/images/scrap/scrap-cable.svg" alt="Ảnh 2 — bó dây điện khách chụp gửi" width="96" height="72" loading="lazy">
+                </a>
+                <a href="../../assets/images/hero/hero-01.svg" target="_blank" rel="noopener">
+                  <img src="../../assets/images/hero/hero-01.svg" alt="Ảnh 3 — góc kho chứa phế liệu tại nhà khách" width="96" height="72" loading="lazy">
+                </a>
+                <a href="../../assets/images/company/company-yard.svg" target="_blank" rel="noopener">
+                  <img src="../../assets/images/company/company-yard.svg" alt="Ảnh 4 — hiện trường cân hàng" width="96" height="72" loading="lazy">
+                </a>
+              </div>
+              <p class="small text-muted mb-0 mt-2"><i class="bi bi-zoom-in" aria-hidden="true"></i> Click để xem ảnh gốc — backend wire lightbox</p>
+            </div>
+          </div>
+
+          <!-- Nội bộ & ghi chú xử lý -->
+          <div class="admin-panel mb-0">
+            <div class="panel-head">
+              <h2>Nội bộ &amp; ghi chú xử lý</h2>
+            </div>
+            <div class="panel-body">
+              <label class="form-label-tech" for="leadNoteInternal">Ghi chú xử lý</label>
+              <textarea class="form-control" id="leadNoteInternal" rows="3" placeholder="Ghi chú xử lý nội bộ — chỉ quản trị viên xem được…"></textarea>
+              <!-- backend: GET /admin/leads/LE-0248/history — lịch sử trạng thái -->
+              <ul class="status-history mt-3 mb-0">
+                <li>
+                  <span class="sh-dot" aria-hidden="true"></span>
+                  <div>
+                    <strong>Mới</strong>
+                    <span>Lead tự tạo từ form báo giá trên website — 12/08/2026 09:24</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="sh-dot" aria-hidden="true"></span>
+                  <div>
+                    <strong>Đang xử lý</strong>
+                    <span>[QUẢN TRỊ VIÊN] đã gọi xác nhận, khách hẹn 14:00 hôm sau xem hàng tại xưởng — 12/08/2026 10:05</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="sh-dot sh-dot--done" aria-hidden="true"></span>
+                  <div>
+                    <strong>Hoàn tất</strong>
+                    <span>Đã cân thực tế 352kg, thanh toán chuyển khoản ngay tại xưởng — 13/08/2026 15:40</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="sh-dot" aria-hidden="true"></span>
+                  <div>
+                    <strong>Chăm sóc sau bán</strong>
+                    <span>Gửi tin nhắn qua [ZALO] cảm ơn khách, khách hẹn tái thu mua cuối tháng — 14/08/2026 08:30</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- Thông tin lô hàng -->
+          <div class="admin-panel">
+            <div class="panel-head">
+              <h2>Thông tin lô hàng</h2>
+            </div>
+            <div class="panel-body">
+              <span class="form-label-tech">Loại phế liệu chính</span>
+              <p class="mb-3">Đồng đỏ, Dây điện</p>
+              <span class="form-label-tech">Số lượng ước tính</span>
+              <p class="mb-3">~350 kg</p>
+              <span class="form-label-tech">Khu vực</span>
+              <p class="mb-3">Biên Hòa — Đồng Nai</p>
+              <span class="form-label-tech">Trạng thái hiện tại</span>
+              <p class="mb-0"><span class="badge-status st-done">Hoàn tất</span></p>
+            </div>
+          </div>
+
+          <!-- Nguồn & theo dõi -->
+          <div class="admin-panel mb-0">
+            <div class="panel-head">
+              <h2>Nguồn &amp; theo dõi</h2>
+            </div>
+            <div class="panel-body">
+              <dl class="row small mb-0">
+                <dt class="col-5 fw-normal text-muted">Trang nguồn</dt>
+                <dd class="col-7">/bang-gia</dd>
+                <dt class="col-5 fw-normal text-muted">UTM source</dt>
+                <dd class="col-7">google</dd>
+                <dt class="col-5 fw-normal text-muted">UTM medium</dt>
+                <dd class="col-7">cpc</dd>
+                <dt class="col-5 fw-normal text-muted">UTM campaign</dt>
+                <dd class="col-7">dong-nai</dd>
+                <dt class="col-5 fw-normal text-muted">IP</dt>
+                <dd class="col-7">[XXX.XXX.XXX.XXX]</dd>
+                <dt class="col-5 fw-normal text-muted">Thiết bị</dt>
+                <dd class="col-7">Mobile</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

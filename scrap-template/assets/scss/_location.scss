@@ -1,0 +1,109 @@
+// =============================================================================
+// LOCATION — danh sách khu vực theo tỉnh + landing page khu vực (local SEO)
+// =============================================================================
+
+// Bản đồ phủ khu vực (dùng SVG/ảnh placeholder)
+.loc-map-band {
+  position: relative;
+  background: $c-dark;
+  color: #fff;
+  overflow: hidden;
+
+  .loc-map-img {
+    position: absolute;
+    inset: 0;
+    img { width: 100%; height: 100%; object-fit: cover; opacity: .2; }
+  }
+  .loc-map-inner {
+    position: relative;
+    padding: clamp(2.5rem, 6vw, 4rem) 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+
+    h2 { color: #fff; margin-bottom: .75rem; }
+    p { color: var(--on-dark-muted); margin-bottom: 0; }
+  }
+  @include up(lg) { .loc-map-inner { grid-template-columns: 1fr 1fr; } }
+}
+
+// Landing khu vực — districts grid dạng link table
+.district-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: $c-border;
+  border: 1px solid $c-border;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .875rem 1.125rem;
+    background: $c-surface;
+    font-size: .9375rem;
+    font-weight: $fw-medium;
+    color: $c-text;
+    transition: all $t-fast;
+
+    i { color: $c-primary; font-size: .75rem; opacity: 0; transform: translateX(-4px); transition: all $t-fast; }
+    &:hover {
+      background: $c-dark;
+      color: #fff;
+      i { opacity: 1; transform: none; }
+    }
+  }
+
+  @include up(md) { grid-template-columns: repeat(3, 1fr); }
+  @include up(lg) { grid-template-columns: repeat(4, 1fr); }
+}
+
+// Khu công nghiệp tiêu biểu — danh sách có số thứ tự kiểu biên bản
+.iz-list {
+  counter-reset: iz;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    counter-increment: iz;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: .875rem 0;
+    border-bottom: 1px solid $c-border;
+
+    &::before {
+      content: counter(iz, decimal-leading-zero);
+      font-family: $font-heading;
+      font-weight: $fw-semibold;
+      color: $c-primary;
+      flex: 0 0 auto;
+    }
+    strong { flex: 1 1 auto; font-weight: $fw-semibold; }
+    span { color: $c-muted; font-size: .8125rem; }
+  }
+}
+
+// Gallery địa phương — ảnh thực tế (placeholder đúng tỉ lệ)
+.loc-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 160px;
+  gap: 10px;
+
+  .loc-gitem {
+    overflow: hidden;
+    border-radius: $radius-md;
+    background: $c-dark-2;
+    position: relative;
+
+    img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    &:hover img { transform: scale(1.04); }
+    &.loc-gitem-wide { grid-column: span 2; }
+  }
+
+  @include up(md) { grid-auto-rows: 200px; }
+}

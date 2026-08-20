@@ -1,0 +1,167 @@
+// =============================================================================
+// BUTTONS — ghi đè Bootstrap theo design system: góc vuông, chữ uppercase
+// Không pill, không gradient. Hover dịch nhẹ / đổi màu phẳng.
+// =============================================================================
+
+.btn {
+  --bs-btn-border-radius: #{$radius-sm};
+  --bs-btn-padding-x: 1.375rem;
+  --bs-btn-padding-y: .6875rem;
+  font-family: $font-heading;
+  font-size: .9375rem;
+  font-weight: $fw-semibold;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-radius: $radius-sm;
+  transition: all $t-base;
+  @include focus-ring;
+
+  i { font-size: 1rem; line-height: 0; margin-inline: .125rem; }
+}
+
+.btn-lg {
+  --bs-btn-padding-x: 1.875rem;
+  --bs-btn-padding-y: .9375rem;
+  font-size: 1.0625rem;
+}
+
+.btn-sm {
+  --bs-btn-padding-x: .875rem;
+  --bs-btn-padding-y: .4375rem;
+  font-size: .8125rem;
+}
+
+// Primary — cam công nghiệp
+.btn-primary {
+  --bs-btn-bg: #{$c-primary};
+  --bs-btn-border-color: #{$c-primary};
+  --bs-btn-hover-bg: #{$c-primary-dark};
+  --bs-btn-hover-border-color: #{$c-primary-dark};
+  --bs-btn-active-bg: #{$c-primary-darker};
+  --bs-btn-active-border-color: #{$c-primary-darker};
+  --bs-btn-disabled-bg: #{lighten($c-primary, 18%)};
+  --bs-btn-disabled-border-color: transparent;
+}
+
+.btn-outline-primary {
+  --bs-btn-color: #{$c-primary-dark};
+  --bs-btn-border-color: #{$c-primary};
+  --bs-btn-hover-bg: #{$c-primary};
+  --bs-btn-hover-border-color: #{$c-primary};
+  --bs-btn-active-bg: #{$c-primary-dark};
+  --bs-btn-active-border-color: #{$c-primary-dark};
+}
+
+// Dark — than công nghiệp
+.btn-dark {
+  --bs-btn-bg: #{$c-dark};
+  --bs-btn-border-color: #{$c-dark};
+  --bs-btn-hover-bg: #{$c-primary};
+  --bs-btn-hover-border-color: #{$c-primary};
+  --bs-btn-active-bg: #{$c-primary-dark};
+  --bs-btn-active-border-color: #{$c-primary-dark};
+}
+
+.btn-outline-dark {
+  --bs-btn-color: #{$c-text};
+  --bs-btn-border-color: #{$c-dark};
+  --bs-btn-hover-bg: #{$c-dark};
+  --bs-btn-hover-border-color: #{$c-dark};
+  --bs-btn-active-bg: #{$c-dark-2};
+  --bs-btn-active-border-color: #{$c-dark-2};
+}
+
+// Trên nền tối
+.btn-light {
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #fff;
+  --bs-btn-color: #{$c-dark};
+  --bs-btn-hover-bg: #{$c-accent};
+  --bs-btn-hover-border-color: #{$c-accent};
+  --bs-btn-hover-color: #{$c-dark};
+  --bs-btn-active-bg: #{darken($c-accent, 10%)};
+  --bs-btn-active-border-color: #{darken($c-accent, 10%)};
+  --bs-btn-active-color: #{$c-dark};
+}
+
+.btn-outline-light {
+  --bs-btn-color: #fff;
+  --bs-btn-border-color: var(--c-border-dark);
+  --bs-btn-hover-bg: #fff;
+  --bs-btn-hover-border-color: #fff;
+  --bs-btn-hover-color: #{$c-dark};
+  --bs-btn-active-bg: #E8EAED;
+  --bs-btn-active-border-color: #E8EAED;
+  --bs-btn-active-color: #{$c-dark};
+}
+
+// Nút hành động hotline — có số điện thoại to
+.btn-hotline {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+
+  .hotline-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(#fff, .12);
+    font-size: 1.25rem;
+  }
+  .hotline-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    text-align: left;
+
+    small {
+      font-family: $font-body;
+      font-size: .6875rem;
+      font-weight: $fw-medium;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--on-dark-muted);
+    }
+    strong { font-size: 1.0625rem; letter-spacing: .03em; }
+  }
+}
+
+// Text link có mũi tên
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: $font-heading;
+  font-size: .875rem;
+  font-weight: $fw-semibold;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: $c-primary-dark;
+
+  i { transition: transform $t-fast; }
+  &:hover {
+    color: $c-primary;
+    i { transform: translateX(4px); }
+  }
+}
+
+// Icon button vuông
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+  background: $c-surface;
+  color: $c-text;
+  transition: all $t-fast;
+  @include focus-ring;
+
+  &:hover { border-color: $c-primary; color: $c-primary; }
+  &.icon-btn--dark {
+    background: $c-dark; border-color: $c-dark; color: #fff;
+    &:hover { background: $c-primary; border-color: $c-primary; }
+  }
+}

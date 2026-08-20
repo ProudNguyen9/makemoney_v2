@@ -1,0 +1,237 @@
+// =============================================================================
+// BASE — reset bổ sung, nền chung, liên kết, thanh cuộn, tiện ích section
+// =============================================================================
+
+html {
+  scroll-behavior: smooth;
+  // Bù offset khi dùng anchor (header sticky)
+  scroll-padding-top: calc(#{$header-height} + 16px);
+}
+
+body {
+  font-family: $font-body;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: $c-text;
+  background: $c-bg;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: $c-primary-dark;
+  text-decoration: none;
+  transition: color $t-fast;
+  @include focus-ring;
+
+  &:hover { color: $c-primary; }
+}
+
+img { max-width: 100%; }
+
+::selection {
+  background: $c-primary;
+  color: #fff;
+}
+
+// Tiện ích chọn nhanh theo token (dùng sparingly, ưu tiên component class)
+.text-muted-2 { color: $c-muted !important; }
+.bg-paper { background: $c-bg !important; }
+.bg-surface { background: $c-surface !important; }
+// Chữ phụ trên nền tối (dùng thay inline style)
+.text-on-dark { color: var(--on-dark-muted) !important; }
+
+.bg-coal { background: $c-dark !important; color: var(--on-dark-text); }
+
+// -----------------------------------------------------------------------------
+// SECTION — khối section chuẩn
+// -----------------------------------------------------------------------------
+.section { padding-block: $sec-lg; }
+.section--xl { padding-block: $sec-xl; }
+.section--md { padding-block: $sec-md; }
+.section--sm { padding-block: $sec-sm; }
+
+.section--surface { background: $c-surface; }
+.section--paper { background: $c-bg; }
+.section--bordered { border-block: $border-w solid $c-border; }
+
+.section--dark {
+  background: $c-dark;
+  color: var(--on-dark-text);
+
+  h1, h2, h3, h4 { color: #fff; }
+  a:not(.btn):not(.page-link) { color: #E8EAED; &:hover { color: $c-accent; } }
+}
+
+// Container hẹp hơn cho article / form — đọc thoải mái
+.container-narrow { max-width: 820px; }
+
+// -----------------------------------------------------------------------------
+// SEC-HEAD — heading section chuẩn: nhãn nhỏ + H2 + vạch hazard
+// -----------------------------------------------------------------------------
+.sec-head {
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+
+  .sec-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .625rem;
+    font-family: $font-heading;
+    font-size: .8125rem;
+    font-weight: $fw-semibold;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: $c-primary;
+    margin-bottom: .75rem;
+
+    &::before {
+      content: "";
+      width: 26px;
+      height: 3px;
+      background: $c-primary;
+    }
+  }
+
+  .sec-title {
+    font-family: $font-heading;
+    @include clamp-font(1.625rem, calc(1.3rem + 1.5vw), 2.5rem);
+    font-weight: $fw-semibold;
+    line-height: 1.15;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+    color: $c-text;
+    margin: 0 0 .625rem;
+    max-width: 22ch;
+  }
+
+  .sec-desc {
+    color: $c-muted;
+    max-width: 62ch;
+    margin-bottom: 0;
+  }
+
+  // Căn phải ở desktop khi đặt cạnh nhau
+  &.sec-head--row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+
+    .sec-title { margin-bottom: 0; }
+  }
+}
+
+.section--dark .sec-head .sec-title { color: #fff; }
+
+// -----------------------------------------------------------------------------
+// VẠCH hazard — chữ ký công nghiệp (dùng tiết chế)
+// -----------------------------------------------------------------------------
+.hazard-rule {
+  @include hazard-line(5px);
+  width: 64px;
+  border: 0;
+  margin: 0;
+}
+
+// -----------------------------------------------------------------------------
+// LIST DASH — danh sách có gạch đầu dòng kiểu kỹ thuật
+// -----------------------------------------------------------------------------
+.list-dash {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 1.375rem;
+    margin-bottom: .5rem;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .72em;
+      width: 10px;
+      height: 2px;
+      background: $c-primary;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// BADGE nhỏ — "MỚI", "HOT", số liệu bảng giá
+// -----------------------------------------------------------------------------
+.tag-min {
+  display: inline-block;
+  font-family: $font-heading;
+  font-size: .6875rem;
+  font-weight: $fw-semibold;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: .375rem .5rem;
+  border-radius: $radius-sm;
+  background: $c-bg;
+  color: $c-steel;
+  border: 1px solid $c-border;
+
+  &.tag-min--primary { background: $c-primary; border-color: $c-primary; color: #fff; }
+  &.tag-min--dark { background: $c-dark; border-color: $c-dark; color: #fff; }
+}
+
+// -----------------------------------------------------------------------------
+// EMPTY STATE
+// -----------------------------------------------------------------------------
+.empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  border: 1px dashed $c-border;
+  background: $c-surface;
+
+  i { font-size: 2.25rem; color: $c-muted; }
+  h3 {
+    font-family: $font-heading;
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    letter-spacing: .04em;
+    margin: 1rem 0 .375rem;
+  }
+  p { color: $c-muted; margin-bottom: 1.25rem; }
+}
+
+// Back to top
+.back-top {
+  position: fixed;
+  right: 18px;
+  bottom: 84px; // trên mobile contact bar
+  z-index: $z-backtop;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: $c-dark;
+  color: #fff;
+  border: 0;
+  border-radius: $radius-sm;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: all $t-base;
+
+  &.show { opacity: 1; visibility: visible; transform: none; }
+  &:hover { background: $c-primary; }
+  @include focus-ring(#fff);
+
+  @include up(lg) { bottom: 24px; }
+}
+
+// Chừa khoảng cho mobile contact bar che footer
+.has-mobilebar {
+  @include down(lg) { padding-bottom: 62px; }
+}
+
+// Bootstrap 5.3 .visually-hidden đặt position:absolute mà không kèm left/top:
+// trong bảng cuộn ngang, tọa độ static của nó làm tăng scrollWidth trang.
+// Neo về (0,0) — vẫn giữ ẩn hoàn toàn với screen reader.
+.visually-hidden { left: 0; top: 0; }

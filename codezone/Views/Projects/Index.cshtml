@@ -1,0 +1,288 @@
+@{
+    ViewData["Title"] = "Dự án";
+}
+
+<main>
+
+  <!-- ============================ PAGE HERO START ============================ -->
+  <section class="page-hero" aria-labelledby="projects-hero-title">
+    <div class="page-hero-bg" aria-hidden="true">
+      <img src="~/assets/images/projects/project-03-cover.svg" alt="" width="1600" height="900" fetchpriority="high">
+    </div>
+    <div class="container">
+      <div class="page-hero-inner">
+        <span class="tech-label">Dự án</span>
+        <h1 id="projects-hero-title">Dự án thu mua đã thực hiện</h1>
+        <p class="page-hero-desc">
+          Một số hợp đồng tiêu biểu: thanh lý nhà xưởng, thu gom công trình,
+          mua máy móc và dây chuyền sản xuất. Mỗi dự án đều có khối lượng, thời gian
+          và khu vực cụ thể — không phóng đại, không làm đẹp số liệu.
+        </p>
+        <ol class="breadcrumb-line">
+          <li><a href="/">Trang chủ</a></li>
+          <li aria-current="page">Dự án</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ PAGE HERO END ============================ -->
+
+  <!-- ============================ PROJECT LIST START ============================ -->
+  <section class="section section--paper" aria-label="Danh sách dự án thu mua">
+    <div class="container">
+
+      <!-- FILTER BAR START -->
+      <div class="filter-bar" role="group" aria-label="Lọc dự án theo loại">
+        <span class="filter-label">Lọc theo loại</span>
+        <a class="filter-link active" href="/du-an">Tất cả</a>
+        <a class="filter-link" href="/du-an">Nhà xưởng</a>
+        <a class="filter-link" href="/du-an">Công trình</a>
+        <a class="filter-link" href="/du-an">Máy móc</a>
+        <a class="filter-link" href="/du-an">Đồng</a>
+        <a class="filter-link" href="/du-an">Sắt</a>
+        <a class="filter-link" href="/du-an">Khác</a>
+      </div>
+      <!-- FILTER BAR END -->
+
+      <div class="project-rows">
+        <!-- PROJECT ROW 01 START -->
+        <article class="project-row reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-01-cover.svg" alt="Tháo dỡ nhà xưởng 2.000m² tại Biên Hòa để thu mua sắt thép" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Nhà xưởng</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Biên Hòa, Đồng Nai</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Tháo dỡ — thanh lý nhà xưởng 2.000m²</h2>
+            <p>
+              Nhà xưởng kèo thép hết thời gian thuê, chủ đầu tư cần giải phóng mặt bằng trong tuần.
+              Chúng tôi điều xe cẩu và đội tháo dỡ vào làm liền 5 ngày — vừa tháo mái tôn, khung kèo,
+              vừa cân thu mua ngay tại sân, xong sạch sẽ bàn giao đúng hẹn.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>45 tấn</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>5 ngày</strong>
+                <small>Thời gian</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 01 END -->
+
+        <!-- PROJECT ROW 02 START -->
+        <article class="project-row project-row--flip reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-02-cover.svg" alt="Thu gom 40 tấn sắt thép tại công trình ở Thủ Đức" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Công trình</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Thủ Đức, TP.HCM</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Thu gom 40 tấn sắt công trình</h2>
+            <p>
+              Công trình nhà xưởng mới hoàn tất để lại lượng lớn sắt cây, giàn giáo và tôn vụn quanh chân đài.
+              Xe tải và nhân công vào làm theo lịch của nhà thầu chính, thu gom dồn hết trong 3 ngày
+              để trả lại mặt bằng sạch cho chủ đầu tư.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>40 tấn</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>3 ngày</strong>
+                <small>Thời gian</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 02 END -->
+
+        <!-- PROJECT ROW 03 START -->
+        <article class="project-row reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-03-cover.svg" alt="Mua lại dây chuyền máy móc sản xuất đã qua sử dụng tại Dĩ An" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Máy móc</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Dĩ An, Bình Dương</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Mua dây chuyền sản xuất đã qua sử dụng</h2>
+            <p>
+              Doanh nghiệp chuyển hướng ngành nghề, cần thanh lý trọn dây chuyền máy móc cũ còn chạy tốt.
+              Kỹ thuật của chúng tôi kiểm tra tình trạng từng máy, định giá tổng thể theo trạng thái thực
+              rồi tháo lắp, vận chuyển rời xưởng trọn gói trong 2 ngày.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>[XX] máy</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>2 ngày</strong>
+                <small>Thời gian</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 03 END -->
+
+        <!-- PROJECT ROW 04 START -->
+        <article class="project-row project-row--flip reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-05-cover.svg" alt="Thu mua lô 3 tấn đồng đỏ từ nhà máy tại Long Thành" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Đồng</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Long Thành, Đồng Nai</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Thu mua lô 3 tấn đồng đỏ từ nhà máy</h2>
+            <p>
+              Nhà máy điện tử thanh lý lô đồng đỏ bóc từ dây dẫn cũ và tấm tản nhiệt dư sản xuất.
+              Phế liệu được phân loại sạch ngay tại chỗ, cân từng lô trước mặt đại diện nhà máy
+              và thanh toán trọn gói trong cùng buổi.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>3 tấn</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>1 ngày</strong>
+                <small>Thời gian</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 04 END -->
+
+        <!-- PROJECT ROW 05 START -->
+        <article class="project-row reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-06-cover.svg" alt="Thanh lý tủ điện và dây cáp nhà máy tại Bến Cát" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Khác</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Bến Cát, Bình Dương</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Thanh lý tủ điện + dây cáp nhà máy</h2>
+            <p>
+              Nhà máy nâng cấp hệ thống điện, thay toàn bộ tủ điện và dây cáp cũ kỹ xuống cấp.
+              Chúng tôi tháo tủ nguyên bộ, bóc dây theo từng tiết diện rồi cân phân loại riêng —
+              phần cáp đồng sạch được tính giá cao hơn hẳn lô dây lẫn tạp chất.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>[XX] tấn</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>2 ngày</strong>
+                <small>Thời gian</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 05 END -->
+
+        <!-- PROJECT ROW 06 START -->
+        <article class="project-row project-row--flip reveal">
+          <div class="project-row-media">
+            <img src="~/assets/images/projects/project-04-cover.svg" alt="Thu gom sắt thép định kỳ cho khu công nghiệp tại Nhơn Trạch" width="1200" height="750" loading="lazy">
+            <span class="pr-badge tag-min tag-min--dark">Sắt</span>
+          </div>
+          <div class="project-row-body">
+            <div class="project-meta">
+              <span><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Nhơn Trạch, Đồng Nai</span>
+              <span><i class="bi bi-calendar3" aria-hidden="true"></i>[DD/MM/YYYY]</span>
+            </div>
+            <h2>Thu gom định kỳ cho khu công nghiệp</h2>
+            <p>
+              Chuỗi nhà máy trong KCN ký hợp đồng thu gom sắt thép vụn phát sinh hàng tháng.
+              Xe ghé theo lịch cố định từng nhà máy, cân ký bảng kê ngay tại chỗ và chuyển khoản trong ngày —
+              không để phế liệu tồn đọng lấn chiếm diện tích sản xuất.
+            </p>
+            <div class="project-specs">
+              <div class="ps-item">
+                <strong>[X] tấn/tháng</strong>
+                <small>Khối lượng</small>
+              </div>
+              <div class="ps-item">
+                <strong>Hàng tháng</strong>
+                <small>Tần suất</small>
+              </div>
+            </div>
+            <a class="link-arrow" href="/du-an/thanh-ly-nha-xuong-bien-hoa">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </article>
+        <!-- PROJECT ROW 06 END -->
+      </div>
+
+      <!-- PAGINATION START -->
+      <nav aria-label="Phân trang dự án">
+        <ul class="pagination-industrial">
+          <li class="page-item">
+            <a class="page-link" href="/du-an" aria-label="Trang trước"><i class="bi bi-chevron-left" aria-hidden="true"></i></a>
+          </li>
+          <li class="page-item"><a class="page-link" href="/du-an">1</a></li>
+          <li class="page-item active"><span class="page-link" aria-current="page">2</span></li>
+          <li class="page-item"><a class="page-link" href="/du-an">3</a></li>
+          <li class="page-item"><a class="page-link" href="/du-an">4</a></li>
+          <li class="page-item"><a class="page-link" href="/du-an">5</a></li>
+          <li class="page-item">
+            <a class="page-link" href="/du-an" aria-label="Trang sau"><i class="bi bi-chevron-right" aria-hidden="true"></i></a>
+          </li>
+        </ul>
+      </nav>
+      <!-- PAGINATION END -->
+    </div>
+  </section>
+  <!-- ============================ PROJECT LIST END ============================ -->
+
+  <!-- ============================ FINAL CTA START ============================ -->
+  <section class="cta-final" aria-labelledby="cta-title">
+    <div class="cta-final-bg" aria-hidden="true">
+      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
+    </div>
+    <div class="container">
+      <div class="cta-final-inner">
+        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
+        <h2 id="cta-title">Dự án tiếp theo là của bạn?</h2>
+        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
+        <div class="cta-actions">
+          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
+          </button>
+          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+          </a>
+          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
+            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ FINAL CTA END ============================ -->
+
+</main>

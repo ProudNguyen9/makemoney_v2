@@ -1,0 +1,124 @@
+// =============================================================================
+// DESIGN TOKENS — Bộ token thiết kế chung cho toàn bộ template
+// Public + Admin dùng chung một nguồn token này.
+// =============================================================================
+
+// ----- Color: Brand -----
+$c-primary:        #E4570F; // Cam an toàn công nghiệp — CTA chính
+$c-primary-dark:   #C2410C; // Hover / pressed
+$c-primary-darker: #9A3412; // Active / visited
+
+$c-dark:           #16181C; // Gần đen than — section tối, footer
+$c-dark-2:         #1F2329; // Surface tối phụ
+$c-dark-3:         #2A2F36; // Border trên nền tối
+
+$c-steel:          #3E4C59; // Xám xanh thép — heading phụ, secondary
+$c-accent:         #F5B301; // Vàng cảnh báo — điểm nhấn nhỏ, hazard stripe
+
+// ----- Color: Neutrals -----
+$c-text:           #1C1F24;
+$c-muted:          #66707A;
+$c-bg:             #F6F5F2;   // Nền giấy ấm
+$c-surface:        #FFFFFF;
+$c-border:         #E3E1DC;   // Border nền sáng
+$c-border-dark:    #33383F;   // Border nền tối
+$c-success:        #1E7E34;
+$c-error:          #C0392B;
+$c-warning:        #B45309;
+$c-info:           #0C5460;
+
+// ----- Typography -----
+$font-heading: 'Oswald', 'Be Vietnam Pro', Arial, sans-serif;
+$font-body: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+
+$fw-medium: 500;
+$fw-semibold: 600;
+$fw-bold: 700;
+
+// ----- Layout -----
+// Container dạng fluid có mũ: hai bên chừa ~2cm (64px margin + 12px padding),
+// cap tuyệt đối 1792px để dòng chữ không quá dài trên màn 2K/4K.
+$container-max: 1792px;
+$header-height: 76px;
+$topbar-height: 38px;
+
+// ----- Section spacing (desktop; mobile thu hẹp ở responsive) -----
+$sec-xl: 104px;
+$sec-lg: 80px;
+$sec-md: 56px;
+$sec-sm: 40px;
+
+// ----- Radius: KHÔNG dùng bo tròn lớn (chống AI-style) -----
+$radius-0: 0px;
+$radius-sm: 2px;  // mặc định — input, button, table
+$radius-md: 4px;  // card, ảnh, dropdown
+$radius-lg: 6px;  // component đặc biệt, dùng có lý do
+
+// ----- Border & shadow -----
+$border-w: 1px;
+$shadow-sm: 0 1px 2px rgba(22, 24, 28, .06);
+$shadow-md: 0 4px 14px rgba(22, 24, 28, .10); // dùng tiết chế
+$shadow-focus: 0 0 0 3px rgba(228, 87, 15, .22);
+
+// ----- Transition & motion -----
+$t-base: .22s cubic-bezier(.4, 0, .2, 1);
+$t-fast: .15s ease;
+$lift: translateY(-3px); // hover transform 2–4px
+
+// ----- Z-index -----
+$z-header: 1030;
+$z-sticky: 1020;
+$z-offcanvas: 1045;
+$z-floating: 1050;
+$z-mobilebar: 1060;
+$z-backtop: 1070;
+
+// =============================================================================
+// CSS CUSTOM PROPERTIES — expose token ra root cho backend / override dễ
+// =============================================================================
+:root {
+  --c-primary: #{$c-primary};
+  --c-primary-dark: #{$c-primary-dark};
+  --c-primary-darker: #{$c-primary-darker};
+  --c-dark: #{$c-dark};
+  --c-dark-2: #{$c-dark-2};
+  --c-dark-3: #{$c-dark-3};
+  --c-steel: #{$c-steel};
+  --c-accent: #{$c-accent};
+  --c-text: #{$c-text};
+  --c-muted: #{$c-muted};
+  --c-bg: #{$c-bg};
+  --c-surface: #{$c-surface};
+  --c-border: #{$c-border};
+  --c-border-dark: #{$c-border-dark};
+  --c-success: #{$c-success};
+  --c-error: #{$c-error};
+  --c-warning: #{$c-warning};
+  --c-info: #{$c-info};
+
+  --font-heading: #{$font-heading};
+  --font-body: #{$font-body};
+
+  --container-max: #{$container-max};
+  --header-height: #{$header-height};
+  --topbar-height: #{$topbar-height};
+
+  --sec-xl: #{$sec-xl};
+  --sec-lg: #{$sec-lg};
+  --sec-md: #{$sec-md};
+  --sec-sm: #{$sec-sm};
+
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-focus: #{$shadow-focus};
+
+  --t-base: #{$t-base};
+
+  // Bảng màu chữ trên nền tối (đổi qua .section--dark / footer)
+  --on-dark-text: #E8EAED;
+  --on-dark-muted: #9AA3AE;
+}

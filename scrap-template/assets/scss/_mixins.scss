@@ -1,0 +1,53 @@
+// =============================================================================
+// MIXINS — media query & helper dùng chung
+// =============================================================================
+
+@mixin up($bp) {
+  @if $bp == sm { @media (min-width: 576px) { @content; } }
+  @else if $bp == md { @media (min-width: 768px) { @content; } }
+  @else if $bp == lg { @media (min-width: 992px) { @content; } }
+  @else if $bp == xl { @media (min-width: 1200px) { @content; } }
+  @else if $bp == xxl { @media (min-width: 1400px) { @content; } }
+}
+
+@mixin down($bp) {
+  @if $bp == sm { @media (max-width: 575.98px) { @content; } }
+  @else if $bp == md { @media (max-width: 767.98px) { @content; } }
+  @else if $bp == lg { @media (max-width: 991.98px) { @content; } }
+  @else if $bp == xl { @media (max-width: 1199.98px) { @content; } }
+  @else if $bp == xxl { @media (max-width: 1399.98px) { @content; } }
+}
+
+// Vùng giữa laptop – tablet ngang
+@mixin between($a, $b) {
+  @media (min-width: $a) and (max-width: $b) { @content; }
+}
+
+// Sọc hazard công nghiệp — chữ ký thị giác của template.
+// Dùng TIẾT CHẾ: vạch nhỏ 4–6px dưới heading / mép trên banner CTA.
+@mixin hazard-line($h: 5px) {
+  height: $h;
+  background: repeating-linear-gradient(
+    -45deg,
+    $c-primary 0 10px,
+    $c-accent 10px 20px
+  );
+}
+
+@mixin clamp-font($min, $preferred, $max) {
+  font-size: clamp($min, $preferred, $max);
+}
+
+// Ảnh giữ đúng tỉ lệ, chống CLS
+@mixin ratio-box($w, $h) {
+  position: relative;
+  aspect-ratio: #{$w} / #{$h};
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+@mixin focus-ring($color: $c-primary) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+  }
+}

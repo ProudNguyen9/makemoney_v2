@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soạn bài viết — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html" class="active"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: POST /admin/articles — tạo / cập nhật bài viết -->
+      <div class="admin-page-head">
+        <h1>Soạn bài viết <small>Viết bài bảng giá tuần, kiến thức và tin công ty</small></h1>
+        <div class="aph-actions">
+          <!-- backend: lưu với trạng thái bản nháp -->
+          <button class="btn btn-outline-dark" type="submit" form="articleForm" formaction="#draft"><i class="bi bi-save" aria-hidden="true"></i> Lưu nháp</button>
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="../../article.html" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="articleForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Xuất bản</button>
+        </div>
+      </div>
+
+      <form id="articleForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Nội dung bài viết -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Nội dung</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTitle">Tiêu đề<span class="required-mark">*</span></label>
+                    <input class="form-control" id="articleTitle" type="text" value="Bảng giá phế liệu tuần này: đồng giữ đà tăng" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="articleSlug">Slug</label>
+                    <div class="input-with-suffix">
+                      <input class="form-control" id="articleSlug" type="text" value="bang-gia-phe-lieu-tuan-nay">
+                      <span class="input-suffix">.html</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="articleCategory">Chuyên mục<span class="required-mark">*</span></label>
+                    <select class="form-select" id="articleCategory" required>
+                      <option value="bang-gia" selected>Bảng giá</option>
+                      <option value="kien-thuc">Kiến thức</option>
+                      <option value="kinh-nghiem">Kinh nghiệm</option>
+                      <option value="tin-cong-ty">Tin công ty</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTags">Tags</label>
+                    <input class="form-control" id="articleTags" type="text" value="bảng giá, phế liệu đồng, giá sắt">
+                    <p class="small text-muted mb-0 mt-1">Ngăn cách bằng dấu phẩy</p>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTeaser">Trích dẫn</label>
+                    <textarea class="form-control" id="articleTeaser" rows="2">Giá đồng đỏ giữ mức 92.000–95.000đ/kg, sắt vụn tăng nhẹ 500đ/kg — cập nhật bảng giá thu mua tuần này tại TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung bài viết</span>
+                    <!-- backend: gắn rich editor (TinyMCE/CKEditor) cho trường nội dung -->
+                    <div class="editor-placeholder">
+                      <div>
+                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
+                        <span>Rich editor — trình soạn thảo, backend wire (TinyMCE/CKEditor)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ảnh đại diện -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Ảnh đại diện (16:9)</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload — trả về URL ảnh gắn vào trường thumbnail -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh lên</p>
+                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×900</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- Xuất bản -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Xuất bản</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="articleStatus">Trạng thái</label>
+                <select class="form-select" id="articleStatus">
+                  <option value="published" selected>Xuất bản</option>
+                  <option value="draft">Bản nháp</option>
+                </select>
+                <label class="form-label-tech mt-3" for="articlePublishAt">Ngày đăng</label>
+                <input class="form-control" id="articlePublishAt" type="datetime-local" value="2026-08-17T08:00">
+                <label class="form-label-tech mt-3" for="articleAuthor">Tác giả</label>
+                <select class="form-select" id="articleAuthor">
+                  <option value="admin" selected>[QUẢN TRỊ VIÊN]</option>
+                  <option value="editor">[BIÊN TẬP VIÊN]</option>
+                </select>
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="articleFeatured">
+                  <label class="form-check-label" for="articleFeatured">Nổi bật</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="articleSeoTitle">SEO Title</label>
+                <input class="form-control" id="articleSeoTitle" type="text" value="Bảng giá phế liệu tuần này: đồng giữ đà tăng — [TÊN CÔNG TY]">
+                <p class="small text-muted mb-3 mt-1">61/70 ký tự</p>
+                <label class="form-label-tech" for="articleSeoMeta">Meta description</label>
+                <textarea class="form-control" id="articleSeoMeta" rows="3">Bảng giá thu mua phế liệu tuần này: đồng đỏ 92.000–95.000đ/kg, sắt vụn tăng nhẹ. Cập nhật giá tại TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
+                <span class="form-label-tech">OG image (1200×630)</span>
+                <!-- backend: upload — trả về URL ảnh gắn vào trường ogImage -->
+                <label class="upload-drop py-3">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh OG lên</p>
+                  <p class="upload-hint">PNG, JPG — 1200×630</p>
+                </label>
+                <label class="form-label-tech mt-3" for="articleCanonical">Canonical</label>
+                <input class="form-control" id="articleCanonical" type="url" value="https://thumuaphelieu.vn/bang-gia-phe-lieu-tuan-nay.html">
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="articleSeoIndex" checked>
+                  <label class="form-check-label" for="articleSeoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="articleSeoFollow" checked>
+                  <label class="form-check-label" for="articleSeoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bài liên quan -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Bài liên quan</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: chọn bài liên quan hiển thị cuối bài viết -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle1" checked>
+                  <label class="form-check-label" for="relArticle1">Bảng giá tuần trước: sắt vụn tăng nhẹ, nhôm đi ngang</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle2" checked>
+                  <label class="form-check-label" for="relArticle2">Cách phân loại dây điện đồng để bán được giá cao</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle3">
+                  <label class="form-check-label" for="relArticle3">Phân biệt inox 304 và inox 201 bằng nam châm</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

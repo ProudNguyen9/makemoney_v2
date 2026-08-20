@@ -1,0 +1,284 @@
+// =============================================================================
+// SCRAP — trang danh sách phế liệu, danh mục, chi tiết loại phế liệu
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// SCRAP LIST — intro SEO + nhóm danh mục dạng "mục lục kỹ thuật"
+// -----------------------------------------------------------------------------
+.scrap-intro {
+  background: $c-surface;
+  border-bottom: 1px solid $c-border;
+
+  .scrap-intro-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+
+  @include up(lg) { .scrap-intro-grid { grid-template-columns: 8fr 4fr; } }
+
+  .scrap-intro-text {
+    p { color: $c-muted; &:last-child { margin-bottom: 0; } }
+  }
+
+  .scrap-intro-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: $c-border;
+    border: 1px solid $c-border;
+
+    .sis-item {
+      background: $c-bg;
+      padding: 1.25rem;
+
+      .num-display { font-size: clamp(1.75rem, 3vw, 2.25rem); }
+      .sis-label {
+        display: block;
+        font-size: .8125rem;
+        color: $c-muted;
+        margin-top: .25rem;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SCRAP CATEGORY GROUP — mỗi nhóm: heading + dải item ngang kiểu bảng kê
+// -----------------------------------------------------------------------------
+.scrap-groups {
+  .scrap-group {
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+    border-top: 1px solid $c-border;
+
+    .scrap-group-head {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .scrap-group-icon {
+        display: grid;
+        place-items: center;
+        width: 46px; height: 46px;
+        background: $c-dark;
+        color: $c-accent;
+        font-size: 1.25rem;
+        border-radius: $radius-md;
+        flex: 0 0 auto;
+      }
+      h2 {
+        font-size: 1.375rem;
+        margin: 0;
+        flex: 1 1 auto;
+      }
+      .scrap-group-count { @extend .tech-label; }
+    }
+
+    .scrap-group-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      // SCRAP ITEM START/END markup trong HTML
+      .scrap-item {
+        display: grid;
+        grid-template-columns: 96px 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        background: $c-surface;
+        border: 1px solid $c-border;
+        border-radius: $radius-md;
+        padding: .875rem 1rem;
+        transition: border-color $t-fast, transform $t-fast;
+
+        .scrap-item-media {
+          @include ratio-box(4, 3);
+          border-radius: $radius-sm;
+          overflow: hidden;
+          background: $c-dark-2;
+        }
+        .scrap-item-body {
+          h3 {
+            font-family: $font-body;
+            font-size: .9375rem;
+            font-weight: $fw-semibold;
+            margin: 0 0 .1875rem;
+          }
+          .scrap-item-price {
+            font-size: .8125rem;
+            color: $c-muted;
+            .price-value { color: $c-primary-dark; }
+          }
+        }
+        .scrap-item-arrow {
+          color: $c-muted;
+          font-size: 1.125rem;
+          transition: all $t-fast;
+        }
+
+        &:hover {
+          border-color: $c-primary;
+          transform: $lift;
+          .scrap-item-arrow { color: $c-primary; transform: translateX(3px); }
+          h3 { color: $c-primary-dark; }
+        }
+
+        // Đánh dấu "featured" — loại nhiều người tìm
+        &.is-featured .scrap-item-body h3::after {
+          content: "NHIỀU KHÁCH BÁN";
+          font-family: $font-heading;
+          font-size: .5625rem;
+          font-weight: $fw-semibold;
+          letter-spacing: .12em;
+          color: #fff;
+          background: $c-primary;
+          border-radius: 2px;
+          padding: .1875rem .375rem;
+          margin-left: .5rem;
+          vertical-align: middle;
+        }
+      }
+
+      @include up(md) { grid-template-columns: repeat(2, 1fr); }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SCRAP CATEGORY / DETAIL — hero info + giá nổi bật
+// -----------------------------------------------------------------------------
+.scrap-hero {
+  background: $c-surface;
+  border-bottom: 1px solid $c-border;
+
+  .scrap-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+  @include up(lg) { .scrap-hero-grid { grid-template-columns: 7fr 5fr; align-items: center; } }
+
+  .scrap-hero-media { @include ratio-box(16, 10); border: 1px solid $c-border; border-radius: $radius-md; overflow: hidden; background: $c-dark-2; }
+
+  .scrap-hero-info {
+    h1 { margin-bottom: .875rem; }
+    .lead-2 { margin-bottom: 1.5rem; }
+  }
+
+  .price-highlight {
+    background: $c-dark;
+    color: #fff;
+    padding: 1.375rem 1.5rem;
+    border-left: 4px solid $c-primary;
+    margin-bottom: 1.5rem;
+
+    .ph-label {
+      font-family: $font-heading;
+      font-size: .75rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: $c-accent;
+      display: block;
+      margin-bottom: .375rem;
+    }
+    .ph-value {
+      font-family: $font-heading;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: $fw-semibold;
+      strong { color: $c-accent; }
+    }
+    .ph-note { font-size: .8125rem; color: var(--on-dark-muted); margin: .5rem 0 0; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// SPEC TABLE — đặc điểm / cách phân loại
+// -----------------------------------------------------------------------------
+.spec-table {
+  width: 100%;
+  border: 1px solid $c-border;
+  background: $c-surface;
+  font-size: .9375rem;
+
+  th, td { padding: .8125rem 1.125rem; border-bottom: 1px solid $c-border; vertical-align: top; }
+  th {
+    background: $c-bg;
+    font-family: $font-heading;
+    font-size: .8125rem;
+    font-weight: $fw-semibold;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: $c-steel;
+    width: 32%;
+    text-align: left;
+  }
+  tr:last-child td, tr:last-child th { border-bottom: 0; }
+}
+
+// Phân loại màu chất liệu — minh họa bằng swatch (đồng đỏ, đồng vàng...)
+.type-legend {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  .type-row {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+    padding: .875rem 1rem;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+
+    .type-swatch {
+      width: 34px; height: 34px;
+      border-radius: $radius-sm;
+      border: 1px solid rgba(#000, .12);
+      flex: 0 0 auto;
+    }
+    .type-body {
+      flex: 1;
+      strong { display: block; font-size: .9375rem; }
+      small { color: $c-muted; font-size: .8125rem; }
+    }
+    .type-price {
+      text-align: right;
+      .price-value { color: $c-primary-dark; }
+      small { color: $c-muted; font-size: .75rem; display: block; }
+    }
+  }
+
+  @include up(md) { grid-template-columns: repeat(2, 1fr); }
+}
+
+// Related scrap — dải cuộn ngang các loại liên quan
+.related-scrap {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+
+  .rs-item {
+    display: block;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+    overflow: hidden;
+    transition: border-color $t-fast;
+
+    .rs-media { @include ratio-box(4, 3); border-bottom: 1px solid $c-border; background: $c-dark-2; }
+    .rs-body {
+      padding: .875rem 1rem;
+      h3 { font-family: $font-body; font-size: .875rem; font-weight: $fw-semibold; margin: 0 0 .1875rem; }
+      .price-value { font-size: .875rem; color: $c-primary-dark; }
+    }
+    &:hover { border-color: $c-primary; h3 { color: $c-primary-dark; } }
+  }
+
+  @include up(md) { grid-template-columns: repeat(4, 1fr); }
+}

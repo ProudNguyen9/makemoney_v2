@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Theme Studio — Chỉnh màu chủ đạo | Template Thu Mua Phế Liệu</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/images/logo/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== THEME STUDIO — UI riêng, không phụ thuộc CSS trang web ===== */
+    :root {
+      --tool-bg: #16181D;
+      --tool-panel: #1E222A;
+      --tool-panel-2: #262B35;
+      --tool-border: #343B48;
+      --tool-text: #E8EAED;
+      --tool-muted: #9AA3B2;
+      --tool-accent: #E4570F;
+      --tool-ok: #3FB68B;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      background: var(--tool-bg);
+      color: var(--tool-text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .studio-hazard {
+      height: 5px;
+      flex: 0 0 auto;
+      background: repeating-linear-gradient(-45deg, var(--tool-accent) 0 10px, #F5B301 10px 20px);
+      transition: background .2s;
+    }
+    .studio-bar {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .75rem 1.25rem;
+      background: var(--tool-panel);
+      border-bottom: 1px solid var(--tool-border);
+    }
+    .studio-bar h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .studio-bar h1 i { color: var(--tool-accent); font-style: normal; }
+    .studio-bar .spacer { flex: 1; }
+    .studio-bar select,
+    .studio-bar button {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: .8125rem;
+      padding: .5rem .875rem;
+      border-radius: 4px;
+      border: 1px solid var(--tool-border);
+      background: var(--tool-panel-2);
+      color: var(--tool-text);
+      cursor: pointer;
+    }
+    .studio-bar select:hover, .studio-bar button:hover { border-color: var(--tool-accent); }
+    .studio-bar .btn-accent { background: var(--tool-accent); border-color: var(--tool-accent); color: #fff; font-weight: 600; }
+    .studio-bar .btn-accent:hover { filter: brightness(1.1); }
+
+    .studio-body { flex: 1; display: flex; min-height: 0; }
+
+    /* ===== PANEL TRÁI ===== */
+    .studio-panel {
+      width: 330px;
+      flex: 0 0 auto;
+      background: var(--tool-panel);
+      border-right: 1px solid var(--tool-border);
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .field-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .6875rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--tool-muted);
+      margin-bottom: .5rem;
+    }
+    .field-label code {
+      font-family: ui-monospace, monospace;
+      font-size: .6875rem;
+      color: var(--tool-text);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+    .preset {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      position: relative;
+      background: var(--sw);
+      transition: transform .12s;
+    }
+    .preset:hover { transform: scale(1.08); }
+    .preset.active { border-color: #fff; }
+    .preset::after {
+      content: attr(data-name);
+      position: absolute;
+      left: 50%; bottom: -1.15rem;
+      transform: translateX(-50%);
+      font-size: .5625rem;
+      color: var(--tool-muted);
+      white-space: nowrap;
+    }
+    .presets { margin-bottom: 1rem; }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      padding: .625rem .75rem;
+      background: var(--tool-panel-2);
+      border: 1px solid var(--tool-border);
+      border-radius: 6px;
+    }
+    .color-row + .color-row { margin-top: .5rem; }
+    .color-row input[type="color"] {
+      width: 42px; height: 42px;
+      border: none; border-radius: 4px;
+      background: none; cursor: pointer; padding: 0;
+    }
+    .color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-row input[type="color"]::-webkit-color-swatch { border: 1px solid var(--tool-border); border-radius: 4px; }
+    .color-row .meta { flex: 1; min-width: 0; }
+    .color-row .meta strong { display: block; font-size: .8125rem; font-weight: 600; }
+    .color-row .meta small { font-size: .6875rem; color: var(--tool-muted); }
+    .color-row input[type="text"] {
+      width: 84px;
+      font-family: ui-monospace, monospace;
+      font-size: .75rem;
+      padding: .375rem .5rem;
+      border-radius: 4px;
+      border: 1px solid var(--tool-border);
+      background: var(--tool-bg);
+      color: var(--tool-text);
+      text-transform: uppercase;
+    }
+    .color-row input[type="text"]:focus { outline: none; border-color: var(--tool-accent); }
+    .color-row.shade { opacity: .92; }
+    .color-row.shade input[type="color"] { pointer-events: none; }
+
+    .combo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      margin-top: .625rem;
+      padding: .3125rem .625rem;
+      border-radius: 99px;
+      font-size: .6875rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      border: 1px solid var(--tool-border);
+      background: var(--tool-panel-2);
+    }
+    .combo-badge .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    .shade-note { font-size: .6875rem; color: var(--tool-muted); line-height: 1.5; margin-top: .5rem; }
+
+    .studio-actions { display: grid; gap: .5rem; }
+    .studio-actions button {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: .8125rem;
+      font-weight: 600;
+      padding: .625rem;
+      border-radius: 6px;
+      border: 1px solid var(--tool-border);
+      background: var(--tool-panel-2);
+      color: var(--tool-text);
+      cursor: pointer;
+    }
+    .studio-actions button:hover { border-color: var(--tool-accent); }
+    .studio-actions button.primary { background: var(--tool-accent); border-color: var(--tool-accent); color: #fff; }
+
+    .scss-out {
+      font-family: ui-monospace, monospace;
+      font-size: .6875rem;
+      line-height: 1.7;
+      color: #C9D4E3;
+      background: #111318;
+      border: 1px solid var(--tool-border);
+      border-radius: 6px;
+      padding: .75rem;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .scss-out .k { color: var(--tool-ok); }
+
+    .note {
+      font-size: .6875rem;
+      color: var(--tool-muted);
+      line-height: 1.6;
+      background: rgba(228, 87, 15, .08);
+      border-left: 3px solid var(--tool-accent);
+      padding: .625rem .75rem;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .status {
+      position: fixed;
+      left: 50%; bottom: 1.25rem;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--tool-ok);
+      color: #06231A;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .5rem 1rem;
+      border-radius: 99px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s;
+      z-index: 99;
+    }
+    .status.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== KHUNG PREVIEW PHẢI ===== */
+    .studio-preview { flex: 1; min-width: 0; background: #fff; position: relative; }
+    .studio-preview iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; }
+      .studio-body { flex-direction: column; }
+      .studio-panel { width: 100%; border-right: 0; border-bottom: 1px solid var(--tool-border); }
+      .studio-preview { height: 75vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="studio-hazard" id="hazard"></div>
+
+  <header class="studio-bar">
+    <h1><i>▮▮</i> Theme Studio — chỉnh màu chủ đạo</h1>
+    <span class="spacer"></span>
+    <label for="pagePick" style="font-size:.75rem;color:var(--tool-muted)">Trang xem:</label>
+    <select id="pagePick">
+      <option value="index.html">Trang chủ</option>
+      <option value="scrap.html">Phế liệu thu mua</option>
+      <option value="prices.html">Bảng giá</option>
+      <option value="services.html">Dịch vụ</option>
+      <option value="about.html">Giới thiệu</option>
+      <option value="contact.html">Liên hệ</option>
+      <option value="locations.html">Khu vực</option>
+      <option value="news.html">Tin tức</option>
+      <option value="ui-kit.html">UI Kit</option>
+    </select>
+    <button id="btnReset" type="button">↺ Reset mặc định</button>
+  </header>
+
+  <div class="studio-body">
+    <aside class="studio-panel">
+      <section>
+        <div class="field-label"><span>Màu mẫu có sẵn</span></div>
+        <div class="presets" id="presets"></div>
+      </section>
+
+      <section>
+        <div class="field-label"><span>Màu chủ đạo</span><code>$c-primary</code></div>
+        <div class="color-row">
+          <input type="color" id="pickPrimary" value="#E4570F">
+          <div class="meta">
+            <strong>Primary</strong>
+            <small>Nút CTA · link · tiêu đề điểm nhấn</small>
+          </div>
+          <input type="text" id="hexPrimary" value="#E4570F" maxlength="7" spellcheck="false">
+        </div>
+        <div class="color-row shade">
+          <input type="color" id="pickDark" value="#C2410C">
+          <div class="meta">
+            <strong>Dark</strong>
+            <small>Hover · pressed (tự tính −15% sáng)</small>
+          </div>
+          <input type="text" id="hexDark" value="#C2410C" maxlength="7" spellcheck="false">
+        </div>
+        <div class="color-row shade">
+          <input type="color" id="pickDarker" value="#9A3412">
+          <div class="meta">
+            <strong>Darker</strong>
+            <small>Active · visited (tự tính −30% sáng)</small>
+          </div>
+          <input type="text" id="hexDarker" value="#9A3412" maxlength="7" spellcheck="false">
+        </div>
+        <p class="shade-note">2 tông đậm tự sinh theo màu chủ đạo — sửa ô hex nếu muốn tinh chỉnh tay.</p>
+      </section>
+
+      <section>
+        <div class="field-label"><span>Màu điểm nhấn</span><code>$c-accent</code></div>
+        <div class="color-row">
+          <input type="color" id="pickAccent" value="#F5B301">
+          <div class="meta">
+            <strong>Accent</strong>
+            <small>Vạch hazard · icon nhấn · giá</small>
+          </div>
+          <input type="text" id="hexAccent" value="#F5B301" maxlength="7" spellcheck="false">
+        </div>
+      </section>
+
+      <section>
+        <div class="field-label"><span>Màu nền tối</span><code>$c-dark</code></div>
+        <div class="color-row">
+          <input type="color" id="pickDarkBg" value="#16181C">
+          <div class="meta">
+            <strong>Dark</strong>
+            <small>Topbar info · header bảng giá · footer · banner CTA</small>
+          </div>
+          <input type="text" id="hexDarkBg" value="#16181C" maxlength="7" spellcheck="false">
+        </div>
+        <div class="color-row shade">
+          <input type="color" id="pickDark2" value="#1F2329">
+          <div class="meta">
+            <strong>Dark-2</strong>
+            <small>Surface tối phụ (tự tính +5% sáng)</small>
+          </div>
+          <input type="text" id="hexDark2" value="#1F2329" maxlength="7" spellcheck="false">
+        </div>
+        <div class="color-row shade">
+          <input type="color" id="pickDark3" value="#2A2F36">
+          <div class="meta">
+            <strong>Dark-3</strong>
+            <small>Border trên nền tối (tự tính +9% sáng)</small>
+          </div>
+          <input type="text" id="hexDark3" value="#2A2F36" maxlength="7" spellcheck="false">
+        </div>
+        <div class="combo-badge" id="comboBadge">
+          <span class="dot"></span>
+          <span class="combo-text">Chữ trên nền tối: TRẮNG (tự động)</span>
+        </div>
+        <p class="shade-note">Đổi sang màu nền sáng → chữ tự chuyển sang tông đậm để luôn đọc được (chuẩn WCAG).</p>
+      </section>
+
+      <section class="studio-actions">
+        <button class="primary" id="btnCopy" type="button">⧉ Copy biến SCSS để build thật</button>
+        <button id="btnDownload" type="button">⭳ Tải main.css đã đổi màu</button>
+      </section>
+
+      <section>
+        <div class="field-label"><span>_variables.scss — dán vào rồi chạy</span><code>npm run build</code></div>
+        <div class="scss-out" id="scssOut"></div>
+      </section>
+
+      <p class="note">
+        Preview đổi màu bằng cách ghi đè CSS trong iframe — <strong>chính xác 100% mọi component</strong>.
+        Màu nền tối áp cho: topbar info, header bảng giá, footer, banner CTA, section tối, nút nổi, menu mobile.
+        Chữ trên nền tối tự chọn combo trắng/đen theo độ sáng (WCAG); chữ trên nút primary luôn trắng.
+        Khi ưng màu: <strong>Copy biến SCSS → dán vào <code>assets/scss/_variables.scss</code> → <code>npm run build</code></strong>.
+      </p>
+    </aside>
+
+    <main class="studio-preview">
+      <iframe id="preview" src="index.html" title="Preview template"></iframe>
+    </main>
+  </div>
+
+  <div class="status" id="status"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var DEFAULTS = {
+    primary: '#E4570F', dark: '#C2410C', darker: '#9A3412', accent: '#F5B301',
+    darkBg: '#16181C', dark2: '#1F2329', dark3: '#2A2F36'
+  };
+
+  var PRESETS = [
+    { name: 'Cam an toàn', primary: '#E4570F', accent: '#F5B301', darkBg: '#16181C' },
+    { name: 'Đỏ công nghiệp', primary: '#D93025', accent: '#FFC107', darkBg: '#1D1013' },
+    { name: 'Xanh dương', primary: '#1565C0', accent: '#FFB300', darkBg: '#0F1D33' },
+    { name: 'Xanh teal', primary: '#0E7C7B', accent: '#F5B301', darkBg: '#0D1E1E' },
+    { name: 'Xanh lá', primary: '#2E7D32', accent: '#F9A825', darkBg: '#101F12' },
+    { name: 'Tím than', primary: '#6D28D9', accent: '#FBBF24', darkBg: '#171127' },
+    { name: 'Vàng đồng', primary: '#B45309', accent: '#FACC15', darkBg: '#211A0D' },
+    { name: 'Hồng đất', primary: '#BE3455', accent: '#F5B301', darkBg: '#1F1018' }
+  ];
+
+  var state = {
+    primary: DEFAULTS.primary,
+    dark: DEFAULTS.dark,
+    darker: DEFAULTS.darker,
+    accent: DEFAULTS.accent,
+    darkBg: DEFAULTS.darkBg,
+    dark2: DEFAULTS.dark2,
+    dark3: DEFAULTS.dark3
+  };
+
+  var cssOriginal = null;
+  var applyTimer = null;
+
+  // ---------- màu tiện ích ----------
+  function hexToRgb(hex) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex.replace(/./g, function (c) { return c + c; });
+    var n = parseInt(hex, 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgbToHex(r, g, b) {
+    var f = function (v) { v = Math.round(Math.min(255, Math.max(0, v))); return ('0' + v.toString(16)).slice(-2); };
+    return '#' + f(r) + f(g) + f(b);
+  }
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    var h = 0, s = 0, l = (max + min) / 2;
+    if (d) {
+      s = l > .5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0));
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return { h: h, s: s * 100, l: l * 100 };
+  }
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    var f = function (n) {
+      var k = (n + h / 30) % 12;
+      var a = s * Math.min(l, 1 - l);
+      return l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)));
+    };
+    return rgbToHex(f(0) * 255, f(8) * 255, f(4) * 255).toUpperCase();
+  }
+  function deriveShades(primary) {
+    var c = rgbToHsl(hexToRgb(primary).r, hexToRgb(primary).g, hexToRgb(primary).b);
+    return {
+      dark: hslToHex(c.h, c.s, Math.max(4, c.l * .85)),
+      darker: hslToHex(c.h, c.s, Math.max(2, c.l * .70))
+    };
+  }
+
+  // Tông nền tối phụ suy sinh: +5% / +9% độ sáng (khớp bảng gốc 9.8→14.5→18.6%)
+  function deriveDarkTones(darkBg) {
+    var c = rgbToHsl(hexToRgb(darkBg).r, hexToRgb(darkBg).g, hexToRgb(darkBg).b);
+    return {
+      dark2: hslToHex(c.h, c.s, Math.min(96, c.l + 5)),
+      dark3: hslToHex(c.h, c.s, Math.min(96, c.l + 9))
+    };
+  }
+
+  // Độ sáng tương đối WCAG — quyết định combo chữ trắng hay đen trên nền tối
+  function luminance(hex) {
+    var c = hexToRgb(hex);
+    var f = function (v) { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); };
+    return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b);
+  }
+  function isLightDark() { return luminance(state.darkBg) >= 0.4; }
+
+  // ---------- patch CSS ----------
+  // Combo nền tối sáng → bộ chữ đậm; nền tối tối → giữ bộ chữ trắng mặc định.
+  function patchCss(css, c) {
+    var rgb = hexToRgb(c.primary);
+    var rgbDark = hexToRgb(c.darkBg);
+    var out = css
+      .replace(/#E4570F/gi, c.primary)
+      .replace(/#C2410C/gi, c.dark)
+      .replace(/#9A3412/gi, c.darker)
+      .replace(/#F5B301/gi, c.accent)
+      .replace(/228\s*,\s*87\s*,\s*15/g, rgb.r + ', ' + rgb.g + ', ' + rgb.b)
+      // Nền tối: topbar · header bảng giá · footer · banner CTA · nút nổi…
+      .replace(/#16181C/gi, c.darkBg)
+      .replace(/#1F2329/gi, c.dark2)
+      .replace(/#2A2F36/gi, c.dark3)
+      .replace(/#33383F/gi, c.dark3)
+      .replace(/22\s*,\s*24\s*,\s*28/g, rgbDark.r + ', ' + rgbDark.g + ', ' + rgbDark.b);
+
+    if (luminance(c.darkBg) >= 0.4) {
+      // Combo nền sáng: lật toàn bộ chữ trắng trên nền tối sang tông đậm
+      var textC = '#1C1F24', mutedC = '#4A525C';
+      var t = hexToRgb(textC);
+      out = out
+        .replace(/#E8EAED/gi, textC)
+        .replace(/#9AA3AE/gi, mutedC)
+        .replace(/rgba\(255, 255, 255, 0\.65\)/g, 'rgba(' + t.r + ', ' + t.g + ', ' + t.b + ', 0.72)')
+        .replace(/rgba\(255, 255, 255, 0\.12\)/g, 'rgba(0, 0, 0, 0.14)')
+        // Chữ trắng nằm trên nền primary (không phải nền tối) — giữ trắng
+        .replace(/([;{\n\r\s])color:\s*#fff\b/g, '$1color: var(--on-dark-text, ' + textC + ')')
+        // Nút outline-light trên nền tối: viền + chữ theo tông đậm
+        .replace(/--bs-btn-color:\s*#fff/g, '--bs-btn-color: ' + textC)
+        .replace(/--bs-btn-hover-bg:\s*#fff/g, '--bs-btn-hover-bg: ' + textC)
+        .replace(/--bs-btn-hover-border-color:\s*#fff/g, '--bs-btn-hover-border-color: ' + textC)
+        // Fixup: các phần tử chữ trắng nằm trên NỀN PRIMARY / màu riêng — không lật
+        + '\n::selection { color: #fff; }'
+        + '\n.tag-min.tag-min--primary { color: #fff; }'
+        + '\n.mobile-bar .mobile-bar-cta, .mobile-bar .mobile-bar-cta i { color: #fff; }'
+        + '\n.floating-contact a { color: #fff; }'
+        + '\n.floating-contact .fc-quote { color: ' + textC + '; }';
+    }
+    return out;
+  }
+
+  function applyToFrame() {
+    var frame = document.getElementById('preview');
+    var doc = frame.contentDocument;
+    if (!doc || !doc.head) return;
+    var style = doc.getElementById('theme-override');
+    if (!style) {
+      style = doc.createElement('style');
+      style.id = 'theme-override';
+      doc.head.appendChild(style);
+    }
+    style.textContent = patchCss(cssOriginal, state);
+    syncToolAccent();
+  }
+
+  function syncToolAccent() {
+    document.getElementById('hazard').style.background =
+      'repeating-linear-gradient(-45deg, ' + state.primary + ' 0 10px, ' + state.accent + ' 10px 20px)';
+    document.documentElement.style.setProperty('--tool-accent', state.primary);
+  }
+
+  function scheduleApply() {
+    clearTimeout(applyTimer);
+    applyTimer = setTimeout(applyToFrame, 120);
+  }
+
+  // ---------- UI sync ----------
+  function syncInputs() {
+    document.getElementById('pickPrimary').value = state.primary;
+    document.getElementById('hexPrimary').value = state.primary;
+    document.getElementById('pickDark').value = state.dark;
+    document.getElementById('hexDark').value = state.dark;
+    document.getElementById('pickDarker').value = state.darker;
+    document.getElementById('hexDarker').value = state.darker;
+    document.getElementById('pickAccent').value = state.accent;
+    document.getElementById('hexAccent').value = state.accent;
+    document.getElementById('pickDarkBg').value = state.darkBg;
+    document.getElementById('hexDarkBg').value = state.darkBg;
+    document.getElementById('pickDark2').value = state.dark2;
+    document.getElementById('hexDark2').value = state.dark2;
+    document.getElementById('pickDark3').value = state.dark3;
+    document.getElementById('hexDark3').value = state.dark3;
+    renderScss();
+    renderCombo();
+    markActivePreset();
+  }
+
+  function renderCombo() {
+    var badge = document.getElementById('comboBadge');
+    var dot = badge.querySelector('.dot');
+    var txt = badge.querySelector('.combo-text');
+    if (isLightDark()) {
+      badge.style.borderColor = '#E8EAED';
+      dot.style.background = '#1C1F24';
+      txt.textContent = 'Chữ trên nền tối: ĐEN (nền sáng — tự động)';
+    } else {
+      badge.style.borderColor = '';
+      dot.style.background = '#fff';
+      txt.textContent = 'Chữ trên nền tối: TRẮNG (nền tối — tự động)';
+    }
+  }
+
+  function renderScss() {
+    var out =
+      '<span class="k">$c-primary</span>:        ' + state.primary + ';  <span class="k">// CTA chính</span>\n' +
+      '<span class="k">$c-primary-dark</span>:   ' + state.dark + ';  <span class="k">// Hover / pressed</span>\n' +
+      '<span class="k">$c-primary-darker</span>: ' + state.darker + ';  <span class="k">// Active / visited</span>\n' +
+      '<span class="k">$c-accent</span>:         ' + state.accent + ';  <span class="k">// Vạch hazard, icon nhấn</span>\n' +
+      '<span class="k">$c-dark</span>:           ' + state.darkBg + ';  <span class="k">// Nền tối: topbar, footer…</span>\n' +
+      '<span class="k">$c-dark-2</span>:         ' + state.dark2 + ';  <span class="k">// Surface tối phụ</span>\n' +
+      '<span class="k">$c-dark-3</span>:         ' + state.dark3 + ';  <span class="k">// Border trên nền tối</span>';
+    document.getElementById('scssOut').innerHTML = out;
+  }
+
+  function plainScss() {
+    return '$c-primary:        ' + state.primary + ';\n' +
+           '$c-primary-dark:   ' + state.dark + ';\n' +
+           '$c-primary-darker: ' + state.darker + ';\n' +
+           '$c-accent:         ' + state.accent + ';\n' +
+           '$c-dark:           ' + state.darkBg + ';\n' +
+           '$c-dark-2:         ' + state.dark2 + ';\n' +
+           '$c-dark-3:         ' + state.dark3 + ';\n';
+  }
+
+  function markActivePreset() {
+    document.querySelectorAll('.preset').forEach(function (p) {
+      p.classList.toggle('active', p.dataset.primary.toUpperCase() === state.primary.toUpperCase());
+    });
+  }
+
+  function setPrimary(hex, opts) {
+    state.primary = hex;
+    var shades = deriveShades(hex);
+    state.dark = shades.dark;
+    state.darker = shades.darker;
+    if (opts && opts.accent) state.accent = opts.accent;
+    if (opts && opts.darkBg) setDarkBg(opts.darkBg, true);
+    else syncInputs();
+    scheduleApply();
+  }
+
+  function setDarkBg(hex, skipSync) {
+    state.darkBg = hex;
+    var tones = deriveDarkTones(hex);
+    state.dark2 = tones.dark2;
+    state.dark3 = tones.dark3;
+    if (!skipSync) syncInputs();
+    scheduleApply();
+  }
+
+  function showStatus(msg) {
+    var el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.classList.remove('show'); }, 2200);
+  }
+
+  // ---------- gắn sự kiện ----------
+  var HEX_RE = /^#[0-9a-fA-F]{6}$/;
+  function bindColorPair(pickId, hexId, key, onChange) {
+    var pick = document.getElementById(pickId);
+    var hex = document.getElementById(hexId);
+    pick.addEventListener('input', function () { onChange(pick.value); });
+    // Áp dụng live khi gõ đủ 7 ký tự — không cần Enter/blur
+    hex.addEventListener('input', function () {
+      var v = hex.value.trim();
+      if (HEX_RE.test(v)) onChange(v.toUpperCase());
+    });
+    hex.addEventListener('change', function () {
+      var v = hex.value.trim();
+      if (HEX_RE.test(v) || /^#[0-9a-fA-F]{3}$/.test(v)) onChange(v.toUpperCase());
+      else hex.value = state[key];
+    });
+  }
+
+  bindColorPair('pickPrimary', 'hexPrimary', 'primary', function (v) { setPrimary(v); });
+  bindColorPair('pickDark', 'hexDark', 'dark', function (v) { state.dark = v; syncInputs(); scheduleApply(); });
+  bindColorPair('pickDarker', 'hexDarker', 'darker', function (v) { state.darker = v; syncInputs(); scheduleApply(); });
+  bindColorPair('pickAccent', 'hexAccent', 'accent', function (v) { state.accent = v; syncInputs(); scheduleApply(); });
+  bindColorPair('pickDarkBg', 'hexDarkBg', 'darkBg', function (v) { setDarkBg(v); });
+  bindColorPair('pickDark2', 'hexDark2', 'dark2', function (v) { state.dark2 = v; syncInputs(); scheduleApply(); });
+  bindColorPair('pickDark3', 'hexDark3', 'dark3', function (v) { state.dark3 = v; syncInputs(); scheduleApply(); });
+
+  // Presets
+  var presetWrap = document.getElementById('presets');
+  PRESETS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'preset';
+    b.style.setProperty('--sw', p.primary);
+    b.dataset.primary = p.primary;
+    b.dataset.name = p.name;
+    b.title = p.name + ' — ' + p.primary + ' · nền tối ' + p.darkBg;
+    b.addEventListener('click', function () { setPrimary(p.primary, { accent: p.accent, darkBg: p.darkBg }); });
+    presetWrap.appendChild(b);
+  });
+
+  // Đổi trang preview
+  var pagePick = document.getElementById('pagePick');
+  pagePick.addEventListener('change', function () {
+    document.getElementById('preview').src = pagePick.value;
+  });
+
+  // Iframe load xong → bơm lại CSS override
+  document.getElementById('preview').addEventListener('load', function () {
+    if (cssOriginal) applyToFrame();
+  });
+
+  // Reset
+  document.getElementById('btnReset').addEventListener('click', function () {
+    state.primary = DEFAULTS.primary; state.dark = DEFAULTS.dark;
+    state.darker = DEFAULTS.darker; state.accent = DEFAULTS.accent;
+    state.darkBg = DEFAULTS.darkBg; state.dark2 = DEFAULTS.dark2; state.dark3 = DEFAULTS.dark3;
+    syncInputs();
+    applyToFrame();
+    showStatus('Đã reset về màu mặc định');
+  });
+
+  // Copy SCSS
+  document.getElementById('btnCopy').addEventListener('click', function () {
+    var text = plainScss();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showStatus('Đã copy biến SCSS — dán vào _variables.scss');
+      }, function () { fallbackCopy(text); });
+    } else fallbackCopy(text);
+  });
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showStatus('Đã copy biến SCSS'); }
+    catch (e) { showStatus('Không copy được — copy tay khối dưới'); }
+    document.body.removeChild(ta);
+  }
+
+  // Tải main.css đã patch
+  document.getElementById('btnDownload').addEventListener('click', function () {
+    var blob = new Blob([patchCss(cssOriginal, state)], { type: 'text/css' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'main.css';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    showStatus('Đã tải main.css — chép đè assets/css/main.css');
+  });
+
+  // ---------- khởi động ----------
+  fetch('assets/css/main.css')
+    .then(function (r) { return r.text(); })
+    .then(function (text) {
+      cssOriginal = text;
+      applyToFrame();
+    });
+
+  syncInputs();
+  syncToolAccent();
+})();
+</script>
+</body>
+</html>

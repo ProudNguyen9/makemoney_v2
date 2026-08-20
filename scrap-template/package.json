@@ -1,0 +1,13 @@
+{
+  "name": "scrap-template",
+  "version": "1.0.0",
+  "description": "Frontend template bộ website thu mua phế liệu — Bootstrap 5.3, SCSS, HTML tĩnh",
+  "private": true,
+  "scripts": {
+    "build": "sass --no-source-map assets/scss/main.scss assets/css/main.css && sass --no-source-map assets/scss/admin.scss assets/css/admin.css && sass --no-source-map assets/scss/responsive.scss assets/css/responsive.css",
+    "watch": "sass --watch assets/scss/main.scss assets/css/main.css assets/scss/admin.scss assets/css/admin.css"
+  },
+  "devDependencies": {
+    "sass": "^1.77.8"
+  }
+}

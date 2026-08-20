@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thêm dự án — Quản trị</title>
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap-icons.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <!-- ADMIN SIDEBAR START -->
+  <aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+      <img src="../../assets/images/logo/logo-footer.svg" alt="Logo [TÊN CÔNG TY]" width="140" height="32">
+      <strong>Quản trị<small>[TÊN CÔNG TY]</small></strong>
+      <button class="sidebar-toggle" type="button" aria-label="Thu gọn menu quản trị">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="list-unstyled mb-0">
+        <li><a href="../dashboard.html"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+        <li><h2 class="nav-sec">Thu mua</h2></li>
+        <li>
+          <a href="../leads/index.html"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a>
+        </li>
+        <li>
+          <a href="../prices/index.html"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a>
+        </li>
+
+        <li><h2 class="nav-sec">Nội dung</h2></li>
+        <li>
+          <button class="nav-group-btn" type="button" aria-expanded="false">
+            <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="sidebar-sub list-unstyled">
+            <li><a href="../scrap/index.html">Danh sách</a></li>
+            <li><a href="../scrap/form.html">Thêm loại phế liệu</a></li>
+          </ul>
+        </li>
+        <li><a href="../services/index.html"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+        <li><a href="../locations/index.html"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+        <li><a href="../projects/index.html" class="active"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+        <li><a href="../articles/index.html"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+        <li><a href="../faq/index.html"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+        <li><h2 class="nav-sec">Website</h2></li>
+        <li><a href="../media/index.html"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
+        <li><a href="../homepage/index.html"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+        <li><a href="../menu/index.html"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+        <li><a href="../seo/index.html"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+        <li><h2 class="nav-sec">Hệ thống</h2></li>
+        <li><a href="../settings/index.html"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="../../index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+      <a href="../login.html"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+  </aside>
+  <div class="admin-overlay" aria-hidden="true"></div>
+  <!-- ADMIN SIDEBAR END -->
+
+  <!-- ADMIN MAIN + TOPBAR START -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+      <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị">
+      </form>
+
+      <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <button class="at-user" type="button" aria-label="Tài khoản quản trị">
+          <span class="at-avatar">QT</span>
+          <span class="at-name">
+            <strong>[QUẢN TRỊ VIÊN]</strong>
+            <small>Quản lý</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- ADMIN CONTENT START -->
+
+      <!-- backend: POST /admin/projects — tạo dự án mới -->
+      <div class="admin-page-head">
+        <h1>Thêm dự án <small>Ghi lại hợp đồng thu mua, tháo dỡ đã thực hiện</small></h1>
+        <div class="aph-actions">
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="../../project-detail.html" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="projectForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+        </div>
+      </div>
+
+      <form id="projectForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Thông tin dự án -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thông tin dự án</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-8">
+                    <label class="form-label-tech" for="projectName">Tên dự án<span class="required-mark">*</span></label>
+                    <input class="form-control" id="projectName" type="text" value="Tháo dỡ — thanh lý nhà xưởng 2.000m²" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label-tech" for="projectLocation">Địa điểm</label>
+                    <input class="form-control" id="projectLocation" type="text" value="Biên Hòa, Đồng Nai">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="projectType">Loại</label>
+                    <select class="form-select" id="projectType">
+                      <option value="nha-xuong" selected>Nhà xưởng</option>
+                      <option value="cong-trinh">Công trình</option>
+                      <option value="may-moc">Máy móc</option>
+                      <option value="dong">Đồng</option>
+                      <option value="sat">Sắt</option>
+                      <option value="khac">Khác</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="projectService">Dịch vụ liên quan</label>
+                    <select class="form-select" id="projectService">
+                      <option value="thu-mua-thanh-ly-nha-xuong" selected>Thu mua &amp; thanh lý nhà xưởng</option>
+                      <option value="thu-mua-phe-lieu-tan-noi">Thu mua phế liệu tận nơi</option>
+                      <option value="thu-mua-phe-lieu-doanh-nghiep">Thu mua phế liệu doanh nghiệp</option>
+                      <option value="thu-mua-phe-lieu-cong-trinh">Thu mua phế liệu công trình</option>
+                      <option value="thu-mua-may-moc-cu">Thu mua máy móc cũ</option>
+                      <option value="thu-gom-dinh-ky">Thu gom định kỳ</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="projectDate">Ngày thực hiện</label>
+                    <input class="form-control" id="projectDate" type="date" value="2026-07-22">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="projectTeaser">Mô tả ngắn</label>
+                    <textarea class="form-control" id="projectTeaser" rows="2">Tháo dỡ kèo thép, tôn, hệ điện và thu mua toàn bộ phế liệu trong 5 ngày — thanh toán một lần sau khi cân.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung</span>
+                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung dự án -->
+                    <div class="editor-placeholder">
+                      <div>
+                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
+                        <span>Rich editor — mô tả hiện trạng, khối lượng, tiến độ và kết quả hợp đồng…</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Thách thức & giải pháp -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Thách thức &amp; Giải pháp</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="projectChallenge">Thách thức</label>
+                    <textarea class="form-control" id="projectChallenge" rows="3">Xưởng đang sản xuất, chỉ có 2 ngày nghỉ cuối tuần để tháo dỡ; kèo thép liên kết với hệ thống điện 3 pha đang hoạt động.</textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="projectSolution">Giải pháp</label>
+                    <textarea class="form-control" id="projectSolution" rows="3">Tổ chức 2 đội làm việc luân phiên ngày — đêm, ngắt điện từng khu theo lịch của nhà máy, cắt và phân loại tại chỗ để rút ngắn thời gian cân.</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ảnh cover -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Ảnh cover (16:10)</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload — trả về URL ảnh gắn vào trường cover -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh lên</p>
+                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×1000</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- Thư viện ảnh dự án -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thư viện ảnh dự án</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload nhiều ảnh — trả về danh sách URL gắn vào gallery -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" multiple hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải nhiều ảnh lên</p>
+                  <p class="upload-hint">Chọn nhiều file — PNG, JPG, tối đa 20 ảnh</p>
+                </label>
+                <div class="upload-previews">
+                  <div class="upload-thumb">
+                    <img src="../../assets/images/projects/project-01-cover.svg" alt="Ảnh dự án 1" width="86" height="86" loading="lazy">
+                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 1"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                  </div>
+                  <div class="upload-thumb">
+                    <img src="../../assets/images/projects/project-02-cover.svg" alt="Ảnh dự án 2" width="86" height="86" loading="lazy">
+                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 2"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                  </div>
+                  <div class="upload-thumb">
+                    <img src="../../assets/images/projects/project-03-cover.svg" alt="Ảnh dự án 3" width="86" height="86" loading="lazy">
+                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 3"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cấu hình -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Cấu hình</h2>
+              </div>
+              <div class="panel-body">
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="projectFeatured" checked>
+                  <label class="form-check-label" for="projectFeatured">Nổi bật</label>
+                </div>
+                <label class="form-label-tech" for="projectStatus">Trạng thái</label>
+                <select class="form-select" id="projectStatus">
+                  <option value="published" selected>Đang hiển thị</option>
+                  <option value="hidden">Ẩn</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="projectSeoTitle">SEO Title</label>
+                <input class="form-control" id="projectSeoTitle" type="text" value="Tháo dỡ nhà xưởng 2.000m² tại Biên Hòa — [TÊN CÔNG TY]">
+                <p class="small text-muted mb-3 mt-1">52/70 ký tự</p>
+                <label class="form-label-tech" for="projectSeoMeta">Meta description</label>
+                <textarea class="form-control" id="projectSeoMeta" rows="3">Hợp đồng tháo dỡ và thanh lý nhà xưởng 2.000m² tại Biên Hòa: hoàn tất trong 5 ngày, thu mua toàn bộ kèo thép, tôn và hệ điện.</textarea>
+                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="projectSeoIndex" checked>
+                  <label class="form-check-label" for="projectSeoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="projectSeoFollow" checked>
+                  <label class="form-check-label" for="projectSeoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- ADMIN CONTENT END -->
+    </div>
+  </div>
+  <!-- ADMIN MAIN END -->
+
+</div>
+<script src="../../assets/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/admin.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,23 @@
+@model IReadOnlyList<ScrapPrice>
+<section class="section-block">
+    <h2>Bang gia tham khao</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Gia</th>
+                <th>Don vi</th>
+                <th>Ngay ap dung</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var price in Model)
+            {
+                <tr>
+                    <td>@(price.PriceLabel ?? price.PriceValue?.ToString("N0") ?? "Lien he")</td>
+                    <td>@price.Unit</td>
+                    <td>@price.EffectiveDate.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

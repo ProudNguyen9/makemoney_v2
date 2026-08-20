@@ -1,0 +1,437 @@
+@{
+    ViewData["Title"] = "Danh mục phế liệu";
+}
+
+<main>
+
+  <!-- ============================ SECTION SCRAP HERO START ============================ -->
+  <section class="scrap-hero" aria-label="Thu mua phế liệu đồng">
+    <div class="container">
+      <ol class="breadcrumb-line">
+        <li><a href="/">Trang chủ</a></li>
+        <li><a href="/phe-lieu">Phế liệu thu mua</a></li>
+        <li aria-current="page">Phế liệu đồng</li>
+      </ol>
+      <div class="scrap-hero-grid">
+        <div class="scrap-hero-info">
+          <span class="tech-label">Nhóm phế liệu</span>
+          <h1>Thu mua phế liệu đồng giá cao</h1>
+          <p class="lead-2">
+            Đồng là nhóm kim loại phế liệu có giá cao nhất thị trường. Chúng tôi thu mua mọi dạng đồng —
+            từ đồng đỏ sạch, dây điện, cáp đến đồng tháo từ máy lạnh — và trả giá theo độ sạch thực tế của lô,
+            không ép giá lúc đến nơi.
+          </p>
+          <div class="price-highlight">
+            <span class="ph-label">Giá thu mua hôm nay</span>
+            <span class="ph-value">Đồng đỏ sạch: <strong>75.000 – 95.000đ/kg</strong></span>
+            <p class="ph-note">Cập nhật [DD/MM/YYYY] — giá theo độ sạch thực tế, chốt sau khi xem hình hoặc khảo sát.</p>
+          </div>
+          <div class="d-flex flex-wrap gap-3">
+            <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+              <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình báo giá
+            </button>
+            <a class="btn btn-outline-dark btn-lg" href="tel:[HOTLINE]">
+              <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+            </a>
+          </div>
+        </div>
+        <div class="scrap-hero-media">
+          <img src="~/assets/images/scrap/scrap-copper.svg" alt="Phế liệu đồng đỏ và dây đồng đã phân loại" width="1200" height="750" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION SCRAP HERO END ============================ -->
+
+  <!-- ============================ SECTION TYPES START ============================ -->
+  <section class="section" aria-labelledby="types-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Các loại đồng</span>
+        <h2 class="sec-title" id="types-title">Sáu dạng đồng chúng tôi đang nhận</h2>
+        <p class="sec-desc">
+          Cùng là "phế liệu đồng" nhưng mỗi dạng chênh nhau vài chục nghìn mỗi ký. So hàng của bạn
+          với sáu phân loại dưới đây để ước giá trước khi gọi.
+        </p>
+      </div>
+
+      <div class="type-legend reveal">
+        <div class="type-row">
+          <span class="type-swatch" style="background:#B87333"></span>
+          <span class="type-body">
+            <strong>Đồng đỏ</strong>
+            <small>Đồng nguyên chất, màu đỏ hồng — dạng dây, cây, cuộn, miếng. Nhóm có giá cao nhất.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 75.000đ/kg</span><small>hàng sạch</small></span>
+        </div>
+        <div class="type-row">
+          <span class="type-swatch" style="background:#DAA520"></span>
+          <span class="type-body">
+            <strong>Đồng vàng</strong>
+            <small>Hợp kim đồng – kẽm (thau), màu vàng: van, khóa, phụ tùng, chân máy gia công.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 55.000đ/kg</span><small>theo độ sạch</small></span>
+        </div>
+        <div class="type-row">
+          <span class="type-swatch" style="background:#C47F3D"></span>
+          <span class="type-body">
+            <strong>Đồng cáp</strong>
+            <small>Lõi cáp đơn sợi hoặc đa sợi đã bóc vỏ ngoài, độ dẫn sạch cao.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 50.000đ/kg</span><small>đã bóc vỏ</small></span>
+        </div>
+        <div class="type-row">
+          <span class="type-swatch" style="background:#A0522D"></span>
+          <span class="type-body">
+            <strong>Dây điện bọc nhựa</strong>
+            <small>Dây điện nguyên vỏ, đủ màu — giá tính theo tỷ lệ lõi đồng bên trong.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 30.000đ/kg</span><small>cân cả lô</small></span>
+        </div>
+        <div class="type-row">
+          <span class="type-swatch" style="background:#B87333"></span>
+          <span class="type-body">
+            <strong>Đồng máy lạnh</strong>
+            <small>Ống đồng, tụ trao đổi nhiệt tháo từ máy lạnh, tủ đông — thường còn dáng ống dài.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 60.000đ/kg</span><small>ống sạch</small></span>
+        </div>
+        <div class="type-row">
+          <span class="type-swatch" style="background:#CD7F32"></span>
+          <span class="type-body">
+            <strong>Đồng milk</strong>
+            <small>Hợp kim đồng – niken màu trắng ngà, gặp nhiều ở đồng xu, vòi, đồ gia dụng cao cấp.</small>
+          </span>
+          <span class="type-price"><span class="price-value">từ 45.000đ/kg</span><small>tách riêng</small></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION TYPES END ============================ -->
+
+  <!-- ============================ SECTION PRICE BOARD START ============================ -->
+  <section class="section section--surface" aria-labelledby="price-title">
+    <div class="container">
+      <div class="price-board">
+        <div class="price-board-head reveal">
+          <div class="sec-head mb-0">
+            <span class="sec-label">Bảng giá đồng</span>
+            <h2 class="sec-title" id="price-title">Giá thu mua đồng hôm nay</h2>
+          </div>
+          <span class="price-updated">
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+            Cập nhật <strong>[DD/MM/YYYY]</strong> — chạy theo giá đồng thế giới
+          </span>
+        </div>
+
+        <div class="table-scroll reveal">
+          <table class="table table-price align-middle">
+            <caption class="visually-hidden">Bảng giá thu mua phế liệu đồng theo từng phân loại, đơn vị tính theo kg</caption>
+            <thead>
+              <tr>
+                <th scope="col">Loại</th>
+                <th scope="col">Phân loại</th>
+                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
+                <th scope="col" class="text-end">Xu hướng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#B87333"></span>Đồng đỏ</td>
+                <td class="mat-type">Sạch, không dính tạp</td>
+                <td class="text-end"><span class="price-value">75.000 – 95.000</span></td>
+                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#DAA520"></span>Đồng vàng</td>
+                <td class="mat-type">Thau / hợp kim đồng kẽm</td>
+                <td class="text-end"><span class="price-value">55.000 – 65.000</span></td>
+                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#C47F3D"></span>Đồng cáp</td>
+                <td class="mat-type">Đã bóc vỏ, lõi sạch</td>
+                <td class="text-end"><span class="price-value">50.000 – 65.000</span></td>
+                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#A0522D"></span>Dây điện</td>
+                <td class="mat-type">Còn nguyên vỏ nhựa</td>
+                <td class="text-end"><span class="price-value">30.000 – 50.000</span></td>
+                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#B87333"></span>Đồng máy lạnh</td>
+                <td class="mat-type">Ống đồng, tụ trao đổi nhiệt</td>
+                <td class="text-end"><span class="price-value">60.000 – 75.000</span></td>
+                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#CD7F32"></span>Đồng milk</td>
+                <td class="mat-type">Hợp kim đồng – nikel</td>
+                <td class="text-end"><span class="price-value">45.000 – 55.000</span></td>
+                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#E0B080"></span>Đồng super blank</td>
+                <td class="mat-type">Tôn đồng phẳng, nguyên tem</td>
+                <td class="text-end"><span class="price-value">80.000 – 90.000</span></td>
+                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
+              </tr>
+              <tr>
+                <td class="mat-name"><span class="mat-swatch" style="background:#8B5A2B"></span>Đồng cháy</td>
+                <td class="mat-type">Đốt lấy lõi, bề mặt xỉn</td>
+                <td class="text-end"><span class="price-value">50.000 – 60.000</span></td>
+                <td class="text-end"><span class="price-trend down"><i class="bi bi-graph-down-arrow" aria-hidden="true"></i>-2%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-3 mt-4 reveal">
+          <button class="btn btn-primary" type="button" data-quote-open>
+            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình chốt giá đồng
+          </button>
+          <a class="link-arrow" href="/bang-gia">Bảng giá tất cả loại phế liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION PRICE BOARD END ============================ -->
+
+  <!-- ============================ SECTION WHY START ============================ -->
+  <section class="section" aria-labelledby="why-title">
+    <div class="container">
+      <div class="row row-editorial">
+        <div class="col-lg-4 reveal">
+          <div class="sec-head">
+            <span class="sec-label">Lý do chọn chúng tôi</span>
+            <h2 class="sec-title" id="why-title">Bán đồng cho chúng tôi, bạn được gì?</h2>
+            <p class="sec-desc">Bốn điều diễn ra trong mọi lô đồng, từ nửa ký dây điện đến vài tấn đồng tháo nhà máy.</p>
+          </div>
+          <a class="btn btn-outline-dark" href="tel:[HOTLINE]"><i class="bi bi-telephone-fill" aria-hidden="true"></i>Gọi hỏi giá ngay</a>
+        </div>
+        <div class="col-lg-8">
+          <div class="why-list reveal">
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">01</span>
+              <div class="why-body">
+                <h3>Giá theo bảng niêm yết hàng ngày</h3>
+                <p>Bảng giá đồng cập nhật mỗi sáng theo giá thế giới. Báo đúng mức nhận — không nói một đằng, khi đến nơi lại hứa một nẻo.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">02</span>
+              <div class="why-body">
+                <h3>Cân điện tử chuẩn đo lường</h3>
+                <p>Cân nhỏ tại chỗ cho lô vài chục ký, cân xe tải cho lô nặng tấn — có phiếu cân từng lô để bạn đối chiếu.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">03</span>
+              <div class="why-body">
+                <h3>Thu gom tận nơi có xe tải</h3>
+                <p>Xe và nhân công đến nhà xưởng, công trình dọn toàn bộ lô đồng — kể cả thứ đang nằm lẫn trong máy móc, tủ điện.</p>
+              </div>
+            </div>
+            <div class="why-item">
+              <span class="why-no" aria-hidden="true">04</span>
+              <div class="why-body">
+                <h3>Thanh toán ngay sau cân</h3>
+                <p>Tiền mặt tại chỗ hoặc chuyển khoản trong ngày. Doanh nghiệp cần chứng từ thì xuất hóa đơn mua phế liệu đầy đủ.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION WHY END ============================ -->
+
+  <!-- ============================ SECTION PROCESS START ============================ -->
+  <section class="section section--surface" aria-labelledby="process-title">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-label">Quy trình</span>
+        <h2 class="sec-title" id="process-title">Thu mua phế liệu 6 bước — rõ ràng từng công đoạn</h2>
+      </div>
+      <ol class="process-steps list-unstyled reveal">
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">01</span>
+          <h3>Tiếp nhận</h3>
+          <p>Gọi điện, Zalo hoặc gửi hình qua form báo giá.</p>
+        </li>
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">02</span>
+          <h3>Báo giá</h3>
+          <p>Báo giá tham khảo nhanh qua hình ảnh, điện thoại.</p>
+        </li>
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">03</span>
+          <h3>Khảo sát</h3>
+          <p>Đến tận nơi xem hàng, đo lượng với lô lớn.</p>
+        </li>
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">04</span>
+          <h3>Chốt giá</h3>
+          <p>Thống nhất giá cuối cùng theo thực tế từng loại.</p>
+        </li>
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">05</span>
+          <h3>Thu gom</h3>
+          <p>Xe và nhân công phân loại, vận chuyển khỏi mặt bằng.</p>
+        </li>
+        <li class="step-item">
+          <span class="step-no" aria-hidden="true">06</span>
+          <h3>Thanh toán</h3>
+          <p>Cân minh bạch, trả tiền ngay tại chỗ.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+  <!-- ============================ SECTION PROCESS END ============================ -->
+
+  <!-- ============================ SECTION SHOWCASE START ============================ -->
+  <section class="section section--paper section--bordered" aria-labelledby="showcase-title">
+    <div class="container">
+      <div class="sec-head sec-head--row reveal">
+        <div>
+          <span class="sec-label">Dự án liên quan</span>
+          <h2 class="sec-title" id="showcase-title">Những lô đồng chúng tôi đã lấy</h2>
+        </div>
+        <a class="link-arrow" href="/du-an">Xem tất cả dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
+
+      <div class="showcase-grid reveal">
+        <a class="show-item show-main" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+          <img src="~/assets/images/projects/project-05-cover.svg" alt="Thu mua lô 3 tấn đồng đỏ từ nhà máy tại Long Thành" width="1280" height="800" loading="lazy">
+          <span class="show-overlay"></span>
+          <span class="show-info">
+            <span class="show-cat">Nhà máy</span>
+            <h3>Thu mua lô 3 tấn đồng đỏ từ nhà máy</h3>
+            <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Long Thành, Đồng Nai</span>
+            <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+          </span>
+        </a>
+        <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+          <img src="~/assets/images/projects/project-03-cover.svg" alt="Mua lại dây chuyền máy móc sản xuất tại Dĩ An" width="1280" height="800" loading="lazy">
+          <span class="show-overlay"></span>
+          <span class="show-info">
+            <span class="show-cat">Máy móc</span>
+            <h3>Mua dây chuyền sản xuất đã qua sử dụng</h3>
+            <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Dĩ An, Bình Dương</span>
+            <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION SHOWCASE END ============================ -->
+
+  <!-- ============================ SECTION FAQ START ============================ -->
+  <section class="section section--surface" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="row row-editorial">
+        <div class="col-lg-4 reveal">
+          <div class="sec-head">
+            <span class="sec-label">Câu hỏi thường gặp</span>
+            <h2 class="sec-title" id="faq-title">Về phế liệu đồng — hỏi trước khi bán</h2>
+            <p class="sec-desc">
+              Phân loại chưa rõ, hàng dính tạp hay lô quá nhỏ — bốn câu trả lời dưới đây giải quyết gần hết.
+              Còn vướng thì chat Zalo <a href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">[ZALO]</a> gửi hình trực tiếp.
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <!-- FAQ LIST START -->
+          <div class="accordion faq-accordion reveal" id="faqCopper">
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCopper1" aria-expanded="true" aria-controls="faqCopper1">
+                  Phân biệt đồng đỏ và đồng vàng như thế nào?
+                </button>
+              </h3>
+              <div id="faqCopper1" class="accordion-collapse collapse show" data-bs-parent="#faqCopper">
+                <div class="accordion-body">
+                  Nhìn màu là nhanh nhất: đồng đỏ ánh đỏ hồng, đồng vàng (thau) vàng đậm như vàng cũ. Cách khác là cạo nhẹ
+                  một góc — đồng đỏ cho màu đỏ đồng đều, thau vẫn giữ vàng. Hai loại giá chênh nhau cả chục nghìn mỗi ký,
+                  nên nếu lô trộn lẫn, chúng tôi cân tách riêng từng loại để bạn không bị thiệt.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCopper2" aria-expanded="false" aria-controls="faqCopper2">
+                  Dây điện còn nguyên vỏ nhựa thì tính giá ra sao?
+                </button>
+              </h3>
+              <div id="faqCopper2" class="accordion-collapse collapse" data-bs-parent="#faqCopper">
+                <div class="accordion-body">
+                  Chúng tôi cân cả lô rồi trừ theo tỷ lệ lõi đồng ước tính của từng loại dây — dây lõi to, vỏ mỏng giá cao hơn
+                  dây lõi nhỏ. Nếu bạn có thời gian bóc vỏ sẵn, đồng ra thành "cáp bóc" thì giá tăng đáng kể. Không chắc loại dây
+                  mình có nên bóc không thì chụp hình gửi Zalo, chúng tôi tính cho cả hai phương án.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCopper3" aria-expanded="false" aria-controls="faqCopper3">
+                  Đồng bị dính chì, thiếc thì xử lý thế nào?
+                </button>
+              </h3>
+              <div id="faqCopper3" class="accordion-collapse collapse" data-bs-parent="#faqCopper">
+                <div class="accordion-body">
+                  Vẫn mua được, chỉ giảm giá theo tỷ lệ tạp dính trên lô — đầu mối hàn chì, mối hàn thiếc trên dây hoặc miếng đồng.
+                  Nếu tách được phần sạch ra riêng, cứ để riêng khi gom hộp, phần sạch vẫn nhận giá cao. Gửi hình gần các mối hàn,
+                  chúng tôi ước phần trăm trừ trước khi lên hàng.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCopper4" aria-expanded="false" aria-controls="faqCopper4">
+                  Chỉ có dưới 50kg đồng, có gọi được không?
+                </button>
+              </h3>
+              <div id="faqCopper4" class="accordion-collapse collapse" data-bs-parent="#faqCopper">
+                <div class="accordion-body">
+                  Gọi được. Mang đến kho là cân bán lấy tiền ngay trong ngày. Còn nếu muốn được lấy tận nơi mà ở gần trục
+                  đường chính, báo trước — nhiều khi xe đi tuyến đó ghé lấy luôn, không tính phí.
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FAQ LIST END -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION FAQ END ============================ -->
+
+  <!-- ============================ SECTION FINAL CTA START ============================ -->
+  <section class="cta-final" aria-labelledby="cta-title">
+    <div class="cta-final-bg" aria-hidden="true">
+      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
+    </div>
+    <div class="container">
+      <div class="cta-final-inner">
+        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
+        <h2 id="cta-title">Bạn đang có phế liệu cần thanh lý?</h2>
+        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
+        <div class="cta-actions">
+          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
+          </button>
+          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
+          </a>
+          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
+            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ============================ SECTION FINAL CTA END ============================ -->
+
+</main>

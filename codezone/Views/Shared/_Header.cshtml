@@ -1,0 +1,155 @@
+<!-- ============================================================================
+     PARTIAL: TopBar + Header + Nav + Offcanvas mobile
+     Dùng chung mọi trang public. Convert sang Razor: Views/Shared/_Header.cshtml
+     Thay thế: [TÊN CÔNG TY], [HOTLINE], [EMAIL], [ZALO]
+     ============================================================================ -->
+
+<!-- TOPBAR START -->
+<div class="topbar d-none d-md-block">
+  <div class="container">
+    <div class="topbar-inner">
+      <span class="topbar-note">
+        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+        Thu mua phế liệu tận nơi tại Đồng Nai, TP.HCM, Bình Dương…
+      </span>
+      <div class="topbar-meta">
+        <a class="topbar-mail" href="mailto:[EMAIL]"><i class="bi bi-envelope-fill" aria-hidden="true"></i>[EMAIL]</a>
+        <span class="topbar-sep topbar-sep--hours" aria-hidden="true"></span>
+        <span class="topbar-hours"><i class="bi bi-clock-fill" aria-hidden="true"></i>T2–CN: [GIỜ LÀM VIỆC]</span>
+        <span class="topbar-sep" aria-hidden="true"></span>
+        <a href="tel:[HOTLINE]"><i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TOPBAR END -->
+
+<!-- HEADER START -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Trang chủ [TÊN CÔNG TY]">
+        <img class="brand-logo" src="~/assets/images/logo/logo.svg" alt="Logo [TÊN CÔNG TY]" width="186" height="46">
+      </a>
+
+      <!-- DESKTOP NAV START -->
+      <nav aria-label="Điều hướng chính">
+        <ul class="nav-main list-unstyled mb-0">
+          <li><a class="nav-link" href="/">Trang chủ</a></li>
+
+          <li class="has-drop">
+            <a class="nav-link" href="/gioi-thieu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Giới thiệu</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/gioi-thieu">Về chúng tôi</a></li>
+              <li><a class="dropdown-item" href="/nang-luc">Năng lực</a></li>
+              <li><a class="dropdown-item" href="/du-an">Dự án</a></li>
+            </ul>
+          </li>
+
+          <li class="has-drop">
+            <a class="nav-link" href="/phe-lieu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Phế liệu thu mua</a>
+            <ul class="dropdown-menu">
+              <li><h2 class="dropdown-header">Theo nhóm chất liệu</h2></li>
+              <li><a class="dropdown-item" href="/phe-lieu/danh-muc">Đồng <span class="drop-count">6 loại</span></a></li>
+              <li><a class="dropdown-item" href="/phe-lieu/danh-muc">Sắt thép <span class="drop-count">4 loại</span></a></li>
+              <li><a class="dropdown-item" href="/phe-lieu/danh-muc">Nhôm <span class="drop-count">3 loại</span></a></li>
+              <li><a class="dropdown-item" href="/phe-lieu/danh-muc">Inox <span class="drop-count">3 loại</span></a></li>
+              <li><a class="dropdown-item" href="/phe-lieu/danh-muc">Điện tử — máy móc <span class="drop-count">5 loại</span></a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item dropdown-item--all" href="/phe-lieu">Xem tất cả loại phế liệu</a></li>
+            </ul>
+          </li>
+
+          <li><a class="nav-link" href="/dich-vu">Dịch vụ</a></li>
+          <li><a class="nav-link" href="/bang-gia">Bảng giá</a></li>
+          <li><a class="nav-link" href="/khu-vuc">Khu vực</a></li>
+          <li><a class="nav-link" href="/tin-tuc">Tin tức</a></li>
+          <li><a class="nav-link" href="/lien-he">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <!-- DESKTOP NAV END -->
+
+      <div class="header-hotline d-none d-xxl-flex">
+        <a href="tel:[HOTLINE]">
+          <span class="hl-ring"><i class="bi bi-telephone-fill" aria-hidden="true"></i></span>
+          <span class="hl-text">
+            <small>Hotline báo giá</small>
+            <strong>[HOTLINE]</strong>
+          </span>
+        </a>
+      </div>
+
+      <button class="header-cta btn btn-primary d-none d-lg-inline-flex" data-quote-open type="button">
+        <i class="bi bi-camera-fill" aria-hidden="true"></i>Nhận báo giá
+      </button>
+
+      <button class="header-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"
+              aria-controls="mobileMenu" aria-expanded="false" aria-label="Mở menu">
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+<!-- HEADER END -->
+
+<!-- OFFCANVAS MOBILE MENU START -->
+<div class="offcanvas offcanvas-start mobile-menu" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header mobile-menu-head p-0">
+    <span class="d-inline-flex align-items-center gap-2" id="mobileMenuLabel">
+      <img class="brand-logo" src="~/assets/images/logo/logo.svg" alt="Logo [TÊN CÔNG TY]" width="154" height="38">
+    </span>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng menu"></button>
+  </div>
+
+  <div class="offcanvas-body mobile-menu-body">
+    <nav aria-label="Menu di động">
+      <ul class="mobile-nav">
+        <li><a class="mobile-link" href="/">Trang chủ</a></li>
+
+        <li>
+          <button class="mobile-link" type="button" data-sub aria-expanded="false">
+            Giới thiệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="mobile-sub">
+            <li><a href="/gioi-thieu">Về chúng tôi</a></li>
+            <li><a href="/nang-luc">Năng lực</a></li>
+            <li><a href="/du-an">Dự án</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <button class="mobile-link" type="button" data-sub aria-expanded="false">
+            Phế liệu thu mua <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+          </button>
+          <ul class="mobile-sub">
+            <li><a href="/phe-lieu/danh-muc">Đồng</a></li>
+            <li><a href="/phe-lieu/danh-muc">Sắt thép</a></li>
+            <li><a href="/phe-lieu/danh-muc">Nhôm</a></li>
+            <li><a href="/phe-lieu/danh-muc">Inox</a></li>
+            <li><a href="/phe-lieu">Xem tất cả</a></li>
+          </ul>
+        </li>
+
+        <li><a class="mobile-link" href="/dich-vu">Dịch vụ</a></li>
+        <li><a class="mobile-link" href="/bang-gia">Bảng giá</a></li>
+        <li><a class="mobile-link" href="/khu-vuc">Khu vực</a></li>
+        <li><a class="mobile-link" href="/tin-tuc">Tin tức</a></li>
+        <li><a class="mobile-link" href="/lien-he">Liên hệ</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="mobile-menu-foot">
+    <a class="mm-hotline" href="tel:[HOTLINE]">
+      <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+      <span>
+        <small>Gọi báo giá ngay</small>
+        <strong>[HOTLINE]</strong>
+      </span>
+    </a>
+    <button class="btn btn-primary w-100" type="button" data-quote-open data-bs-dismiss="offcanvas">
+      <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình — nhận báo giá
+    </button>
+  </div>
+</div>
+<!-- OFFCANVAS MOBILE MENU END -->
