@@ -1,0 +1,27 @@
+@model codezone.ViewModels.Shared.PageHeroViewModel
+
+<section class="page-hero" aria-labelledby="@Model.TitleId">
+  <div class="page-hero-bg" aria-hidden="true">
+    <img src="@Url.Content(Model.BackgroundImage)" alt="" width="1600" height="900" fetchpriority="high">
+  </div>
+  <div class="container">
+    <div class="page-hero-inner">
+      <span class="tech-label">@Model.Label</span>
+      <h1 id="@Model.TitleId">@Model.Title</h1>
+      <p class="page-hero-desc">@Model.Description</p>
+      <ol class="breadcrumb-line">
+        @foreach (var item in Model.BreadcrumbItems)
+        {
+          if (string.IsNullOrWhiteSpace(item.Url))
+          {
+            <li aria-current="page">@item.Text</li>
+          }
+          else
+          {
+            <li><a href="@item.Url">@item.Text</a></li>
+          }
+        }
+      </ol>
+    </div>
+  </div>
+</section>

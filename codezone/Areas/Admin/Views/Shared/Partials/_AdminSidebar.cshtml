@@ -1,0 +1,59 @@
+@{
+    var section = ViewData["AdminSection"]?.ToString() ?? string.Empty;
+    var subSection = ViewData["AdminSubSection"]?.ToString() ?? string.Empty;
+
+    string Active(string name) => string.Equals(section, name, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+    string Open(string name) => string.Equals(section, name, StringComparison.OrdinalIgnoreCase) ? "open" : string.Empty;
+    string SubActive(string name) => string.Equals(subSection, name, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+}
+
+<aside class="admin-sidebar" aria-label="Menu quản trị">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-main">
+            <img src="/assets/images/imported/brand/logo-footer.png" alt="Logo Phế Liệu Thành Trung" width="140" height="32" />
+            <strong>Quản trị<small>Phế Liệu Thành Trung</small></strong>
+        </div>
+        <button class="sidebar-collapse-toggle" type="button" aria-label="Thu gọn menu quản trị">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul class="list-unstyled mb-0">
+            <li><a class="@(Active("dashboard"))" href="/admin"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+
+            <li><h2 class="nav-sec">Thu mua</h2></li>
+            <li><a class="@(Active("leads"))" href="/admin/leads"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a></li>
+            <li><a class="@(Active("prices"))" href="/admin/prices"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a></li>
+
+            <li><h2 class="nav-sec">Nội dung</h2></li>
+            <li class="@(Open("scrap"))">
+                <button class="nav-group-btn" type="button" aria-expanded="@(section == "scrap" ? "true" : "false")">
+                    <i class="bi bi-recycle" aria-hidden="true"></i>Loại phế liệu <i class="bi bi-chevron-down mi-caret" aria-hidden="true"></i>
+                </button>
+                <ul class="sidebar-sub list-unstyled">
+                    <li><a class="@(SubActive("index"))" href="/admin/scrap">Danh sách</a></li>
+                    <li><a class="@(SubActive("form"))" href="/admin/scrap/form">Thêm loại phế liệu</a></li>
+                </ul>
+            </li>
+            <li><a class="@(Active("services"))" href="/admin/services"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+            <li><a class="@(Active("locations"))" href="/admin/locations"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+            <li><a class="@(Active("projects"))" href="/admin/projects"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
+            <li><a class="@(Active("articles"))" href="/admin/articles"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
+            <li><a class="@(Active("faq"))" href="/admin/faq"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+
+            <li><h2 class="nav-sec">Website</h2></li>
+            <li><a class="@(Active("homepage"))" href="/admin/homepage"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
+            <li><a class="@(Active("menu"))" href="/admin/menu"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+            <li><a class="@(Active("seo"))" href="/admin/seo"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
+
+            <li><h2 class="nav-sec">Hệ thống</h2></li>
+            <li><a class="@(Active("settings"))" href="/admin/settings"><i class="bi bi-gear-fill" aria-hidden="true"></i>Cài đặt</a></li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-foot">
+        <a href="/" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
+        <a href="/admin/login"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+    </div>
+</aside>

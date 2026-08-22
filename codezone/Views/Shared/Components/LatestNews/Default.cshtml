@@ -2,7 +2,7 @@
 <section class="section-block">
     <div class="section-title">
         <h2>Tin moi</h2>
-        <a asp-controller="News" asp-action="Index">Xem tin tuc</a>
+        <a asp-area="" asp-controller="News" asp-action="Index">Xem tin tuc</a>
     </div>
     <div class="card-grid">
         @foreach (var post in Model)
@@ -11,7 +11,7 @@
                 <img src="@AssetHelper.NormalizePath(post.CoverImage)" alt="@post.Title" />
                 <h3>@post.Title</h3>
                 <p>@post.Excerpt</p>
-                <a asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug">Doc tiep</a>
+                <a asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug">Doc tiep</a>
             </article>
         }
     </div>

@@ -11,8 +11,11 @@ public static class ApplicationBuilderExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseStaticFiles();
         app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<ScrapWebsite.Middleware.PublicHtmlDataMiddleware>();
 
         return app;
     }

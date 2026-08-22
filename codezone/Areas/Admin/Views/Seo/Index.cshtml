@@ -1,0 +1,87 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminSeoListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "SEO";
+    ViewData["AdminSection"] = "seo";
+    ViewData["AdminSubSection"] = "";
+}
+
+<div class="admin-page-head">
+  <h1>SEO <small>Cấu hình SEO đọc từ database</small></h1>
+  <div class="aph-actions">
+    <button class="btn btn-primary" type="button" disabled><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+  </div>
+</div>
+
+<div class="admin-panel seo-pages-panel">
+  <div class="panel-head">
+    <h2>SEO theo trang/entity</h2>
+    <div class="panel-head-actions"><span class="small text-muted">@Model.Items.Count mục đang hiển thị</span></div>
+  </div>
+  <div class="table-admin-wrap seo-pages-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Route</th>
+          <th scope="col">Entity</th>
+          <th scope="col">SEO Title</th>
+          <th scope="col">Index</th>
+          <th scope="col">Follow</th>
+          <th scope="col">Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var seo in Model.Items)
+      {
+        <tr>
+          <td><strong>@(string.IsNullOrWhiteSpace(seo.RoutePath) ? "(entity)" : seo.RoutePath)</strong><br><small class="text-muted">@seo.MetaDescription</small></td>
+          <td>@seo.EntityType @(seo.EntityId.HasValue ? $"#{seo.EntityId}" : "")</td>
+          <td><input class="form-control form-control-sm" type="text" value="@seo.SeoTitle" aria-label="SEO title @seo.RoutePath" disabled></td>
+          <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked="@seo.RobotsIndex" disabled></div></td>
+          <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked="@seo.RobotsFollow" disabled></div></td>
+          <td><span class="badge-status st-published">@seo.Status</span></td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-foot">
+    <span class="small text-muted">Read-only phase: chỉnh SEO sẽ mở ở phase CRUD sau.</span>
+  </div>
+</div>
+
+<div class="seo-meta-grid">
+  <div class="admin-panel seo-compact-panel">
+    <div class="panel-head"><h2>Cấu hình toàn site</h2></div>
+    <div class="panel-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label-tech" for="seoSiteTitle">Site title</label>
+          <input class="form-control" id="seoSiteTitle" type="text" value="@Model.SiteTitle" disabled>
+        </div>
+        <div class="col-12">
+          <label class="form-label-tech" for="seoMetaDefault">Meta description mặc định</label>
+          <textarea class="form-control" id="seoMetaDefault" rows="2" disabled>@Model.DefaultDescription</textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label-tech" for="seoOgDefault">Ảnh OG mặc định</label>
+          <input class="form-control" id="seoOgDefault" type="text" value="@Model.DefaultOgImage" disabled>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-panel mb-0">
+    <div class="panel-head"><h2>Sitemap &amp; Redirect</h2></div>
+    <div class="panel-body">
+      <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+        <p class="mb-0">Sitemap entries<small class="d-block text-muted">Sinh từ dữ liệu public đã có</small></p>
+        <strong>@Model.SitemapCount</strong>
+      </div>
+      <div class="d-flex justify-content-between align-items-center gap-2 py-2">
+        <p class="mb-0">Redirects<small class="d-block text-muted">Chỉ seed khi có path cũ rõ ràng</small></p>
+        <strong>@Model.RedirectCount</strong>
+      </div>
+    </div>
+  </div>
+</div>

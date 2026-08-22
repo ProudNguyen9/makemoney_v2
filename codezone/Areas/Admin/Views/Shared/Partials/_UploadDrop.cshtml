@@ -1,0 +1,8 @@
+@model codezone.Areas.Admin.ViewModels.UploadDropViewModel
+
+<label class="upload-drop@(Model.Compact ? " upload-drop--compact" : string.Empty)">
+    <input name="@Model.InputName" type="file" accept="image/*" multiple="@Model.Multiple" hidden>
+    <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+    <p class="upload-title">@Model.Label</p>
+    <p class="upload-hint">@Model.Hint</p>
+</label>

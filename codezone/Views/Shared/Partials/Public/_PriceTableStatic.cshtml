@@ -1,0 +1,31 @@
+@model codezone.ViewModels.Shared.PriceTableStaticViewModel
+
+<div class="price-board">
+  <div class="price-board-head">
+    <h3>@Model.Title</h3>
+    <span>@Model.UpdatedText</span>
+  </div>
+  <div class="table-responsive">
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th>Loại phế liệu</th>
+          <th>Đơn vị</th>
+          <th>Giá tham khảo</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var row in Model.Rows)
+        {
+          <tr>
+            <td>@row.Material</td>
+            <td>@row.Unit</td>
+            <td><strong>@row.Price</strong></td>
+            <td>@row.Note</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,14 +1,12 @@
-using ScrapWebsite.Models;
+using ScrapWebsite.ViewModels.Public;
 
 namespace ScrapWebsite.ViewModels;
 
 public class ScrapDetailViewModel
 {
-    public SharedSeoViewModel Seo { get; set; } = new();
+    public SeoDto Seo { get; set; } = new("Chi tiet phe lieu", "Chi tiet mat hang phe lieu.");
 
-    public ScrapItem Item { get; set; } = new();
+    public ScrapDetailDto Item { get; set; } = new(0, string.Empty, string.Empty, "Phế liệu", null, null, null, "Liên hệ báo giá", "kg", []);
 
-    public IReadOnlyList<ScrapPrice> Prices { get; set; } = [];
-
-    public IReadOnlyList<ScrapItem> RelatedItems { get; set; } = [];
+    public IReadOnlyList<ScrapCardDto> RelatedItems { get; set; } = [];
 }

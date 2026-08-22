@@ -14,8 +14,23 @@
     var header = document.querySelector('.site-header');
     if (!header) return;
 
+    var ticking = false;
+    var isStuck = header.classList.contains('is-stuck');
+
     var onScroll = function () {
-      header.classList.toggle('is-stuck', window.scrollY > 40);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var y = window.scrollY || window.pageYOffset || 0;
+        if (!isStuck && y > 64) {
+          isStuck = true;
+          header.classList.add('is-stuck');
+        } else if (isStuck && y < 24) {
+          isStuck = false;
+          header.classList.remove('is-stuck');
+        }
+        ticking = false;
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -139,6 +154,30 @@
   }
 
   /* ---------------------------------------------------------------
+   * Carousel nhóm phế liệu ở trang chủ (.cat-swiper)
+   * 4 card/lượt trên desktop, vuốt hoặc bấm mũi tên.
+   * --------------------------------------------------------------- */
+  function initCatCarousel() {
+    document.querySelectorAll('.cat-swiper').forEach(function (el) {
+      if (typeof Swiper === 'undefined') return;
+      new Swiper(el, {
+        slidesPerView: 1.15,
+        spaceBetween: 16,
+        grabCursor: true,
+        navigation: {
+          nextEl: el.querySelector('.swiper-button-next'),
+          prevEl: el.querySelector('.swiper-button-prev')
+        },
+        breakpoints: {
+          576: { slidesPerView: 2, spaceBetween: 16 },
+          992: { slidesPerView: 3, spaceBetween: 20 },
+          1200: { slidesPerView: 4, spaceBetween: 20 }
+        }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
    * Bootstrap: khởi tạo tooltip/toast nếu có trong trang (no-op nếu chưa dùng)
    * --------------------------------------------------------------- */
 
@@ -149,5 +188,6 @@
     initBackTop();
     initAnchorNav();
     initYear();
+    initCatCarousel();
   });
 })();

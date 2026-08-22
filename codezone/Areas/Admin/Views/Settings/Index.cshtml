@@ -1,0 +1,101 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminSettingsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Cài đặt";
+    ViewData["AdminSection"] = "settings";
+    ViewData["AdminSubSection"] = "";
+}
+
+<div class="admin-page-head">
+  <h1>Cài đặt công ty <small>Thông tin liên hệ hiển thị toàn website</small></h1>
+  <div class="aph-actions">
+    <button class="btn btn-primary" type="button" disabled><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu cài đặt</button>
+  </div>
+</div>
+
+<div class="admin-form-grid">
+  <div>
+    <div class="admin-panel">
+      <div class="panel-head"><h2>Thông tin chung</h2></div>
+      <div class="panel-body">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label-tech" for="setName">Tên công ty</label>
+            <input class="form-control" id="setName" type="text" value="@Model.CompanyName" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-tech" for="setTax">Mã số thuế</label>
+            <input class="form-control" id="setTax" type="text" value="@Model.TaxCode" disabled>
+          </div>
+          <div class="col-12">
+            <label class="form-label-tech" for="setAddress">Địa chỉ</label>
+            <input class="form-control" id="setAddress" type="text" value="@Model.Address" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="setHotline">Hotline</label>
+            <input class="form-control" id="setHotline" type="tel" value="@Model.Hotline" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="setZalo">Zalo</label>
+            <input class="form-control" id="setZalo" type="tel" value="@Model.Zalo" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="setEmail">Email</label>
+            <input class="form-control" id="setEmail" type="email" value="@Model.Email" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="setHours">Giờ làm việc</label>
+            <input class="form-control" id="setHours" type="text" value="@Model.WorkingHours" disabled>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel mb-0">
+      <div class="panel-head"><h2>Mạng xã hội</h2></div>
+      <div class="panel-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label-tech" for="setFacebook">Facebook</label>
+            <input class="form-control" id="setFacebook" type="url" value="@Model.Facebook" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-tech" for="setYoutube">YouTube</label>
+            <input class="form-control" id="setYoutube" type="url" value="@Model.Youtube" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-tech" for="setTiktok">TikTok</label>
+            <input class="form-control" id="setTiktok" type="url" value="@Model.Tiktok" disabled>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="admin-panel">
+      <div class="panel-head"><h2>Logo &amp; Favicon</h2></div>
+      <div class="panel-body">
+        <span class="form-label-tech">Logo chính</span>
+        <div class="media-item mb-3">
+          <span class="media-thumb"><img src="@Model.LogoUrl" alt="Logo chính" loading="lazy"></span>
+          <div class="media-meta"><strong>@Model.LogoUrl</strong><small>Đọc từ SiteSettings</small></div>
+        </div>
+        <span class="form-label-tech mt-3 d-block">Logo footer</span>
+        <div class="media-item mb-3">
+          <span class="media-thumb"><img src="@Model.FooterLogoUrl" alt="Logo footer" loading="lazy"></span>
+          <div class="media-meta"><strong>@Model.FooterLogoUrl</strong><small>Đọc từ SiteSettings</small></div>
+        </div>
+        <span class="form-label-tech mt-3 d-block">Favicon</span>
+        <input class="form-control" type="text" value="@Model.FaviconUrl" disabled>
+      </div>
+    </div>
+
+    <div class="admin-panel mb-0">
+      <div class="panel-head"><h2>Trạng thái</h2></div>
+      <div class="panel-body">
+        <p class="small text-muted mb-0"><i class="bi bi-info-circle me-1" aria-hidden="true"></i>Read-only phase. Cache website hiện đặt @Model.CacheMinutes phút.</p>
+      </div>
+    </div>
+  </div>
+</div>

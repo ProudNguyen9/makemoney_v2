@@ -1,0 +1,11 @@
+@model codezone.Areas.Admin.ViewModels.AdminPageHeadViewModel
+
+<div class="admin-page-head">
+    <h1>@Model.Title@if (!string.IsNullOrWhiteSpace(Model.Subtitle)) { <small>@Model.Subtitle</small> }</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.ActionUrl) && !string.IsNullOrWhiteSpace(Model.ActionText))
+    {
+        <div class="aph-actions">
+            <a class="btn btn-primary" href="@Model.ActionUrl"><i class="@Model.ActionIcon" aria-hidden="true"></i> @Model.ActionText</a>
+        </div>
+    }
+</div>

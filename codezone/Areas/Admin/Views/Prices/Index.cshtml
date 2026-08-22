@@ -1,0 +1,77 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminPriceListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Bảng giá";
+    ViewData["AdminSection"] = "prices";
+    ViewData["AdminSubSection"] = "";
+}
+
+<div class="admin-page-head">
+  <h1>Bảng giá thu mua<small>Cập nhật gần nhất @(Model.LastUpdatedAt?.ToString("dd/MM/yyyy") ?? "chưa có lịch sử") — read-only phase</small></h1>
+  <div class="aph-actions">
+    <button class="btn btn-outline-dark" type="button" disabled><i class="bi bi-files" aria-hidden="true"></i> Copy phiên trước</button>
+    <button class="btn btn-outline-dark" type="button" disabled><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Cập nhật hàng loạt</button>
+    <button class="btn btn-primary" type="button" disabled><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm dòng giá</button>
+  </div>
+</div>
+
+<form class="admin-filter" action="/admin/prices" method="get">
+  <span class="admin-filter-label">Nhóm</span>
+  <select class="form-select" name="group" aria-label="Lọc theo nhóm phế liệu">
+    <option value="">Tất cả</option>
+    @foreach (var category in Model.Categories)
+    {
+      <option value="@category.Slug" selected="@(Model.Group == category.Slug)">@category.Name</option>
+    }
+  </select>
+  <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm loại phế liệu..." aria-label="Tìm loại phế liệu">
+  <div class="spacer"></div>
+  <span class="admin-pagination">@Model.Items.Count dòng đang hiển thị / tổng @Model.TotalCount</span>
+  <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+</form>
+
+<div class="admin-panel mb-0">
+  <div class="table-admin-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th>Nhóm</th>
+          <th>Loại</th>
+          <th>Giá hiện tại</th>
+          <th>Giá số</th>
+          <th>Đơn vị</th>
+          <th>Cập nhật</th>
+          <th>Bật/Tắt</th>
+          <th><span class="visually-hidden">Thao tác</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var row in Model.Items)
+      {
+        <tr>
+          <td>@row.CategoryName</td>
+          <td><strong>@row.ScrapName</strong></td>
+          <td>@row.PriceText</td>
+          <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="@(row.PriceValue?.ToString("0") ?? "")" aria-label="Giá @row.ScrapName" disabled></td>
+          <td>@row.Unit</td>
+          <td>@(row.EffectiveDate?.ToString("dd/MM/yyyy") ?? "Chưa rõ")</td>
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" checked disabled aria-label="Bật dòng giá @row.ScrapName">
+            </div>
+          </td>
+          <td>
+            <div class="ta-actions">
+              <button type="button" disabled aria-label="Sửa dòng @row.ScrapName"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+              <button class="act-danger" type="button" disabled aria-label="Xóa dòng @row.ScrapName"><i class="bi bi-trash" aria-hidden="true"></i></button>
+            </div>
+          </td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-foot">
+    <span class="small text-muted">Read-only phase: bảng giá chỉ đọc từ database, chưa lưu thay đổi.</span>
+  </div>
+</div>

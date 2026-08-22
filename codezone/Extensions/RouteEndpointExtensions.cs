@@ -12,6 +12,30 @@ public static class RouteEndpointExtensions
             .WithStaticAssets();
 
         app.MapControllerRoute(
+                name: "admin-root",
+                pattern: "admin",
+                defaults: new { area = "Admin", controller = "Home", action = "Index" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
+                name: "admin-login",
+                pattern: "admin/login",
+                defaults: new { area = "Admin", controller = "Auth", action = "Login" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
+                name: "admin-static-action",
+                pattern: "admin/{controller}/{action}",
+                defaults: new { area = "Admin", action = "Index" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
+                name: "admin-static-index",
+                pattern: "admin/{controller}",
+                defaults: new { area = "Admin", action = "Index" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
                 name: "about",
                 pattern: "gioi-thieu",
                 defaults: new { controller = "Home", action = "About" })
@@ -26,6 +50,12 @@ public static class RouteEndpointExtensions
         app.MapControllerRoute(
                 name: "scrap-category",
                 pattern: "phe-lieu/danh-muc",
+                defaults: new { controller = "Scrap", action = "Category" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
+                name: "scrap-category-group",
+                pattern: "phe-lieu/nhom/{slug?}",
                 defaults: new { controller = "Scrap", action = "Category" })
             .WithStaticAssets();
 

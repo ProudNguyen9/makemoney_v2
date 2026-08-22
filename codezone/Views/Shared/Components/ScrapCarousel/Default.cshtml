@@ -2,7 +2,7 @@
 <section class="section-block">
     <div class="section-title">
         <h2>Mat hang phe lieu</h2>
-        <a asp-controller="Scrap" asp-action="Index">Xem tat ca</a>
+        <a asp-area="" asp-controller="Scrap" asp-action="Index">Xem tat ca</a>
     </div>
     <div class="card-grid">
         @foreach (var item in Model)
@@ -11,7 +11,7 @@
                 <img src="@AssetHelper.NormalizePath(item.PrimaryImage)" alt="@item.Name" />
                 <h3>@item.Name</h3>
                 <p>@item.ShortDescription</p>
-                <a asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">Chi tiet</a>
+                <a asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">Chi tiet</a>
             </article>
         }
     </div>

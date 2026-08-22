@@ -1,0 +1,206 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dự án";
+    ViewData["AdminSection"] = "projects";
+    ViewData["AdminSubSection"] = "";
+}
+
+<!-- backend: GET /admin/projects — danh sách hợp đồng thu mua, tháo dỡ -->
+      <div class="admin-page-head">
+        <h1>Dự án <small>Hợp đồng thu mua, tháo dỡ đã thực hiện</small></h1>
+        <div class="aph-actions">
+          <a class="btn btn-primary" href="/admin/projects/form"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Thêm dự án</a>
+        </div>
+      </div>
+
+      <!-- Bộ lọc: loại dự án + năm + từ khóa -->
+      <form class="admin-filter" action="#" method="get">
+        <span class="admin-filter-label">Loại</span>
+        <select class="form-select" aria-label="Lọc theo loại dự án">
+          <option value="" selected>Tất cả</option>
+          <option value="nha-xuong">Nhà xưởng</option>
+          <option value="cong-trinh">Công trình</option>
+          <option value="may-moc">Máy móc</option>
+          <option value="dong">Đồng</option>
+          <option value="sat">Sắt</option>
+          <option value="khac">Khác</option>
+        </select>
+        <select class="form-select" aria-label="Lọc theo năm thực hiện">
+          <option value="" selected>Tất cả năm</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </select>
+        <input class="form-control" type="search" placeholder="Tìm theo tên dự án, địa điểm…" aria-label="Tìm theo tên dự án, địa điểm">
+        <div class="spacer"></div>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+      </form>
+
+      <section class="admin-panel">
+        <div class="panel-head">
+          <h2>Danh sách dự án</h2>
+          <div class="panel-head-actions">
+            <span class="small text-muted">24 dự án</span>
+          </div>
+        </div>
+        <!-- BACKEND: dự án trang 1, sắp theo Ngày thực hiện giảm dần -->
+        <div class="table-admin-wrap">
+          <table class="table table-admin align-middle">
+            <thead>
+              <tr>
+                <th scope="col">Ảnh</th>
+                <th scope="col">Tên dự án</th>
+                <th scope="col">Địa điểm</th>
+                <th scope="col">Loại</th>
+                <th scope="col">Ngày</th>
+                <th scope="col">Nổi bật</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-01-cover.svg" alt="Ảnh dự án tháo dỡ nhà xưởng 2.000m²" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Tháo dỡ — thanh lý nhà xưởng 2.000m²</a></span></td>
+                <td>Biên Hòa</td>
+                <td><span class="tag-min">Nhà xưởng</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <!-- backend: bật/tắt đánh dấu nổi bật (POST /admin/projects/{id}/toggle-featured) -->
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" checked aria-label="Đánh dấu nổi bật: Tháo dỡ — thanh lý nhà xưởng 2.000m²">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Tháo dỡ — thanh lý nhà xưởng 2.000m²"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Tháo dỡ — thanh lý nhà xưởng 2.000m²"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-02-cover.svg" alt="Ảnh dự án thu mua phế liệu công trình cao ốc" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Thu mua phế liệu công trình cao ốc Thủ Đức</a></span></td>
+                <td>Thủ Đức</td>
+                <td><span class="tag-min">Công trình</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" aria-label="Đánh dấu nổi bật: Thu mua phế liệu công trình cao ốc Thủ Đức">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Thu mua phế liệu công trình cao ốc Thủ Đức"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Thu mua phế liệu công trình cao ốc Thủ Đức"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-03-cover.svg" alt="Ảnh dự án thanh lý dây cáp đồng nhà máy" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Thanh lý 3,2 tấn dây cáp đồng nhà máy dệt</a></span></td>
+                <td>Dĩ An</td>
+                <td><span class="tag-min">Đồng</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" aria-label="Đánh dấu nổi bật: Thanh lý 3,2 tấn dây cáp đồng nhà máy dệt">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Thanh lý 3,2 tấn dây cáp đồng nhà máy dệt"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Thanh lý 3,2 tấn dây cáp đồng nhà máy dệt"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-04-cover.svg" alt="Ảnh dự án thu mua sắt thép công trình cầu" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Thu mua 18 tấn sắt thép công trình cầu</a></span></td>
+                <td>Long Thành</td>
+                <td><span class="tag-min">Sắt</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" aria-label="Đánh dấu nổi bật: Thu mua 18 tấn sắt thép công trình cầu">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Thu mua 18 tấn sắt thép công trình cầu"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Thu mua 18 tấn sắt thép công trình cầu"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-05-cover.svg" alt="Ảnh dự án thanh lý máy móc sản xuất" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Thanh lý dây chuyền máy móc xưởng gỗ</a></span></td>
+                <td>Bến Cát</td>
+                <td><span class="tag-min">Máy móc</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" checked aria-label="Đánh dấu nổi bật: Thanh lý dây chuyền máy móc xưởng gỗ">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Thanh lý dây chuyền máy móc xưởng gỗ"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Thanh lý dây chuyền máy móc xưởng gỗ"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="ta-title"><img src="~/assets/images/projects/project-06-cover.svg" alt="Ảnh dự án thu gom phế liệu khu chế xuất" width="40" height="30"></span>
+                </td>
+                <td><span class="ta-title"><a href="/admin/projects/form">Thu gom phế liệu định kỳ khu chế xuất</a></span></td>
+                <td>Nhơn Trạch</td>
+                <td><span class="tag-min">Khác</span></td>
+                <td class="text-nowrap">[DD/MM/YYYY]</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" aria-label="Đánh dấu nổi bật: Thu gom phế liệu định kỳ khu chế xuất">
+                  </div>
+                </td>
+                <td><span class="badge-status st-published">Đang hiển thị</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/projects/form" aria-label="Sửa dự án Thu gom phế liệu định kỳ khu chế xuất"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa dự án Thu gom phế liệu định kỳ khu chế xuất"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-foot">
+          <span class="admin-pagination">Hiển thị 1–6 / 24</span>
+          <nav aria-label="Phân trang dự án">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true"><i class="bi bi-chevron-left" aria-hidden="true"></i></a></li>
+              <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">4</a></li>
+              <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>
+            </ul>
+          </nav>
+        </div>
+      </section>

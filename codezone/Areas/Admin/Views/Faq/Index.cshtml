@@ -1,0 +1,144 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "FAQ";
+    ViewData["AdminSection"] = "faq";
+    ViewData["AdminSubSection"] = "";
+}
+
+<!-- backend: GET /admin/faq — danh sách câu hỏi thường gặp -->
+      <div class="admin-page-head">
+        <h1>Câu hỏi thường gặp<small>Gán FAQ cho từng trang: trang chủ, loại phế liệu, dịch vụ, khu vực</small></h1>
+        <div class="aph-actions">
+          <a class="btn btn-primary" href="/admin/faq/form"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm câu hỏi</a>
+        </div>
+      </div>
+
+      <!-- backend: GET /admin/faq?assign=&q= -->
+      <form class="admin-filter" action="#" method="get">
+        <span class="admin-filter-label">Gán vào</span>
+        <select class="form-select" aria-label="Lọc theo trang gán FAQ">
+          <option value="" selected>Tất cả</option>
+          <option value="home">Trang chủ</option>
+          <option value="scrap">Loại phế liệu</option>
+          <option value="service">Dịch vụ</option>
+          <option value="location">Khu vực</option>
+        </select>
+        <input class="form-control" type="search" placeholder="Tìm theo câu hỏi…" aria-label="Tìm theo câu hỏi">
+        <div class="spacer"></div>
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+      </form>
+
+      <div class="admin-panel">
+        <div class="table-admin-wrap">
+          <table class="table table-admin align-middle">
+            <thead>
+              <tr>
+                <th>Câu hỏi</th>
+                <th>Gán vào</th>
+                <th>Thứ tự</th>
+                <th>Trạng thái</th>
+                <th><span class="visually-hidden">Thao tác</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Chỉ có ít phế liệu có bán được không?</strong></td>
+                <td><span class="tag-min">Trang chủ</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="1" aria-label="Thứ tự câu hỏi Chỉ có ít phế liệu có bán được không"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Chỉ có ít phế liệu có bán được không"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Chỉ có ít phế liệu có bán được không"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Giá thu mua khi nào cập nhật?</strong></td>
+                <td><span class="tag-min">Loại phế liệu</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="2" aria-label="Thứ tự câu hỏi Giá thu mua khi nào cập nhật"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Giá thu mua khi nào cập nhật"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Giá thu mua khi nào cập nhật"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Thanh toán bằng hình thức nào?</strong></td>
+                <td><span class="tag-min">Loại phế liệu</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="3" aria-label="Thứ tự câu hỏi Thanh toán bằng hình thức nào"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Thanh toán bằng hình thức nào"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Thanh toán bằng hình thức nào"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Có nhận tháo dỡ nhà xưởng không?</strong></td>
+                <td><span class="tag-min">Dịch vụ</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="4" aria-label="Thứ tự câu hỏi Có nhận tháo dỡ nhà xưởng không"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Có nhận tháo dỡ nhà xưởng không"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Có nhận tháo dỡ nhà xưởng không"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Cách phân biệt đồng đỏ đồng vàng?</strong></td>
+                <td><span class="tag-min">Dịch vụ</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="5" aria-label="Thứ tự câu hỏi Cách phân biệt đồng đỏ đồng vàng"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Cách phân biệt đồng đỏ đồng vàng"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Cách phân biệt đồng đỏ đồng vàng"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Có lấy hàng tại Biên Hòa không?</strong></td>
+                <td><span class="tag-min">Khu vực</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="6" aria-label="Thứ tự câu hỏi Có lấy hàng tại Biên Hòa không"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Có lấy hàng tại Biên Hòa không"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Có lấy hàng tại Biên Hòa không"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Thu gom định kỳ ký hợp đồng thế nào?</strong></td>
+                <td><span class="tag-min">Trang chủ</span></td>
+                <td><input class="form-control form-control-sm" type="number" min="0" value="7" aria-label="Thứ tự câu hỏi Thu gom định kỳ ký hợp đồng thế nào"></td>
+                <td><span class="badge-status st-published">Đã xuất bản</span></td>
+                <td>
+                  <div class="ta-actions">
+                    <a href="/admin/faq/form" aria-label="Sửa câu hỏi Thu gom định kỳ ký hợp đồng thế nào"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                    <button class="act-danger" type="button" aria-label="Xóa câu hỏi Thu gom định kỳ ký hợp đồng thế nào"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-foot">
+          <div class="admin-pagination">Hiển thị 1–7 / 18 câu hỏi</div>
+          <!-- backend: phân trang server-side, ?page=n -->
+          <nav aria-label="Phân trang câu hỏi thường gặp">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Trang trước">«</a></li>
+              <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#" aria-label="Trang sau">»</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>

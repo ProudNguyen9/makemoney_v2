@@ -1,21 +1,24 @@
+@model NewsIndexViewModel
 @{
-    ViewData["Title"] = "Tin tức";
+    ViewData["Title"] = Model.Seo.Title;
+    var featured = Model.Page.Items.FirstOrDefault();
+    var rest = Model.Page.Items.ToList();
+    if (rest.Count > 0)
+    {
+        rest.RemoveAt(0);
+    }
 }
 
 <main>
-
-  <!-- ============================ PAGE HERO START ============================ -->
   <section class="page-hero" aria-labelledby="news-hero-title">
     <div class="page-hero-bg" aria-hidden="true">
-      <img src="~/assets/images/news/news-01.svg" alt="" width="1600" height="900" fetchpriority="high">
+      <img src="@AssetHelper.NormalizePath(Model.Chrome.HeroImage)" alt="" width="1600" height="900" fetchpriority="high">
     </div>
     <div class="container">
       <div class="page-hero-inner">
         <span class="tech-label">Tin tức</span>
-        <h1 id="news-hero-title">Tin tức &amp; kiến thức phế liệu</h1>
-        <p class="page-hero-desc">
-          Cập nhật bảng giá hàng tuần, cách phân loại phế liệu bán được giá cao và kinh nghiệm thanh lý cho doanh nghiệp.
-        </p>
+        <h1 id="news-hero-title">@Model.Chrome.HeroTitle</h1>
+        <p class="page-hero-desc">@Model.Chrome.HeroDescription</p>
         <ol class="breadcrumb-line">
           <li><a href="/">Trang chủ</a></li>
           <li aria-current="page">Tin tức</li>
@@ -23,285 +26,101 @@
       </div>
     </div>
   </section>
-  <!-- ============================ PAGE HERO END ============================ -->
 
-  <!-- ============================ NEWS LIST START ============================ -->
   <section class="section section--paper" aria-label="Danh sách bài viết">
     <div class="container">
-
-      <!-- FILTER BAR START -->
-      <div class="filter-bar" role="group" aria-label="Lọc bài viết theo chuyên mục">
-        <span class="filter-label">Chuyên mục</span>
-        <a class="filter-link active" href="/tin-tuc">Tất cả</a>
-        <a class="filter-link" href="/tin-tuc">Bảng giá</a>
-        <a class="filter-link" href="/tin-tuc">Kiến thức</a>
-        <a class="filter-link" href="/tin-tuc">Kinh nghiệm</a>
-        <a class="filter-link" href="/tin-tuc">Tin công ty</a>
-      </div>
-      <!-- FILTER BAR END -->
-
-      <!-- FEATURED POST START -->
-      <a class="news-feature-hero reveal mb-5" href="/tin-tuc/gia-phe-lieu-hom-nay">
-        <span class="nfh-media">
-          <img src="~/assets/images/news/news-01.svg" alt="Bảng giá phế liệu tuần — ảnh minh họa" width="1200" height="675" loading="lazy">
-        </span>
-        <span class="nfh-body">
-          <span class="news-meta">
-            <span class="news-cat">Bảng giá</span>
-            <span class="news-dot" aria-hidden="true"></span>
-            <time datetime="2026-08-16">[DD/MM/YYYY]</time>
+      @if (featured is not null)
+      {
+        <a class="news-feature-hero reveal mb-5" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@featured.Slug">
+          <span class="nfh-media">
+            <img src="@AssetHelper.NormalizePath(featured.CoverImage)" alt="@featured.Title" width="1200" height="675" loading="lazy">
           </span>
-          <h2>Bảng giá phế liệu tuần này: đồng giữ đà tăng, sắt đi ngang</h2>
-          <p>
-            Giá đồng thế giới tiếp tục đi lên, kéo nhóm đồng đỏ và đồng super blank tăng 2–3% so với tuần trước.
-            Sắt thép giao dịch quanh mốc cũ, lô lớn thanh lý nhanh vẫn được chốt giá riêng.
-          </p>
-          <span class="link-arrow">Đọc bài đầy đủ <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-        </span>
-      </a>
-      <!-- FEATURED POST END -->
+          <span class="nfh-body">
+            <span class="news-meta">
+              <span class="news-cat">@featured.CategoryName</span>
+              <span class="news-dot" aria-hidden="true"></span>
+              <time datetime="@featured.PublishedAt.ToString("yyyy-MM-dd")">@featured.PublishedAt.ToString("dd/MM/yyyy")</time>
+            </span>
+            <h2>@featured.Title</h2>
+            <p>@featured.Excerpt</p>
+            <span class="link-arrow">Đọc bài đầy đủ <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+          </span>
+        </a>
+      }
 
       <div class="row">
         <div class="col-lg-8">
-
-          <!-- NEWS ROWS START -->
           <div class="news-rows reveal">
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/news/news-02.svg" alt="Dây điện đồng được phân loại trước khi bán" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Kiến thức</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-08-14">[DD/MM/YYYY]</time>
+            @foreach (var post in rest)
+            {
+              <a class="news-row" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug">
+                <span class="news-row-media">
+                  <img src="@AssetHelper.NormalizePath(post.CoverImage)" alt="@post.Title" width="600" height="338" loading="lazy">
                 </span>
-                <h3>Cách phân loại dây điện đồng để bán được giá cao</h3>
-                <p>Cùng là dây đồng nhưng bóc vỏ sẵn, nguyên trạng hay đã qua đốt thì giá chênh nhau tới vài chục nghìn mỗi ký. Bài này chỉ cách xếp loại trước khi gọi người thu mua.</p>
-              </span>
-            </a>
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/news/news-03.svg" alt="Nhà xưởng chuẩn bị thanh lý phế liệu" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Kinh nghiệm</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-08-11">[DD/MM/YYYY]</time>
+                <span class="news-row-body">
+                  <span class="news-meta">
+                    <span class="news-cat">@post.CategoryName</span>
+                    <span aria-hidden="true">·</span>
+                    <time datetime="@post.PublishedAt.ToString("yyyy-MM-dd")">@post.PublishedAt.ToString("dd/MM/yyyy")</time>
+                  </span>
+                  <h3>@post.Title</h3>
+                  <p>@post.Excerpt</p>
                 </span>
-                <h3>Thanh lý nhà xưởng: cần chuẩn bị gì để không bị ép giá?</h3>
-                <p>Liệt kê khối lượng từng nhóm, tách phế liệu giá trị cao ra riêng và chốt phương thức thanh toán trước khi cho xe vào — ba việc giúp bạn giữ thế khi thương lượng.</p>
-              </span>
-            </a>
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/news/news-04.svg" alt="So sánh inox 304 và inox 201" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Kiến thức</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-08-08">[DD/MM/YYYY]</time>
-                </span>
-                <h3>Phân biệt inox 304 và inox 201 khi bán phế liệu</h3>
-                <p>Inox 304 ít nhiễm từ và giá thu mua cao hơn inox 201 đáng kể. Cách thử nhanh bằng nam châm giúp bạn tách hai loại này trước khi cân hàng.</p>
-              </span>
-            </a>
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/news/news-05.svg" alt="Sắt vụn được chất thành đống tại kho" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Bảng giá</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-08-05">[DD/MM/YYYY]</time>
-                </span>
-                <h3>Giá sắt vụn hôm nay và 3 yếu tố quyết định</h3>
-                <p>Giá sắt vụn phụ thuộc vào độ sạch của lô hàng, tỷ lệ tôn — dầm — vụn và quãng đường vận chuyển. Xem mức giá hôm nay và cách ước tính cho lô của bạn.</p>
-              </span>
-            </a>
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/news/news-06.svg" alt="Xe tải mới của công ty sẵn sàng nhận lô" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Tin công ty</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-08-02">[DD/MM/YYYY]</time>
-                </span>
-                <h3>[TÊN CÔNG TY] đưa vào sử dụng [2] xe tải mới</h3>
-                <p>Hai xe tải mới tăng năng lực nhận lô gấp tại Đồng Nai và Bình Dương. Thời gian chờ xe của khách hàng từ [2] ngày rút xuống còn trong ngày làm việc.</p>
-              </span>
-            </a>
-            <a class="news-row" href="/tin-tuc/gia-phe-lieu-hom-nay">
-              <span class="news-row-media">
-                <img src="~/assets/images/scrap/scrap-board.svg" alt="Bo mạch điện tử cũ xếp thùng chờ bán" width="600" height="338" loading="lazy">
-              </span>
-              <span class="news-row-body">
-                <span class="news-meta">
-                  <span class="news-cat">Kiến thức</span>
-                  <span aria-hidden="true">·</span>
-                  <time datetime="2026-07-30">[DD/MM/YYYY]</time>
-                </span>
-                <h3>Bo mạch điện tử: vì sao nên bán nguyên máy thay vì bóc linh kiện</h3>
-                <p>Bóc linh kiện chỉ đáng làm khi có công cụ và số lượng lớn. Với lô lẻ, bán nguyên máy giúp cân nhanh, giá rõ ràng và tránh làm hỏng linh kiện còn tốt.</p>
-              </span>
-            </a>
+              </a>
+            }
           </div>
-          <!-- NEWS ROWS END -->
-
-          <!-- PAGINATION START -->
-          <nav aria-label="Phân trang tin tức">
-            <ul class="pagination-industrial">
-              <li class="page-item active"><span class="page-link" aria-current="page">1</span></li>
-              <li class="page-item"><a class="page-link" href="/tin-tuc">2</a></li>
-              <li class="page-item"><a class="page-link" href="/tin-tuc">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="/tin-tuc" aria-label="Trang sau"><i class="bi bi-chevron-right" aria-hidden="true"></i></a>
-              </li>
-            </ul>
-          </nav>
-          <!-- PAGINATION END -->
-
         </div>
-
-        <!-- SIDEBAR START -->
         <aside class="col-lg-4">
           <div class="side-col">
-
-            <!-- SIDE: BÀI MỚI NHẤT START -->
             <div class="side-box">
               <h2 class="side-box-title">Bài mới nhất</h2>
               <ul class="side-list">
-                <li>
-                  <a href="/tin-tuc/gia-phe-lieu-hom-nay">
-                    <img src="~/assets/images/news/news-02.svg" alt="" width="144" height="90" loading="lazy">
-                    <span>
-                      <strong>Cách phân loại dây điện đồng để bán được giá cao</strong>
-                      <small>[DD/MM/YYYY]</small>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tin-tuc/gia-phe-lieu-hom-nay">
-                    <img src="~/assets/images/news/news-03.svg" alt="" width="144" height="90" loading="lazy">
-                    <span>
-                      <strong>Thanh lý nhà xưởng: cần chuẩn bị gì để không bị ép giá?</strong>
-                      <small>[DD/MM/YYYY]</small>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tin-tuc/gia-phe-lieu-hom-nay">
-                    <img src="~/assets/images/news/news-04.svg" alt="" width="144" height="90" loading="lazy">
-                    <span>
-                      <strong>Phân biệt inox 304 và inox 201 khi bán phế liệu</strong>
-                      <small>[DD/MM/YYYY]</small>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tin-tuc/gia-phe-lieu-hom-nay">
-                    <img src="~/assets/images/news/news-05.svg" alt="" width="144" height="90" loading="lazy">
-                    <span>
-                      <strong>Giá sắt vụn hôm nay và 3 yếu tố quyết định</strong>
-                      <small>[DD/MM/YYYY]</small>
-                    </span>
-                  </a>
-                </li>
+                @foreach (var post in Model.SidebarPosts)
+                {
+                  <li>
+                    <a asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug">
+                      <img src="@AssetHelper.NormalizePath(post.CoverImage)" alt="" width="144" height="90" loading="lazy">
+                      <span>
+                        <strong>@post.Title</strong>
+                        <small>@post.PublishedAt.ToString("dd/MM/yyyy")</small>
+                      </span>
+                    </a>
+                  </li>
+                }
               </ul>
             </div>
-            <!-- SIDE: BÀI MỚI NHẤT END -->
-
-            <!-- SIDE: CTA START -->
             <div class="side-box side-cta">
               <h2 class="side-box-title">Có phế liệu cần bán?</h2>
-              <p>Chụp hình phế liệu của bạn gửi cho chúng tôi — nhận báo giá trong [30 phút], không cần gọi điện nhiều lần.</p>
-              <button class="btn btn-primary" type="button" data-quote-open>
-                <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
-              </button>
+              <p>Chụp hình phế liệu của bạn gửi cho chúng tôi để nhận báo giá nhanh.</p>
+              <button class="btn btn-primary" type="button" data-quote-open><i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá</button>
             </div>
-            <!-- SIDE: CTA END -->
-
-            <!-- SIDE: BẢNG GIÁ NHANH START -->
-            <div class="side-box">
-              <h2 class="side-box-title">Bảng giá nhanh</h2>
-              <div class="price-board">
-                <div class="table-scroll">
-                  <table class="table table-price align-middle">
-                    <caption class="visually-hidden">Giá thu mua nhanh một số loại phế liệu phổ biến, đơn vị tính theo kg</caption>
-                    <thead>
-                      <tr>
-                        <th scope="col">Loại</th>
-                        <th scope="col" class="text-end">Giá (đ/kg)</th>
-                        <th scope="col" class="text-end">Xu hướng</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="mat-name">Đồng đỏ sạch</td>
-                        <td class="text-end"><span class="price-value">75.000 – 95.000</span></td>
-                        <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
-                      </tr>
-                      <tr>
-                        <td class="mat-name">Sắt vụn</td>
-                        <td class="text-end"><span class="price-value">6.000 – 9.000</span></td>
-                        <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-                      </tr>
-                      <tr>
-                        <td class="mat-name">Nhôm thanh</td>
-                        <td class="text-end"><span class="price-value">22.000 – 35.000</span></td>
-                        <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
-                      </tr>
-                      <tr>
-                        <td class="mat-name">Inox 304</td>
-                        <td class="text-end"><span class="price-value">13.000 – 18.000</span></td>
-                        <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <a class="link-arrow" href="/bang-gia">Xem bảng giá đầy đủ <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-            </div>
-            <!-- SIDE: BẢNG GIÁ NHANH END -->
-
           </div>
         </aside>
-        <!-- SIDEBAR END -->
       </div>
-
+      @if (Model.Page.Links.Count > 0)
+      {
+        <nav class="pagination-wrap mt-4" aria-label="Phân trang tin tức">
+          <ul class="pagination-industrial">
+            @foreach (var link in Model.Page.Links)
+            {
+              if (link.IsCurrent)
+              {
+                <li class="page-item active"><span class="page-link" aria-current="page">@link.Label</span></li>
+              }
+              else if (link.IsDisabled)
+              {
+                <li class="page-item disabled"><span class="page-link">@link.Label</span></li>
+              }
+              else
+              {
+                <li class="page-item">
+                  <a class="page-link" asp-area="" asp-controller="News" asp-action="Index" asp-route-cursor="@link.Cursor" asp-route-previousCursor="@link.PreviousCursor" asp-route-page="@link.PageNumber" asp-route-pageSize="@Model.PageSize" rel="@link.Rel">@link.Label</a>
+                </li>
+              }
+            }
+          </ul>
+        </nav>
+      }
     </div>
   </section>
-  <!-- ============================ NEWS LIST END ============================ -->
-
-  <!-- ============================ FINAL CTA START ============================ -->
-  <section class="cta-final" aria-labelledby="cta-title">
-    <div class="cta-final-bg" aria-hidden="true">
-      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
-    </div>
-    <div class="container">
-      <div class="cta-final-inner">
-        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
-        <h2 id="cta-title">Bạn đang có phế liệu cần thanh lý?</h2>
-        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
-        <div class="cta-actions">
-          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
-            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
-          </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-          </a>
-          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
-            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ FINAL CTA END ============================ -->
-
 </main>

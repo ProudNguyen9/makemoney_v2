@@ -1,0 +1,156 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Form dịch vụ";
+    ViewData["AdminSection"] = "services";
+    ViewData["AdminSubSection"] = "form";
+}
+
+<!-- backend: POST /admin/services — tạo nhóm dịch vụ mới -->
+      <div class="admin-page-head">
+        <h1>Thêm dịch vụ <small>Tạo nhóm dịch vụ thu mua mới hiển thị trên website</small></h1>
+        <div class="aph-actions">
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="/dich-vu/thu-mua-tan-noi" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="serviceForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+        </div>
+      </div>
+
+      <form id="serviceForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Thông tin dịch vụ -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thông tin dịch vụ</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="serviceName">Tên dịch vụ<span class="required-mark">*</span></label>
+                    <input class="form-control" id="serviceName" type="text" value="Thu mua phế liệu tận nơi" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="serviceSlug">Slug</label>
+                    <div class="input-with-suffix">
+                      <input class="form-control" id="serviceSlug" type="text" value="thu-mua-phe-lieu-tan-noi">
+                      <span class="input-suffix">.html</span>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="serviceTeaser">Mô tả ngắn</label>
+                    <textarea class="form-control" id="serviceTeaser" rows="2">Nhận thu mua phế liệu tận nhà, xưởng — khảo sát miễn phí, cân tại chỗ, thanh toán ngay trong ngày.</textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="serviceIcon">Icon (Bootstrap Icons)</label>
+                    <select class="form-select" id="serviceIcon">
+                      <option value="bi-truck" selected>bi-truck — Vận chuyển tận nơi</option>
+                      <option value="bi-buildings">bi-buildings — Nhà xưởng, doanh nghiệp</option>
+                      <option value="bi-gear">bi-gear — Máy móc</option>
+                      <option value="bi-tools">bi-tools — Tháo dỡ, lắp đặt</option>
+                      <option value="bi-recycle">bi-recycle — Thu gom tái chế</option>
+                      <option value="bi-calendar-check">bi-calendar-check — Định kỳ</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung</span>
+                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung dịch vụ -->
+                    <div class="editor-placeholder">
+                      <div>
+                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
+                        <span>Rich editor — mô tả phạm vi thu mua, quy trình thực hiện, khu vực phục vụ…</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ dịch vụ -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>FAQ dịch vụ</h2>
+              </div>
+              <div class="panel-body">
+                <!-- BACKEND: danh sách câu hỏi — trả lời gắn với dịch vụ -->
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label-tech" for="serviceFaqQ1">Câu hỏi 1</label>
+                    <textarea class="form-control" id="serviceFaqQ1" rows="2">Bạn có thu mua với số lượng ít không?</textarea>
+                    <label class="form-label-tech mt-2" for="serviceFaqA1">Câu trả lời 1</label>
+                    <textarea class="form-control" id="serviceFaqA1" rows="2">Có, chúng tôi nhận thu mua từ 10kg trở lên, cân tại chỗ và thanh toán ngay sau khi cân.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="serviceFaqQ2">Câu hỏi 2</label>
+                    <textarea class="form-control" id="serviceFaqQ2" rows="2">Sau bao lâu đội thu mua có mặt tại nhà xưởng?</textarea>
+                    <label class="form-label-tech mt-2" for="serviceFaqA2">Câu trả lời 2</label>
+                    <textarea class="form-control" id="serviceFaqA2" rows="2">Trong vòng 2–4 giờ tại TP.HCM, Đồng Nai, Bình Dương sau khi tiếp nhận yêu cầu báo giá.</textarea>
+                  </div>
+                </div>
+                <!-- backend: thêm cặp câu hỏi — câu trả lời mới vào form -->
+                <button class="btn btn-outline-dark btn-sm mt-3" type="button"><i class="bi bi-plus" aria-hidden="true"></i> Thêm câu hỏi</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ảnh đại diện -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Ảnh đại diện (16:10)</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload — trả về URL ảnh gắn vào trường thumbnail -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh lên</p>
+                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×1000</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- Cấu hình -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Cấu hình</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="serviceStatus">Trạng thái</label>
+                <select class="form-select" id="serviceStatus">
+                  <option value="published" selected>Đang hiển thị</option>
+                  <option value="hidden">Ẩn</option>
+                </select>
+                <label class="form-label-tech mt-3" for="serviceOrder">Thứ tự</label>
+                <input class="form-control" id="serviceOrder" type="number" min="1" value="1">
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="serviceHome" checked>
+                  <label class="form-check-label" for="serviceHome">Hiển thị ở trang chủ</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="serviceSeoTitle">SEO Title</label>
+                <input class="form-control" id="serviceSeoTitle" type="text" value="Thu mua phế liệu tận nơi giá cao — [TÊN CÔNG TY]">
+                <p class="small text-muted mb-3 mt-1">47/70 ký tự</p>
+                <label class="form-label-tech" for="serviceSeoMeta">Meta description</label>
+                <textarea class="form-control" id="serviceSeoMeta" rows="3">Dịch vụ thu mua phế liệu tận nơi: khảo sát miễn phí, cân tại chỗ, thanh toán ngay. Phục vụ TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="serviceSeoIndex" checked>
+                  <label class="form-check-label" for="serviceSeoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="serviceSeoFollow" checked>
+                  <label class="form-check-label" for="serviceSeoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>

@@ -1,11 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using ScrapWebsite.Services.Interfaces;
 
 namespace ScrapWebsite.ViewComponents;
 
 public class FooterViewComponent : ViewComponent
 {
-    public IViewComponentResult Invoke()
+    private readonly ISiteChromeService _siteChromeService;
+
+    public FooterViewComponent(ISiteChromeService siteChromeService)
     {
-        return View();
+        _siteChromeService = siteChromeService;
+    }
+
+    public async Task<IViewComponentResult> InvokeAsync(CancellationToken cancellationToken = default)
+    {
+        var model = await _siteChromeService.GetAsync(cancellationToken);
+        return View(model);
     }
 }

@@ -1,0 +1,25 @@
+<header class="admin-topbar">
+    <button class="at-toggle" type="button" aria-label="Mở menu quản trị"><i class="bi bi-list" aria-hidden="true"></i></button>
+
+    <form class="at-search" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <input class="form-control" type="search" placeholder="Tìm lead, phế liệu, bài viết…" aria-label="Tìm trong quản trị" />
+    </form>
+
+    <div class="at-right">
+        <button class="at-icon" type="button" aria-label="Thông báo">
+            <i class="bi bi-bell" aria-hidden="true"></i>
+            <span class="dot" aria-hidden="true"></span>
+        </button>
+        <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+            @Html.AntiForgeryToken()
+            <button class="at-user" type="submit" aria-label="Đăng xuất">
+            <span class="at-avatar">QT</span>
+            <span class="at-name">
+                <strong>@(User.Identity?.Name ?? "Quản trị viên")</strong>
+                <small>Đăng xuất</small>
+            </span>
+            </button>
+        </form>
+    </div>
+</header>

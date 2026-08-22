@@ -1,0 +1,82 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminArticleListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Bài viết";
+    ViewData["AdminSection"] = "articles";
+    ViewData["AdminSubSection"] = "";
+
+    string StatusLabel(string status) => status == "published" ? "Đã xuất bản" : status == "draft" ? "Bản nháp" : status;
+    string StatusClass(string status) => status == "published" ? "st-published" : status == "draft" ? "st-draft" : "st-processing";
+}
+
+<div class="admin-page-head">
+  <h1>Bài viết <small>Tin tức, bảng giá và kiến thức phế liệu từ database</small></h1>
+  <div class="aph-actions">
+    <button class="btn btn-primary" type="button" disabled><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Viết bài mới</button>
+  </div>
+</div>
+
+<form class="admin-filter" action="/admin/articles" method="get">
+  <span class="admin-filter-label">Chuyên mục</span>
+  <select class="form-select" name="category" aria-label="Lọc theo chuyên mục">
+    <option value="">Tất cả</option>
+    @foreach (var category in Model.Categories)
+    {
+      <option value="@category.Slug" selected="@(Model.Category == category.Slug)">@category.Name</option>
+    }
+  </select>
+  <select class="form-select" name="status" aria-label="Lọc theo trạng thái">
+    <option value="">Tất cả</option>
+    <option value="published" selected="@(Model.Status == "published")">Xuất bản</option>
+    <option value="draft" selected="@(Model.Status == "draft")">Bản nháp</option>
+  </select>
+  <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm tiêu đề..." aria-label="Tìm tiêu đề">
+  <div class="spacer"></div>
+  <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+</form>
+
+<section class="admin-panel">
+  <div class="panel-head">
+    <h2>Danh sách bài viết</h2>
+    <div class="panel-head-actions"><span class="small text-muted">@Model.TotalCount bài viết</span></div>
+  </div>
+  <div class="table-admin-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Ảnh</th>
+          <th scope="col">Tiêu đề</th>
+          <th scope="col">Chuyên mục</th>
+          <th scope="col">Trạng thái</th>
+          <th scope="col">Ngày đăng</th>
+          <th scope="col">Tác giả</th>
+          <th scope="col">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var post in Model.Items)
+      {
+        <tr>
+          <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
+          <td><span class="ta-title"><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></span></td>
+          <td>@post.CategoryName</td>
+          <td><span class="badge-status @StatusClass(post.Status)">@StatusLabel(post.Status)</span></td>
+          <td class="text-nowrap">@(post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
+          <td>@(string.IsNullOrWhiteSpace(post.AuthorName) ? "Admin" : post.AuthorName)</td>
+          <td>
+            <div class="ta-actions">
+              <button type="button" disabled aria-label="Sửa @post.Title"><i class="bi bi-pencil" aria-hidden="true"></i></button>
+              <button type="button" disabled aria-label="Nhân bản @post.Title"><i class="bi bi-copy" aria-hidden="true"></i></button>
+              <button class="act-danger" type="button" disabled aria-label="Xóa @post.Title"><i class="bi bi-trash" aria-hidden="true"></i></button>
+            </div>
+          </td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-foot">
+    <span class="admin-pagination">Hiển thị @Model.Items.Count / @Model.TotalCount</span>
+    <span class="small text-muted">Read-only phase: chưa bật lưu, nhân bản hoặc xóa bài.</span>
+  </div>
+</section>

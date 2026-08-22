@@ -1,0 +1,64 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminSettingsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Trang chủ";
+    ViewData["AdminSection"] = "homepage";
+    ViewData["AdminSubSection"] = "";
+}
+
+<div class="admin-page-head">
+  <h1>Cấu hình trang chủ <small>Read-only phase, dữ liệu lấy từ SiteSettings và public DB</small></h1>
+  <div class="aph-actions">
+    <button class="btn btn-primary" type="button" disabled><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu cấu hình</button>
+  </div>
+</div>
+
+<div class="admin-panel">
+  <div class="panel-body">
+    <p class="small text-muted mb-0">Phase này chỉ hiển thị dữ liệu đang cấp cho trang chủ. Các section tĩnh vẫn giữ trong Razor/template; admin CRUD sẽ mở sau.</p>
+  </div>
+</div>
+
+<section class="admin-panel">
+  <div class="panel-head"><h2>Thông tin dùng chung trang chủ</h2></div>
+  <div class="panel-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label-tech" for="hpCompany">Tên công ty</label>
+        <input class="form-control" id="hpCompany" type="text" value="@Model.CompanyName" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-tech" for="hpHotline">Hotline</label>
+        <input class="form-control" id="hpHotline" type="text" value="@Model.Hotline" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-tech" for="hpZalo">Zalo</label>
+        <input class="form-control" id="hpZalo" type="text" value="@Model.Zalo" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-tech" for="hpHours">Giờ làm việc</label>
+        <input class="form-control" id="hpHours" type="text" value="@Model.WorkingHours" disabled>
+      </div>
+      <div class="col-12">
+        <label class="form-label-tech" for="hpAddress">Địa chỉ</label>
+        <input class="form-control" id="hpAddress" type="text" value="@Model.Address" disabled>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="admin-panel mb-0">
+  <div class="panel-head"><h2>Ảnh thương hiệu</h2></div>
+  <div class="panel-body">
+    <div class="media-grid">
+      <div class="media-item">
+        <span class="media-thumb"><img src="@Model.LogoUrl" alt="Logo chính" loading="lazy"></span>
+        <div class="media-meta"><strong>Logo chính</strong><small>@Model.LogoUrl</small></div>
+      </div>
+      <div class="media-item">
+        <span class="media-thumb"><img src="@Model.FooterLogoUrl" alt="Logo footer" loading="lazy"></span>
+        <div class="media-meta"><strong>Logo footer</strong><small>@Model.FooterLogoUrl</small></div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+@model codezone.ViewModels.Shared.FaqAccordionViewModel
+
+<div class="accordion faq-accordion reveal" id="@Model.Id">
+  @for (var i = 0; i < Model.Items.Count; i++)
+  {
+    var item = Model.Items[i];
+    var itemId = $"{Model.Id}-item-{i + 1}";
+    var isOpen = i == 0;
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="@($"{itemId}-head")">
+        <button class="accordion-button@(isOpen ? string.Empty : " collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#@itemId" aria-expanded="@(isOpen ? "true" : "false")" aria-controls="@itemId">
+          @item.Question
+        </button>
+      </h3>
+      <div id="@itemId" class="accordion-collapse collapse@(isOpen ? " show" : string.Empty)" data-bs-parent="#@Model.Id">
+        <div class="accordion-body">@item.Answer</div>
+      </div>
+    </div>
+  }
+</div>

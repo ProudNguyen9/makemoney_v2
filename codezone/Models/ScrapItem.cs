@@ -16,7 +16,23 @@ public class ScrapItem
 
     public string? PrimaryImage { get; set; }
 
+    public string? Unit { get; set; } = "kg";
+
+    public decimal? PriceFrom { get; set; }
+
+    public string? PriceLabel { get; set; }
+
+    public string Status { get; set; } = "published";
+
+    public int SortOrder { get; set; }
+
     public bool IsFeatured { get; set; }
+
+    public DateTime? PublishedAt { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public ScrapCategory? Category { get; set; }
 

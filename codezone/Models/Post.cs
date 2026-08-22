@@ -18,5 +18,19 @@ public class Post
 
     public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
 
+    public string Status { get; set; } = "published";
+
+    public int SortOrder { get; set; }
+
+    public bool IsFeatured { get; set; }
+
+    public string? AuthorName { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
     public PostCategory? Category { get; set; }
+
+    public ICollection<PostImage> Images { get; set; } = new List<PostImage>();
 }

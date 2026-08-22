@@ -1,0 +1,30 @@
+@model codezone.ViewModels.Shared.FinalCtaViewModel
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
+@{
+  var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
+  var backgroundImage = Model.BackgroundImage ?? chrome.DefaultCtaImage;
+}
+
+<section class="cta-final" aria-labelledby="@Model.TitleId">
+  <div class="cta-final-bg" aria-hidden="true">
+    <img src="@Url.Content(backgroundImage)" alt="" width="1280" height="800" loading="lazy">
+  </div>
+  <div class="container">
+    <div class="cta-final-inner">
+      <span class="tech-label">@Model.Label</span>
+      <h2 id="@Model.TitleId">@Model.Title</h2>
+      <p>@Model.Description</p>
+      <div class="cta-actions">
+        <button class="btn btn-primary btn-lg" type="button" data-quote-open>
+          <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
+        </button>
+        <a class="btn btn-outline-light btn-lg" href="@chrome.HotlineHref">
+          <i class="bi bi-telephone-fill" aria-hidden="true"></i>@chrome.Hotline
+        </a>
+        <a class="btn btn-outline-light btn-lg" href="@chrome.ZaloHref" target="_blank" rel="noopener">
+          <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

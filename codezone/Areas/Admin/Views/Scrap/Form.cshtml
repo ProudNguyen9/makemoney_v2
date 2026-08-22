@@ -1,0 +1,207 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Form loại phế liệu";
+    ViewData["AdminSection"] = "scrap";
+    ViewData["AdminSubSection"] = "form";
+}
+
+<!-- backend: POST /admin/scrap-types — tạo loại phế liệu mới -->
+      <div class="admin-page-head">
+        <h1>Thêm loại phế liệu<small>Tạo trang chuyên mục thu mua cho một loại phế liệu mới</small></h1>
+        <div class="aph-actions">
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="/phe-lieu/danh-muc" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="scrapTypeForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+        </div>
+      </div>
+
+      <form id="scrapTypeForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Thông tin chính -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Thông tin chính</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="scrapGroup">Nhóm<span class="required-mark">*</span></label>
+                    <select class="form-select" id="scrapGroup" required>
+                      <option value="dong" selected>Đồng</option>
+                      <option value="sat-thep">Sắt thép</option>
+                      <option value="nhom">Nhôm</option>
+                      <option value="inox">Inox</option>
+                      <option value="dien-tu-may-moc">Điện tử — máy móc</option>
+                      <option value="khac">Khác</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="scrapName">Tên loại phế liệu<span class="required-mark">*</span></label>
+                    <input class="form-control" id="scrapName" type="text" value="Thu mua đồng đỏ" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="scrapSlug">Slug</label>
+                    <div class="input-with-suffix">
+                      <input class="form-control" id="scrapSlug" type="text" value="thu-mua-dong-do">
+                      <span class="input-suffix">.html</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="scrapPriceRef">Giá tham khảo</label>
+                    <input class="form-control" id="scrapPriceRef" type="text" value="75.000 – 95.000đ/kg">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="scrapTeaser">Mô tả ngắn</label>
+                    <textarea class="form-control" id="scrapTeaser" rows="2">Thu mua đồng đỏ giá cao tại Đồng Nai, TP.HCM và Bình Dương — cân tại chỗ, thanh toán ngay trong ngày.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung trang</span>
+                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung SEO -->
+                    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_EditorPlaceholder.cshtml")
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bảng giá áp dụng -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Bảng giá áp dụng</h2>
+              </div>
+              <div class="panel-body">
+                <div class="table-admin-wrap">
+                  <table class="table table-admin align-middle">
+                    <thead>
+                      <tr>
+                        <th>Phân loại</th>
+                        <th>Giá tối thiểu (đ)</th>
+                        <th>Giá tối đa (đ)</th>
+                        <th>Đơn vị</th>
+                        <th><span class="visually-hidden">Thao tác</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><input class="form-control form-control-sm" type="text" value="Sạch" aria-label="Phân loại dòng 1"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="75000" aria-label="Giá tối thiểu dòng 1"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="95000" aria-label="Giá tối đa dòng 1"></td>
+                        <td>
+                          <select class="form-select form-select-sm" aria-label="Đơn vị dòng 1">
+                            <option selected>kg</option>
+                            <option>tấn</option>
+                            <option>cái</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div class="ta-actions">
+                            <button class="act-danger" type="button" aria-label="Xóa phân loại dòng 1"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><input class="form-control form-control-sm" type="text" value="Loại 1" aria-label="Phân loại dòng 2"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="65000" aria-label="Giá tối thiểu dòng 2"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="80000" aria-label="Giá tối đa dòng 2"></td>
+                        <td>
+                          <select class="form-select form-select-sm" aria-label="Đơn vị dòng 2">
+                            <option selected>kg</option>
+                            <option>tấn</option>
+                            <option>cái</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div class="ta-actions">
+                            <button class="act-danger" type="button" aria-label="Xóa phân loại dòng 2"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><input class="form-control form-control-sm" type="text" value="Loại 2 (pha tạp)" aria-label="Phân loại dòng 3"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="45000" aria-label="Giá tối thiểu dòng 3"></td>
+                        <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="60000" aria-label="Giá tối đa dòng 3"></td>
+                        <td>
+                          <select class="form-select form-select-sm" aria-label="Đơn vị dòng 3">
+                            <option selected>kg</option>
+                            <option>tấn</option>
+                            <option>cái</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div class="ta-actions">
+                            <button class="act-danger" type="button" aria-label="Xóa phân loại dòng 3"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- backend: thêm dòng phân loại mới vào bảng giá áp dụng -->
+                <button class="btn btn-outline-dark btn-sm mt-3" type="button"><i class="bi bi-plus" aria-hidden="true"></i> Thêm phân loại</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Hình ảnh -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Hình ảnh</h2>
+              </div>
+              <div class="panel-body">
+                <span class="form-label-tech">Ảnh đại diện (4:3)</span>
+                <!-- backend: upload — trả về URL ảnh gắn vào trường thumb -->
+                @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 800×600", "thumb", false))
+                <span class="form-label-tech mt-3">Ảnh banner (16:10)</span>
+                <!-- backend: upload — trả về URL ảnh gắn vào trường banner -->
+                @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000", "banner", false))
+              </div>
+            </div>
+
+            <!-- Cấu hình hiển thị -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Cấu hình hiển thị</h2>
+              </div>
+              <div class="panel-body">
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="scrapFeatured" checked>
+                  <label class="form-check-label" for="scrapFeatured">Nổi bật</label>
+                </div>
+                <label class="form-label-tech" for="scrapStatus">Trạng thái</label>
+                <select class="form-select" id="scrapStatus">
+                  <option value="published" selected>Đang hiển thị</option>
+                  <option value="draft">Ẩn</option>
+                </select>
+                <label class="form-label-tech mt-3" for="scrapOrder">Thứ tự</label>
+                <input class="form-control" id="scrapOrder" type="number" min="0" value="1">
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="seoTitle">SEO Title</label>
+                <input class="form-control" id="seoTitle" type="text" value="Thu mua đồng đỏ giá cao — [TÊN CÔNG TY]">
+                <p class="small text-muted mb-3 mt-1">39/70 ký tự</p>
+                <label class="form-label-tech" for="seoMeta">Meta description</label>
+                <textarea class="form-control" id="seoMeta" rows="3">Thu mua đồng đỏ giá cao theo bảng giá mới nhất — nhận hàng tận nơi tại Đồng Nai, TP.HCM, Bình Dương. Gọi [HOTLINE] để báo giá ngay.</textarea>
+                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
+                <label class="form-label-tech" for="seoCanonical">Canonical</label>
+                <input class="form-control" id="seoCanonical" type="url" value="https://thumuaphelieu.vn/thu-mua-dong-do.html">
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="seoIndex" checked>
+                  <label class="form-check-label" for="seoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="seoFollow" checked>
+                  <label class="form-check-label" for="seoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>

@@ -10,5 +10,9 @@ public class ScrapCategory
 
     public string? Description { get; set; }
 
+    public int SortOrder { get; set; }
+
+    public string Status { get; set; } = "published";
+
     public ICollection<ScrapItem> ScrapItems { get; set; } = new List<ScrapItem>();
 }

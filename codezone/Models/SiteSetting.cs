@@ -9,4 +9,6 @@ public class SiteSetting
     public string? Value { get; set; }
 
     public string Group { get; set; } = "general";
+
+    public string? Description { get; set; }
 }

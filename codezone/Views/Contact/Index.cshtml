@@ -4,26 +4,13 @@
 
 <main>
 
-  <!-- ============================ PAGE HERO START ============================ -->
-  <section class="page-hero" aria-labelledby="contact-hero-title">
-    <div class="page-hero-bg" aria-hidden="true">
-      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1600" height="900" fetchpriority="high">
-    </div>
-    <div class="container">
-      <div class="page-hero-inner">
-        <span class="tech-label">Liên hệ</span>
-        <h1 id="contact-hero-title">Liên hệ nhận báo giá thu mua</h1>
-        <p class="page-hero-desc">
-          Gọi hotline, nhắn Zalo hoặc gửi hình phế liệu — nhân viên tiếp nhận và báo giá nhanh trong [30 phút].
-        </p>
-        <ol class="breadcrumb-line">
-          <li><a href="/">Trang chủ</a></li>
-          <li aria-current="page">Liên hệ</li>
-        </ol>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ PAGE HERO END ============================ -->
+  @await Html.PartialAsync("~/Views/Shared/Partials/Public/_PageHero.cshtml", new codezone.ViewModels.Shared.PageHeroViewModel(
+    "Liên hệ",
+    "Liên hệ nhận báo giá thu mua",
+    "Gọi hotline, nhắn Zalo hoặc gửi hình phế liệu — nhân viên tiếp nhận và báo giá nhanh trong [30 phút].",
+    "~/assets/images/hero/hero-02.svg",
+    "contact-hero-title",
+    new List<(string Text, string? Url)> { ("Trang chủ", "/"), ("Liên hệ", null) }))
 
   <!-- ============================ CONTACT INFO + FORM START ============================ -->
   <section class="section section--surface" aria-labelledby="contact-info-title">
@@ -92,91 +79,7 @@
             <p class="quote-panel-sub">Điền thông tin, chúng tôi gọi lại chốt giá trong [30 phút].</p>
 
             <!-- QUICK QUOTE FORM START -->
-            <form class="js-quote-form" novalidate>
-              <div class="quote-form-body row g-3">
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-name-contact">Họ tên</label>
-                    <input class="form-control" type="text" id="qq-name-contact" name="name" placeholder="Nguyễn Văn A">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-phone-contact">Số điện thoại <span class="required-mark">*</span></label>
-                    <input class="form-control" type="tel" id="qq-phone-contact" name="phone" placeholder="09xx xxx xxx" required>
-                    <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-zalo-contact">Zalo</label>
-                    <input class="form-control" type="text" id="qq-zalo-contact" name="zalo" placeholder="Số Zalo (nếu khác)">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-scrap-contact">Loại phế liệu <span class="required-mark">*</span></label>
-                    <select class="form-select" id="qq-scrap-contact" name="scrap" required>
-                      <option value="">— Chọn loại phế liệu —</option>
-                      <option>Đồng / dây điện</option>
-                      <option>Sắt thép</option>
-                      <option>Nhôm</option>
-                      <option>Inox</option>
-                      <option>Máy móc — motor</option>
-                      <option>Bo mạch — điện tử</option>
-                      <option>Nhà xưởng — công trình</option>
-                      <option>Khác (ghi rõ ở ghi chú)</option>
-                    </select>
-                    <div class="invalid-feedback">Vui lòng chọn loại phế liệu.</div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-qty-contact">Số lượng (ước tính)</label>
-                    <input class="form-control" type="text" id="qq-qty-contact" name="quantity" placeholder="VD: khoảng 2 tấn sắt">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-area-contact">Khu vực <span class="required-mark">*</span></label>
-                    <select class="form-select" id="qq-area-contact" name="area" required>
-                      <option value="">— Chọn khu vực —</option>
-                      <option>Đồng Nai</option>
-                      <option>TP. Hồ Chí Minh</option>
-                      <option>Bình Dương</option>
-                      <option>Bà Rịa – Vũng Tàu</option>
-                      <option>Tỉnh khác</option>
-                    </select>
-                    <div class="invalid-feedback">Vui lòng chọn khu vực.</div>
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-field">
-                    <span class="form-label-tech">Hình ảnh phế liệu</span>
-                    <div class="upload-drop" role="button" tabindex="0" aria-label="Tải ảnh phế liệu lên">
-                      <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
-                      <p class="upload-title mb-0">Kéo thả ảnh vào đây hoặc bấm chọn file</p>
-                      <p class="upload-hint">Hỗ trợ nhiều ảnh JPG/PNG — chụp gần loại phế liệu để báo giá chính xác</p>
-                      <input type="file" accept="image/*" multiple hidden>
-                    </div>
-                    <div class="upload-previews" aria-live="polite"></div>
-                  </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-field">
-                    <label class="form-label-tech" for="qq-note-contact">Ghi chú</label>
-                    <textarea class="form-control" id="qq-note-contact" name="note" rows="2" placeholder="Mô tả thêm: tình trạng, thời gian mong muốn thu gom…"></textarea>
-                  </div>
-                </div>
-                <div class="col-12 d-flex flex-wrap align-items-center gap-3">
-                  <button class="btn btn-primary btn-lg" type="submit">
-                    <i class="bi bi-send-fill" aria-hidden="true"></i>Gửi nhận báo giá
-                  </button>
-                  <span class="text-muted-2 small">Hoặc gọi ngay <a href="tel:[HOTLINE]" class="fw-semibold">[HOTLINE]</a></span>
-                </div>
-              </div>
-              <div class="quote-state" aria-live="polite"></div>
-            </form>
+            @await Html.PartialAsync("~/Views/Shared/Partials/Public/_QuickQuoteForm.cshtml", new codezone.ViewModels.Shared.QuickQuoteFormViewModel(IdSuffix: "contact", ShowTitle: false))
             <!-- QUICK QUOTE FORM END -->
           </div>
         </div>
@@ -222,30 +125,9 @@
   </section>
   <!-- ============================ QUICK GUIDE END ============================ -->
 
-  <!-- ============================ FINAL CTA START ============================ -->
-  <section class="cta-final" aria-labelledby="cta-title">
-    <div class="cta-final-bg" aria-hidden="true">
-      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
-    </div>
-    <div class="container">
-      <div class="cta-final-inner">
-        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
-        <h2 id="cta-title">Bạn đang có phế liệu cần thanh lý?</h2>
-        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
-        <div class="cta-actions">
-          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
-            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
-          </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-          </a>
-          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
-            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ FINAL CTA END ============================ -->
+  @await Html.PartialAsync("~/Views/Shared/Partials/Public/_FinalCta.cshtml", new codezone.ViewModels.Shared.FinalCtaViewModel(
+    "Bán phế liệu ngay hôm nay",
+    "Bạn đang có phế liệu cần thanh lý?",
+    "Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp."))
 
 </main>

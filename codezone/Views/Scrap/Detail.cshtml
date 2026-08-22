@@ -1,421 +1,130 @@
+@model ScrapDetailViewModel?
 @{
-    ViewData["Title"] = "Chi tiết phế liệu";
+    ViewData["Title"] = Model?.Seo.Title ?? "Chi tiết phế liệu";
+}
+
+@if (Model is null)
+{
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1>Không tìm thấy phế liệu</h1>
+        <a class="link-arrow" href="/phe-lieu">Quay lại danh sách <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
+    </section>
+  </main>
+  return;
 }
 
 <main>
-
-  <!-- ============================ SECTION SCRAP HERO START ============================ -->
-  <section class="scrap-hero" aria-label="Thu mua đồng đỏ">
+  <section class="scrap-hero" aria-label="@Model.Item.Name">
     <div class="container">
       <ol class="breadcrumb-line">
         <li><a href="/">Trang chủ</a></li>
         <li><a href="/phe-lieu">Phế liệu thu mua</a></li>
-        <li><a href="/phe-lieu/danh-muc">Đồng</a></li>
-        <li aria-current="page">Thu mua đồng đỏ</li>
+        <li aria-current="page">@Model.Item.Name</li>
       </ol>
       <div class="scrap-hero-grid">
         <div class="scrap-hero-media">
-          <img src="~/assets/images/scrap/scrap-copper.svg" alt="Đồng đỏ phế liệu — dây và cây đồng tím đã phân loại" width="1200" height="750" loading="lazy">
+          <img src="@AssetHelper.NormalizePath(Model.Item.ImageUrl)" alt="@Model.Item.Name" width="1200" height="750" loading="lazy">
         </div>
         <div class="scrap-hero-info">
-          <span class="tech-label">Loại phế liệu</span>
-          <h1>Thu mua đồng đỏ (đồng tím) giá cao</h1>
-          <p class="lead-2">
-            Đồng đỏ nguyên chất là loại phế liệu đắt giá nhất trong các kim loại thường gặp. Chúng tôi nhận mọi dạng —
-            dây, cây, cuộn, miếng — cân điện tử tại chỗ và trả tiền ngay, kể cả lô chỉ vài chục ký.
-          </p>
+          <span class="tech-label">@Model.Item.CategoryName</span>
+          <h1>@Model.Item.Name</h1>
+          <p class="lead-2">@Model.Item.ShortDescription</p>
           <div class="price-highlight">
-            <span class="ph-label">Giá thu mua hôm nay</span>
-            <span class="ph-value"><strong>75.000 – 95.000đ/kg</strong></span>
-            <p class="ph-note">Cập nhật [DD/MM/YYYY] — hàng sạch, không dính chì thiếc. Hàng dính tạp định giá riêng theo thực tế.</p>
+            <span class="ph-label">Giá thu mua tham khảo</span>
+            <span class="ph-value"><strong>@Model.Item.PriceText</strong></span>
+            <p class="ph-note">Giá thay đổi theo chất lượng hàng, số lượng và vị trí thu gom.</p>
           </div>
           <div class="d-flex flex-wrap gap-3">
-            <button class="btn btn-primary btn-lg" type="button" data-quote-open>
-              <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình báo giá
-            </button>
-            <a class="btn btn-outline-dark btn-lg" href="tel:[HOTLINE]">
-              <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-            </a>
+            <button class="btn btn-primary btn-lg" type="button" data-quote-open><i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình báo giá</button>
+            <a class="btn btn-outline-dark btn-lg" href="/lien-he"><i class="bi bi-telephone-fill" aria-hidden="true"></i>Liên hệ</a>
           </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- ============================ SECTION SCRAP HERO END ============================ -->
 
-  <!-- ============================ SECTION DESCRIPTION START ============================ -->
   <section class="section" aria-labelledby="desc-title">
     <div class="container">
       <div class="row row-editorial">
         <div class="col-lg-7 reveal">
-          <span class="tech-label">Đặc điểm vật liệu</span>
+          <div class="sec-head">
+            <span class="sec-label">Tổng quan</span>
+            <h2 class="sec-title" id="desc-title">Về @Model.Item.Name.Replace("Thu mua ", string.Empty).ToLower()</h2>
+          </div>
           <div class="article-body">
-            <p>
-              Đồng đỏ (nhiều nơi gọi là đồng tím) là đồng nguyên chất trên 99%, mặt cắt ánh đỏ hồng, mềm và dẻo nên
-              dễ uốn, không gãy khi bẻ thử. Đây là thứ kim loại "thiện" với người bán phế liệu: hầu như nơi thu mua nào
-              cũng muốn lấy, và giá của nó luôn ở nhóm cao nhất bảng giá — nên bán đúng phân loại là đỡ mất tiền oan.
-            </p>
-            <p>
-              Nguồn đồng đỏ phổ biến nhất là dây dẫn điện bóc vỏ, dây máy hàn, cây đồng từ nhà máy điện, tấm copper
-              tháo từ lõi biến áp và tản nhiệt máy móc. Điều kiện để đạt giá cao rất đơn giản: không dính chì, thiếc,
-              sắt hay nhôm lẫn vào — chỉ cần một mối hàn thiếc trong lô là nơi nhận phải trừ theo tỷ lệ tạp.
-            </p>
-            <h2 id="desc-title">Vì sao cùng đồng đỏ mà giá chênh nhau 20.000đ/kg?</h2>
-            <p>
-              Khoảng 75.000 – 95.000đ/kg là dải cho cả "đồng đỏ sạch" lẫn "đồng đỏ hơi dính tạp". Hàng bó cuộn gọn,
-              bề mặt sáng, bẻ thử thấy đỏ đồng đều thì sát mức trên. Hàng để lâu ẩm mốc, dính dầu mỡ hoặc lẫn mối hàn
-              thì người mua phải xử lý thêm nên giá tất nhiên thấp hơn — không phải "cố ép", mà là chi phí làm sạch thật.
-            </p>
+            @Html.Raw(Model.Item.DescriptionHtml ?? Model.Item.ShortDescription ?? "Liên hệ để được tư vấn chi tiết.")
           </div>
         </div>
         <div class="col-lg-5 reveal">
           <table class="spec-table">
-            <caption class="visually-hidden">Thông số thu mua đồng đỏ</caption>
+            <caption class="visually-hidden">Thông tin giá @Model.Item.Name</caption>
             <tbody>
-              <tr>
-                <th scope="row">Tên gọi khác</th>
-                <td>Đồng tím / Copper nguyên chất</td>
-              </tr>
-              <tr>
-                <th scope="row">Độ sạch yêu cầu</th>
-                <td>Không dính chì, thiếc, sắt</td>
-              </tr>
-              <tr>
-                <th scope="row">Dạng nhận</th>
-                <td>Dây, cây, cuộn, miếng</td>
-              </tr>
-              <tr>
-                <th scope="row">Giá tham khảo</th>
-                <td><span class="price-value">75.000 – 95.000đ/kg</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Cập nhật</th>
-                <td>[DD/MM/YYYY]</td>
-              </tr>
+              <tr><th scope="row">Danh mục</th><td>@Model.Item.CategoryName</td></tr>
+              <tr><th scope="row">Đơn vị</th><td>@(Model.Item.Unit ?? "kg")</td></tr>
+              <tr><th scope="row">Giá</th><td><span class="price-value">@Model.Item.PriceText</span></td></tr>
             </tbody>
           </table>
-          <div class="d-flex flex-wrap gap-3 mt-4">
-            <button class="btn btn-primary" type="button" data-quote-open>
-              <i class="bi bi-camera-fill" aria-hidden="true"></i>Báo giá lô đồng của bạn
-            </button>
-          </div>
         </div>
       </div>
     </div>
   </section>
-  <!-- ============================ SECTION DESCRIPTION END ============================ -->
 
-  <!-- ============================ SECTION CLASSIFY START ============================ -->
-  <section class="section section--surface" aria-labelledby="classify-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Cách phân loại</span>
-        <h2 class="sec-title" id="classify-title">Đồng đỏ của bạn rơi vào hạng nào?</h2>
-        <p class="sec-desc">Ba mức phổ biến nhất khi thẩm định lô đồng đỏ — xem trước để ước được số tiền sẽ nhận.</p>
-      </div>
-
-      <div class="type-legend reveal">
-        <div class="type-row">
-          <span class="type-swatch" style="background:#B87333"></span>
-          <span class="type-body">
-            <strong>Đồng đỏ sạch</strong>
-            <small>Không dính chì thiếc, bề mặt sáng, bẻ thử đỏ đồng đều — dạng dây, cây, cuộn gọn.</small>
-          </span>
-          <span class="type-price"><span class="price-value">75.000 – 95.000đ/kg</span><small>giá cao nhất</small></span>
+  @if (Model.Item.GalleryImages.Count > 0)
+  {
+    var shortName = Model.Item.Name.Replace("Thu mua ", string.Empty);
+    <section class="section section--surface" aria-labelledby="gallery-title">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-label">Hình ảnh thực tế</span>
+          <h2 class="sec-title" id="gallery-title">Ảnh @shortName.ToLower() đã thu mua</h2>
+          <p class="sec-desc">Hình ảnh từ các lô hàng thực tế — hàng của bạn sẽ được báo giá theo tình trạng cụ thể sau khi xem hình.</p>
         </div>
-        <div class="type-row">
-          <span class="type-swatch" style="background:#8B7355"></span>
-          <span class="type-body">
-            <strong>Đồng đỏ dính chì / thiếc</strong>
-            <small>Có mối hàn chì, đầu thiếc dính trên dây hoặc miếng — trừ giá theo tỷ lệ tạp trong lô.</small>
-          </span>
-          <span class="type-price"><span class="price-value">55.000 – 70.000đ/kg</span><small>trừ theo % tạp</small></span>
-        </div>
-        <div class="type-row">
-          <span class="type-swatch" style="background:#C47F3D"></span>
-          <span class="type-body">
-            <strong>Đồng đỏ trộn hợp kim</strong>
-            <small>Lẫn đồng vàng, đồng milk hoặc nhôm trong cùng lô — cân tách riêng từng loại để đúng giá.</small>
-          </span>
-          <span class="type-price"><span class="price-value">40.000 – 55.000đ/kg</span><small>phần trộn lẫn</small></span>
+        <div class="detail-gallery reveal">
+          @foreach (var image in Model.Item.GalleryImages)
+          {
+            <figure class="dg-item">
+              <img src="@AssetHelper.NormalizePath(image.ImageUrl)" alt="@shortName" width="600" height="450" loading="lazy">
+            </figure>
+          }
         </div>
       </div>
+    </section>
+  }
 
-      <p class="mt-4 mb-0 text-muted-2 reveal">
-        Không chắc lô của mình thuộc hạng nào? Chụp vài tấm ảnh gần — có mặt cắt càng tốt — gửi Zalo
-        <a href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">[ZALO]</a>, chúng tôi xem và báo giá trong [30 phút], miễn phí.
-      </p>
-    </div>
-  </section>
-  <!-- ============================ SECTION CLASSIFY END ============================ -->
-
-  <!-- ============================ SECTION GALLERY START ============================ -->
-  <section class="section" aria-labelledby="gallery-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Hình ảnh thực tế</span>
-        <h2 class="sec-title" id="gallery-title">Đồng đỏ từ khi nhận lô đến khi lên cân</h2>
-      </div>
-
-      <div class="loc-gallery reveal">
-        <div class="loc-gitem loc-gitem-wide">
-          <img src="~/assets/images/scrap/scrap-copper.svg" alt="Dây đồng đỏ được phân loại và bó thành cuộn tại kho" width="800" height="400" loading="lazy">
-        </div>
-        <div class="loc-gitem">
-          <img src="~/assets/images/hero/hero-01.svg" alt="Xe tải đến nhà máy thu gom lô đồng đỏ" width="400" height="300" loading="lazy">
-        </div>
-        <div class="loc-gitem">
-          <img src="~/assets/images/company/company-yard.svg" alt="Sân kho phân loại đồng đỏ trước khi cân" width="400" height="300" loading="lazy">
-        </div>
-        <div class="loc-gitem loc-gitem-wide">
-          <img src="~/assets/images/company/company-scale.svg" alt="Cân điện tử kiểm tra khối lượng lô đồng đỏ" width="800" height="400" loading="lazy">
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ SECTION GALLERY END ============================ -->
-
-  <!-- ============================ SECTION PROCESS START ============================ -->
-  <section class="section section--surface" aria-labelledby="process-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Quy trình</span>
-        <h2 class="sec-title" id="process-title">Thu mua phế liệu 6 bước — rõ ràng từng công đoạn</h2>
-      </div>
-      <ol class="process-steps list-unstyled reveal">
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">01</span>
-          <h3>Tiếp nhận</h3>
-          <p>Gọi điện, Zalo hoặc gửi hình qua form báo giá.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">02</span>
-          <h3>Báo giá</h3>
-          <p>Báo giá tham khảo nhanh qua hình ảnh, điện thoại.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">03</span>
-          <h3>Khảo sát</h3>
-          <p>Đến tận nơi xem hàng, đo lượng với lô lớn.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">04</span>
-          <h3>Chốt giá</h3>
-          <p>Thống nhất giá cuối cùng theo thực tế từng loại.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">05</span>
-          <h3>Thu gom</h3>
-          <p>Xe và nhân công phân loại, vận chuyển khỏi mặt bằng.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">06</span>
-          <h3>Thanh toán</h3>
-          <p>Cân minh bạch, trả tiền ngay tại chỗ.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-  <!-- ============================ SECTION PROCESS END ============================ -->
-
-  <!-- ============================ SECTION LOCATIONS START ============================ -->
-  <section class="section section--paper section--bordered" aria-labelledby="loc-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Khu vực thu mua</span>
-        <h2 class="sec-title" id="loc-title">Nhận đồng đỏ ở đâu?</h2>
-      </div>
-
-      <div class="loc-directory reveal">
-        <div class="loc-group">
-          <h3 class="loc-province">Đồng Nai <span class="loc-province-note">phủ toàn tỉnh</span></h3>
-          <div class="loc-districts">
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Biên Hòa</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Long Thành</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Nhơn Trạch</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Trảng Bom</a>
-          </div>
-        </div>
-        <div class="loc-group">
-          <h3 class="loc-province">TP. Hồ Chí Minh</h3>
-          <div class="loc-districts">
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Thủ Đức</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Quận 12</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Bình Tân</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Hóc Môn</a>
-          </div>
-        </div>
-        <div class="loc-group">
-          <h3 class="loc-province">Bình Dương</h3>
-          <div class="loc-districts">
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Dĩ An</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Thuận An</a>
-            <a href="/khu-vuc/dong-nai"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Bến Cát</a>
-          </div>
-        </div>
-      </div>
-
-      <p class="small text-muted-2 mt-3 mb-0 reveal">
-        Khu vực khác (Bà Rịa – Vũng Tàu, Long An…): gọi <a href="tel:[HOTLINE]" class="fw-semibold">[HOTLINE]</a> để kiểm tra lịch xe đi gần nhất.
-      </p>
-    </div>
-  </section>
-  <!-- ============================ SECTION LOCATIONS END ============================ -->
-
-  <!-- ============================ SECTION FAQ START ============================ -->
-  <section class="section section--surface" aria-labelledby="faq-title">
-    <div class="container">
-      <div class="row row-editorial">
-        <div class="col-lg-4 reveal">
-          <div class="sec-head">
-            <span class="sec-label">Câu hỏi thường gặp</span>
-            <h2 class="sec-title" id="faq-title">Về đồng đỏ — hỏi nhiều nhất</h2>
-            <p class="sec-desc">Bốn tình huống gần như khách nào cũng gặp khi bán đồng đỏ lần đầu.</p>
-          </div>
-        </div>
-        <div class="col-lg-8">
-          <!-- FAQ LIST START -->
-          <div class="accordion faq-accordion reveal" id="faqRedCopper">
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqRedCopper1" aria-expanded="true" aria-controls="faqRedCopper1">
-                  Vì sao giá đồng đỏ của tôi thấp hơn bảng giá 75 – 95k?
-                </button>
-              </h3>
-              <div id="faqRedCopper1" class="accordion-collapse collapse show" data-bs-parent="#faqRedCopper">
-                <div class="accordion-body">
-                  Ba nguyên nhân chính: hàng dính mối hàn chì/thiếc, để lâu bị xỉn ẩm, hoặc lẫn đồng vàng — nhôm trong lô.
-                  Tất cả đều xử lý được — tách phần sạch ra là lấy giá cao, phần tạp tính riêng. Nhân viên thẩm định sẽ chỉ
-                  cho bạn thấy chỗ trừ ngay khi cân, không trừ "mù".
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqRedCopper2" aria-expanded="false" aria-controls="faqRedCopper2">
-                  Nên bóc vỏ dây đồng trước khi bán không?
-                </button>
-              </h3>
-              <div id="faqRedCopper2" class="accordion-collapse collapse" data-bs-parent="#faqRedCopper">
-                <div class="accordion-body">
-                  Dây lõi to, vỏ mỏng thì bóc ra thường lời hơn — bán theo giá đồng đỏ sạch. Dây lõi nhỏ, bọc hai lớp
-                  thì công bóc không đáng, bán nguyên vỏ theo giá dây điện lại hợp hơn. Chưa rõ loại dây mình có gì?
-                  Gửi hình qua Zalo, chúng tôi tính thử cả hai cách cho bạn so.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqRedCopper3" aria-expanded="false" aria-controls="faqRedCopper3">
-                  Tôi chỉ có 30 – 50kg đồng đỏ, có được lấy tận nơi không?
-                </button>
-              </h3>
-              <div id="faqRedCopper3" class="accordion-collapse collapse" data-bs-parent="#faqRedCopper">
-                <div class="accordion-body">
-                  Đồng đỏ giá cao nên ngưỡng lấy tận nơi thấp hơn các loại khác — vài chục ký vẫn ghé nếu bạn ở nội thành
-                  hoặc gần trục đường xe đang chạy. Nơi xa hơn thì mang đến kho, cân bán lấy tiền ngay trong ngày.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqRedCopper4" aria-expanded="false" aria-controls="faqRedCopper4">
-                  Bảo quản đồng đỏ thế nào để không mất giá?
-                </button>
-              </h3>
-              <div id="faqRedCopper4" class="accordion-collapse collapse" data-bs-parent="#faqRedCopper">
-                <div class="accordion-body">
-                  Tránh để ngoài mưa nắng lâu ngày — đồng ẩm xỉn mặt dễ bị định giá thấp hơn dù bên trong vẫn tốt.
-                  Cuộn dây gọn, tách khỏi sắt vụn và nhôm, bỏ đầu hàn chì ra riêng nếu tháo được. Ba việc nhỏ đó
-                  giúp lô của bạn luôn được báo ở mức cao của dải giá.
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- FAQ LIST END -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ SECTION FAQ END ============================ -->
-
-  <!-- ============================ SECTION RELATED SCRAP START ============================ -->
   <section class="section section--paper" aria-labelledby="related-title">
     <div class="container">
       <div class="sec-head sec-head--row reveal">
         <div>
           <span class="sec-label">Loại phế liệu khác</span>
-          <h2 class="sec-title" id="related-title">Cũng đang thu mua với giá cao</h2>
+          <h2 class="sec-title" id="related-title">Cũng đang thu mua</h2>
         </div>
-        <a class="link-arrow" href="/phe-lieu">Xem tất cả loại phế liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <a class="link-arrow" href="/phe-lieu">Xem tất cả <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
       </div>
-
-      <div class="related-scrap reveal">
-        <a class="rs-item" href="/phe-lieu/dong-do">
-          <span class="rs-media">
-            <img src="~/assets/images/scrap/scrap-copper.svg" alt="Đồng vàng — hợp kim thau màu vàng" width="400" height="300" loading="lazy">
-          </span>
-          <span class="rs-body">
-            <h3>Đồng vàng</h3>
-            <span class="price-value">55.000 – 65.000đ/kg</span>
-          </span>
-        </a>
-        <a class="rs-item" href="/phe-lieu/dong-do">
-          <span class="rs-media">
-            <img src="~/assets/images/scrap/scrap-cable.svg" alt="Đồng cáp đã bóc vỏ" width="400" height="300" loading="lazy">
-          </span>
-          <span class="rs-body">
-            <h3>Đồng cáp</h3>
-            <span class="price-value">50.000 – 65.000đ/kg</span>
-          </span>
-        </a>
-        <a class="rs-item" href="/phe-lieu/dong-do">
-          <span class="rs-media">
-            <img src="~/assets/images/scrap/scrap-cable.svg" alt="Dây điện đồng còn vỏ nhựa" width="400" height="300" loading="lazy">
-          </span>
-          <span class="rs-body">
-            <h3>Dây điện đồng</h3>
-            <span class="price-value">30.000 – 50.000đ/kg</span>
-          </span>
-        </a>
-        <a class="rs-item" href="/phe-lieu/dong-do">
-          <span class="rs-media">
-            <img src="~/assets/images/scrap/scrap-motor.svg" alt="Motor điện chứa lõi đồng" width="400" height="300" loading="lazy">
-          </span>
-          <span class="rs-body">
-            <h3>Motor điện</h3>
-            <span class="price-value">Giá theo tình trạng</span>
-          </span>
-        </a>
+      <div class="scrap-card-grid reveal">
+        @foreach (var item in Model.RelatedItems)
+        {
+          <a class="scrap-card" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">
+            <span class="scrap-card-media">
+              <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="400" height="300" loading="lazy">
+            </span>
+            <span class="scrap-card-body">
+              <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @item.CategoryName</span>
+              <h3>@item.Name</h3>
+              @if (!string.IsNullOrWhiteSpace(item.ShortDescription))
+              {
+                <p class="scrap-card-desc">@item.ShortDescription</p>
+              }
+              <span class="scrap-card-foot">
+                <span class="scrap-card-price">@item.PriceText</span>
+                <span class="scrap-card-cta">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+              </span>
+            </span>
+          </a>
+        }
       </div>
     </div>
   </section>
-  <!-- ============================ SECTION RELATED SCRAP END ============================ -->
-
-  <!-- ============================ SECTION FINAL CTA START ============================ -->
-  <section class="cta-final" aria-labelledby="cta-title">
-    <div class="cta-final-bg" aria-hidden="true">
-      <img src="~/assets/images/hero/hero-02.svg" alt="" width="1280" height="800" loading="lazy">
-    </div>
-    <div class="container">
-      <div class="cta-final-inner">
-        <span class="tech-label">Bán phế liệu ngay hôm nay</span>
-        <h2 id="cta-title">Bạn đang có phế liệu cần thanh lý?</h2>
-        <p>Gửi hình cho chúng tôi để nhận báo giá nhanh — hoặc gọi điện, chat Zalo nếu cần gấp.</p>
-        <div class="cta-actions">
-          <button class="btn btn-primary btn-lg" type="button" data-quote-open>
-            <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
-          </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-          </a>
-          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
-            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ SECTION FINAL CTA END ============================ -->
-
 </main>

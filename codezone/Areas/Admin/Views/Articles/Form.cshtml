@@ -1,0 +1,172 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Form bài viết";
+    ViewData["AdminSection"] = "articles";
+    ViewData["AdminSubSection"] = "form";
+}
+
+<!-- backend: POST /admin/articles — tạo / cập nhật bài viết -->
+      <div class="admin-page-head">
+        <h1>Soạn bài viết <small>Viết bài bảng giá tuần, kiến thức và tin công ty</small></h1>
+        <div class="aph-actions">
+          <!-- backend: lưu với trạng thái bản nháp -->
+          <button class="btn btn-outline-dark" type="submit" form="articleForm" formaction="#draft"><i class="bi bi-save" aria-hidden="true"></i> Lưu nháp</button>
+          <!-- backend: mở trang xem trước công khai (chưa publish) -->
+          <a class="btn btn-outline-dark" href="/tin-tuc/gia-phe-lieu-hom-nay" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
+          <button class="btn btn-primary" type="submit" form="articleForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Xuất bản</button>
+        </div>
+      </div>
+
+      <form id="articleForm" action="#" method="post">
+        <div class="admin-form-grid">
+          <div>
+            <!-- Nội dung bài viết -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Nội dung</h2>
+              </div>
+              <div class="panel-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTitle">Tiêu đề<span class="required-mark">*</span></label>
+                    <input class="form-control" id="articleTitle" type="text" value="Bảng giá phế liệu tuần này: đồng giữ đà tăng" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="articleSlug">Slug</label>
+                    <div class="input-with-suffix">
+                      <input class="form-control" id="articleSlug" type="text" value="bang-gia-phe-lieu-tuan-nay">
+                      <span class="input-suffix">.html</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-tech" for="articleCategory">Chuyên mục<span class="required-mark">*</span></label>
+                    <select class="form-select" id="articleCategory" required>
+                      <option value="bang-gia" selected>Bảng giá</option>
+                      <option value="kien-thuc">Kiến thức</option>
+                      <option value="kinh-nghiem">Kinh nghiệm</option>
+                      <option value="tin-cong-ty">Tin công ty</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTags">Tags</label>
+                    <input class="form-control" id="articleTags" type="text" value="bảng giá, phế liệu đồng, giá sắt">
+                    <p class="small text-muted mb-0 mt-1">Ngăn cách bằng dấu phẩy</p>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-tech" for="articleTeaser">Trích dẫn</label>
+                    <textarea class="form-control" id="articleTeaser" rows="2">Giá đồng đỏ giữ mức 92.000–95.000đ/kg, sắt vụn tăng nhẹ 500đ/kg — cập nhật bảng giá thu mua tuần này tại TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                  </div>
+                  <div class="col-12">
+                    <span class="form-label-tech">Nội dung bài viết</span>
+                    <!-- backend: gắn rich editor (TinyMCE/CKEditor) cho trường nội dung -->
+                    <div class="editor-placeholder">
+                      <div>
+                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
+                        <span>Rich editor — trình soạn thảo, backend wire (TinyMCE/CKEditor)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <!-- Ảnh đại diện -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Ảnh đại diện (16:9)</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: upload — trả về URL ảnh gắn vào trường thumbnail -->
+                <label class="upload-drop">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh lên</p>
+                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×900</p>
+                </label>
+              </div>
+            </div>
+
+            <!-- Xuất bản -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>Xuất bản</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="articleStatus">Trạng thái</label>
+                <select class="form-select" id="articleStatus">
+                  <option value="published" selected>Xuất bản</option>
+                  <option value="draft">Bản nháp</option>
+                </select>
+                <label class="form-label-tech mt-3" for="articlePublishAt">Ngày đăng</label>
+                <input class="form-control" id="articlePublishAt" type="datetime-local" value="2026-08-17T08:00">
+                <label class="form-label-tech mt-3" for="articleAuthor">Tác giả</label>
+                <select class="form-select" id="articleAuthor">
+                  <option value="admin" selected>[QUẢN TRỊ VIÊN]</option>
+                  <option value="editor">[BIÊN TẬP VIÊN]</option>
+                </select>
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="articleFeatured">
+                  <label class="form-check-label" for="articleFeatured">Nổi bật</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="admin-panel">
+              <div class="panel-head">
+                <h2>SEO</h2>
+              </div>
+              <div class="panel-body">
+                <label class="form-label-tech" for="articleSeoTitle">SEO Title</label>
+                <input class="form-control" id="articleSeoTitle" type="text" value="Bảng giá phế liệu tuần này: đồng giữ đà tăng — [TÊN CÔNG TY]">
+                <p class="small text-muted mb-3 mt-1">61/70 ký tự</p>
+                <label class="form-label-tech" for="articleSeoMeta">Meta description</label>
+                <textarea class="form-control" id="articleSeoMeta" rows="3">Bảng giá thu mua phế liệu tuần này: đồng đỏ 92.000–95.000đ/kg, sắt vụn tăng nhẹ. Cập nhật giá tại TP.HCM, Đồng Nai, Bình Dương.</textarea>
+                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
+                <span class="form-label-tech">OG image (1200×630)</span>
+                <!-- backend: upload — trả về URL ảnh gắn vào trường ogImage -->
+                <label class="upload-drop py-3">
+                  <input type="file" accept="image/*" hidden>
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <p class="upload-title">Tải ảnh OG lên</p>
+                  <p class="upload-hint">PNG, JPG — 1200×630</p>
+                </label>
+                <label class="form-label-tech mt-3" for="articleCanonical">Canonical</label>
+                <input class="form-control" id="articleCanonical" type="url" value="https://thumuaphelieu.vn/bang-gia-phe-lieu-tuan-nay.html">
+                <div class="form-check form-switch mt-3">
+                  <input class="form-check-input" type="checkbox" id="articleSeoIndex" checked>
+                  <label class="form-check-label" for="articleSeoIndex">Index</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="articleSeoFollow" checked>
+                  <label class="form-check-label" for="articleSeoFollow">Follow</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bài liên quan -->
+            <div class="admin-panel mb-0">
+              <div class="panel-head">
+                <h2>Bài liên quan</h2>
+              </div>
+              <div class="panel-body">
+                <!-- backend: chọn bài liên quan hiển thị cuối bài viết -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle1" checked>
+                  <label class="form-check-label" for="relArticle1">Bảng giá tuần trước: sắt vụn tăng nhẹ, nhôm đi ngang</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle2" checked>
+                  <label class="form-check-label" for="relArticle2">Cách phân loại dây điện đồng để bán được giá cao</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="relArticle3">
+                  <label class="form-check-label" for="relArticle3">Phân biệt inox 304 và inox 201 bằng nam châm</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>

@@ -1,8 +1,114 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Admin";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+    ViewData["AdminSection"] = "dashboard";
+    ViewData["AdminSubSection"] = "";
 }
 
-<section class="section-block">
-    <h1>Admin</h1>
-    <p>Khu vuc admin moi chi tao khung, chua trien khai chuc nang.</p>
-</section>
+@await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPageHead.cshtml", new codezone.Areas.Admin.ViewModels.AdminPageHeadViewModel("Dashboard", $"Tổng quan dữ liệu website — {DateTime.Now:dd/MM/yyyy}", "/admin/leads", "Lead mới"))
+
+<div class="metric-grid">
+  <div class="metric-card">
+    <span class="mc-label">Loại phế liệu</span>
+    <span class="mc-value">@Model.ScrapItemCount</span>
+    <span class="mc-delta flat"><i class="bi bi-database" aria-hidden="true"></i>Đọc từ ScrapItems</span>
+  </div>
+  <div class="metric-card metric--accent">
+    <span class="mc-label">Bài viết</span>
+    <span class="mc-value">@Model.PostCount</span>
+    <span class="mc-delta flat"><i class="bi bi-newspaper" aria-hidden="true"></i>Đọc từ Posts</span>
+  </div>
+  <div class="metric-card">
+    <span class="mc-label">Media</span>
+    <span class="mc-value">@Model.MediaFileCount</span>
+    <span class="mc-delta flat"><i class="bi bi-images" aria-hidden="true"></i>File trong MediaFiles</span>
+  </div>
+  <div class="metric-card metric--success">
+    <span class="mc-label">Bảng giá cập nhật</span>
+    <span class="mc-value"><small>@(Model.LatestPriceDate?.ToString("dd/MM/yyyy") ?? "Chưa có")</small></span>
+    <span class="mc-delta flat"><i class="bi bi-clock-history" aria-hidden="true"></i>@Model.SeoMetadataCount SEO metadata</span>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <section class="admin-panel">
+      <div class="panel-head">
+        <h2>Bài viết gần đây</h2>
+        <div class="panel-head-actions"><a class="small" href="/admin/articles">Xem tất cả <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a></div>
+      </div>
+      <div class="table-admin-wrap">
+        <table class="table-admin">
+          <thead>
+            <tr>
+              <th scope="col">Ảnh</th>
+              <th scope="col">Tiêu đề</th>
+              <th scope="col">Chuyên mục</th>
+              <th scope="col">Trạng thái</th>
+              <th scope="col">Ngày</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach (var post in Model.LatestPosts)
+          {
+            <tr>
+              <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
+              <td><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></td>
+              <td>@post.CategoryName</td>
+              <td><span class="badge-status @(post.Status == "published" ? "st-published" : "st-draft")">@post.Status</span></td>
+              <td>@(post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="col-lg-4">
+    <section class="admin-panel">
+      <div class="panel-head"><h2>Lead website</h2></div>
+      <div class="panel-body">
+        <p class="mb-2"><strong>@Model.LeadCount</strong> yêu cầu báo giá trong database.</p>
+        <p class="small text-muted mb-0">Bảng ContactRequests chưa được seed lead giả ở phase này; luồng xử lý lead sẽ làm sau.</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-12">
+    <section class="admin-panel mb-0">
+      <div class="panel-head">
+        <h2>Phế liệu nổi bật</h2>
+        <div class="panel-head-actions"><a class="small" href="/admin/scrap">Xem tất cả <i class="bi bi-arrow-right-short" aria-hidden="true"></i></a></div>
+      </div>
+      <div class="table-admin-wrap">
+        <table class="table-admin">
+          <thead>
+            <tr>
+              <th scope="col">Ảnh</th>
+              <th scope="col">Tên</th>
+              <th scope="col">Nhóm</th>
+              <th scope="col">Giá</th>
+              <th scope="col">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach (var item in Model.FeaturedScrapItems)
+          {
+            <tr>
+              <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/assets/images/imported/brand/banner-1.jpg" : item.ImageUrl)" alt="@item.Name" width="56" height="42" loading="lazy"></span></td>
+              <td><a href="/phe-lieu/@item.Slug" target="_blank" rel="noopener">@item.Name</a></td>
+              <td>@item.CategoryName</td>
+              <td>@item.PriceText</td>
+              <td><span class="badge-status @(item.Status == "published" ? "st-published" : "st-draft")">@item.Status</span></td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

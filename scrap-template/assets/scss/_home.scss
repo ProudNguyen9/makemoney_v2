@@ -58,10 +58,14 @@
   .hero-title {
     color: #fff;
     @include clamp-font(2.5rem, calc(1.9rem + 3.2vw), 4.25rem);
-    line-height: 1.06;
+    line-height: 1.12;
     margin: 0 0 1.25rem;
 
-    .hero-title-accent { color: $c-primary; }
+    .hero-title-accent {
+      color: $c-primary;
+      display: inline-block;
+      margin-top: .125em;
+    }
   }
 
   .hero-sub {
@@ -568,17 +572,39 @@
       }
     }
 
+    @include down(lg) {
+      margin-top: .5rem;
+      width: 100%;
+      max-width: 100%;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: minmax(220px, 38vw) minmax(180px, 30vw);
+    }
+
     @include down(md) {
       grid-template-columns: 1fr;
       grid-template-rows: none;
 
       .story-img { min-height: 210px; }
-      .story-img.story-img-main { min-height: 300px; }
+      .story-img.story-img-main {
+        grid-row: auto;
+        min-height: 300px;
+      }
+    }
+  }
+
+  @include down(lg) {
+    .row-editorial { row-gap: 2rem; }
+    .story-copy {
+      padding-top: 0;
+      padding-inline: 1rem;
     }
   }
 
   @include down(sm) {
-    .story-copy::before { left: -.75rem; }
+    .story-copy {
+      padding-inline: 1.125rem;
+    }
+    .story-copy::before { left: .25rem; }
     .story-metrics { grid-template-columns: 1fr; }
     .story-metrics span {
       padding: .875rem 0;

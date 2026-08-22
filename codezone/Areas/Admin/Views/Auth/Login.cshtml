@@ -1,0 +1,62 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.AuthLoginViewModel
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="login-page">
+
+    <!-- Cột form đăng nhập -->
+    <div class="login-form-col">
+      <div class="login-box">
+        <img class="login-logo" src="/assets/images/imported/brand/logo.png" alt="Logo Phế Liệu Thành Trung" width="88" height="44">
+        <h1>Đăng nhập quản trị</h1>
+
+        <form asp-area="Admin" asp-controller="Auth" asp-action="Login" method="post" novalidate>
+          @Html.AntiForgeryToken()
+          <input type="hidden" asp-for="ReturnUrl">
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+          <div class="mb-3">
+            <label class="form-label-tech" for="login-email">Tài khoản email<span class="required-mark">*</span></label>
+            <input asp-for="Email" type="email" class="form-control" id="login-email" autocomplete="username" placeholder="admin@congty.vn" required>
+            <span asp-validation-for="Email" class="text-danger small"></span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label-tech" for="login-password">Mật khẩu<span class="required-mark">*</span></label>
+            <input asp-for="Password" type="password" class="form-control" id="login-password" autocomplete="current-password" placeholder="••••••••" required>
+            <span asp-validation-for="Password" class="text-danger small"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cột thương hiệu: chỉ hiển thị từ lg -->
+    <div class="login-brand-col">
+      <div class="login-brand-bg">
+        <img src="/assets/images/imported/brand/banner-1.jpg" alt="">
+      </div>
+      <div class="login-brand-content">
+        <h2>Quản lý toàn bộ hoạt động thu mua</h2>
+        <p>Tiếp nhận lead, cập nhật bảng giá, đăng bài viết — một nơi duy nhất.</p>
+
+        <ul class="activity-list mt-4 mb-0">
+          <li>
+            <span class="act-ico"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+            <p>Yêu cầu báo giá về ngay trên dashboard</p>
+          </li>
+          <li>
+            <span class="act-ico"><i class="bi bi-table" aria-hidden="true"></i></span>
+            <p>Bảng giá thu mua cập nhật theo tuần</p>
+          </li>
+          <li>
+            <span class="act-ico"><i class="bi bi-newspaper" aria-hidden="true"></i></span>
+            <p>Bài viết, thư viện ảnh trong cùng một nơi</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>

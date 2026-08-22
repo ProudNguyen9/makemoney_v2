@@ -1711,11 +1711,13 @@ textarea.form-control {
 .hero-home .hero-title {
   color: #fff;
   font-size: clamp(2.5rem, 1.9rem + 3.2vw, 4.25rem);
-  line-height: 1.06;
+  line-height: 1.12;
   margin: 0 0 1.25rem;
 }
 .hero-home .hero-title .hero-title-accent {
   color: #E4570F;
+  display: inline-block;
+  margin-top: 0.125em;
 }
 .hero-home .hero-sub {
   color: var(--on-dark-muted);
@@ -2258,6 +2260,15 @@ textarea.form-control {
   font-size: 0.8125rem;
   margin-top: 0.1875rem;
 }
+@media (max-width: 991.98px) {
+  .story-block .story-media {
+    margin-top: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(220px, 38vw) minmax(180px, 30vw);
+  }
+}
 @media (max-width: 767.98px) {
   .story-block .story-media {
     grid-template-columns: 1fr;
@@ -2267,12 +2278,25 @@ textarea.form-control {
     min-height: 210px;
   }
   .story-block .story-media .story-img.story-img-main {
+    grid-row: auto;
     min-height: 300px;
   }
 }
+@media (max-width: 991.98px) {
+  .story-block .row-editorial {
+    row-gap: 2rem;
+  }
+  .story-block .story-copy {
+    padding-top: 0;
+    padding-inline: 1rem;
+  }
+}
 @media (max-width: 575.98px) {
+  .story-block .story-copy {
+    padding-inline: 1.125rem;
+  }
   .story-block .story-copy::before {
-    left: -0.75rem;
+    left: 0.25rem;
   }
   .story-block .story-metrics {
     grid-template-columns: 1fr;
@@ -3948,9 +3972,43 @@ textarea.form-control {
 .loc-gallery .loc-gitem.loc-gitem-wide {
   grid-column: span 2;
 }
+.timeline-gallery {
+  grid-auto-rows: auto;
+}
+.timeline-gallery .loc-gitem {
+  aspect-ratio: 4 / 3;
+  min-height: 300px;
+}
+.timeline-media-note {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(31, 35, 41, 0.12);
+}
+.timeline-media-note h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+.timeline-media-note p {
+  margin: 0;
+  color: #4D5966;
+}
+.timeline-media-note ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.875rem 0 0;
+  padding-left: 1.1rem;
+  color: #4D5966;
+}
 @media (min-width: 768px) {
   .loc-gallery {
     grid-auto-rows: 200px;
+  }
+  .timeline-gallery {
+    grid-auto-rows: auto;
+  }
+  .timeline-gallery .loc-gitem {
+    min-height: 360px;
   }
 }
 

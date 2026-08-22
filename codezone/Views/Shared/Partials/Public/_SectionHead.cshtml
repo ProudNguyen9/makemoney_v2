@@ -1,0 +1,10 @@
+@model codezone.ViewModels.Shared.SectionHeadViewModel
+
+<div class="@Model.CssClass">
+  <span class="sec-label">@Model.Label</span>
+  <h2 class="sec-title" id="@Model.TitleId">@Model.Title</h2>
+  @if (!string.IsNullOrWhiteSpace(Model.Description))
+  {
+    <p class="sec-desc">@Model.Description</p>
+  }
+</div>

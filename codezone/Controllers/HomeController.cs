@@ -7,16 +7,17 @@ namespace ScrapWebsite.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ISiteSettingService _siteSettingService;
+    private readonly IPublicHomeQueryService _homeQueryService;
 
-    public HomeController(ISiteSettingService siteSettingService)
+    public HomeController(IPublicHomeQueryService homeQueryService)
     {
-        _siteSettingService = siteSettingService;
+        _homeQueryService = homeQueryService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var viewModel = await _siteSettingService.GetHomeAsync();
+        var viewModel = await _homeQueryService.GetHomeAsync(cancellationToken);
+        ViewData["Seo"] = viewModel.Seo;
         return View(viewModel);
     }
 
