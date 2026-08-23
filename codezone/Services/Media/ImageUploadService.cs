@@ -89,7 +89,7 @@ public sealed class ImageUploadService : IImageUploadService
         {
             // Decoding doubles as content validation: magic bytes are checked by ImageSharp,
             // a mismatched content-type or a renamed file still fails here.
-            format = await Image.DetectFormatAsync(sourceStream, cancellationToken);
+            format = Image.DetectFormat(sourceStream);
         }
         catch (UnknownImageFormatException)
         {
