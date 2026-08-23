@@ -1,4 +1,5 @@
 using ScrapWebsite.ViewModels.Public;
+using codezone.ViewModels.Shared;
 
 namespace ScrapWebsite.ViewModels;
 
@@ -31,4 +32,6 @@ public class HomeViewModel
     public IReadOnlyList<CategoryGroupCardDto> CategoryGroups { get; set; } = [];
 
     public IReadOnlyList<PostCardDto> LatestPosts { get; set; } = [];
+
+    public FaqAccordionViewModel Faq { get; set; } = new("faqHome", []);
 }

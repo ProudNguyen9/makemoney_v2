@@ -11,6 +11,7 @@ public sealed record AdminDashboardViewModel(
     int PostCount,
     int MediaFileCount,
     int SeoMetadataCount,
+    int LocationCount,
     int LeadCount,
     DateOnly? LatestPriceDate,
     IReadOnlyList<AdminPostRowDto> LatestPosts,
@@ -53,6 +54,20 @@ public sealed record AdminPriceListViewModel(
     public AdminPaginationViewModel Pager => new(Page, 20, TotalCount, (int)Math.Ceiling(TotalCount / 20.0));
 }
 
+public sealed record AdminLeadListViewModel(
+    IReadOnlyList<AdminLeadRowDto> Items,
+    IReadOnlyList<string> ScrapTypes,
+    IReadOnlyList<string> Areas,
+    string? Status,
+    string? Scrap,
+    string? Area,
+    string? Query,
+    int Page,
+    int TotalCount)
+{
+    public AdminPaginationViewModel Pager => new(Page, 20, TotalCount, (int)Math.Ceiling(TotalCount / 20.0));
+}
+
 public sealed record AdminServiceListViewModel(
     IReadOnlyList<AdminServiceRowDto> Items,
     string? Status,
@@ -89,11 +104,17 @@ public sealed record AdminProjectListViewModel(
 
 public sealed record AdminSeoListViewModel(
     IReadOnlyList<AdminSeoRowDto> Items,
+    IReadOnlyList<string> EntityTypes,
     int SitemapCount,
     int RedirectCount,
     string SiteTitle,
     string DefaultDescription,
-    string DefaultOgImage);
+    string DefaultOgTitle,
+    string DefaultOgImage,
+    string? EntityType,
+    string? Status,
+    string? IndexState,
+    string? Query);
 
 public sealed record AdminSettingsViewModel(
     string CompanyName,
@@ -103,13 +124,39 @@ public sealed record AdminSettingsViewModel(
     string Zalo,
     string Email,
     string WorkingHours,
+    string PurchaseAreas,
     string Facebook,
-    string Youtube,
-    string Tiktok,
     string LogoUrl,
     string FooterLogoUrl,
     string FaviconUrl,
+    string PriceUpdatedText,
+    string ResponseTimeText,
     string CacheMinutes);
+
+public sealed record AdminMediaListViewModel(
+    IReadOnlyList<AdminMediaGroupOptionDto> GroupOptions,
+    IReadOnlyList<AdminMediaGroupDto> Groups,
+    string? Group,
+    string? Query);
+
+public sealed record AdminMediaGroupOptionDto(
+    string Key,
+    string Name,
+    int Count);
+
+public sealed record AdminMediaGroupDto(
+    string Key,
+    string Name,
+    IReadOnlyList<AdminMediaItemDto> Items);
+
+public sealed record AdminMediaItemDto(
+    string Key,
+    string GroupKey,
+    string GroupName,
+    string Label,
+    string Description,
+    string RecommendedSize,
+    string Url);
 
 public sealed record AdminScrapRowDto(
     int Id,
@@ -139,9 +186,27 @@ public sealed record AdminLinkedProductDto(
     int Id,
     string Name,
     string Slug,
+    string CategoryName,
+    string Status,
     string? ImageUrl,
     string? PriceText,
     string? ShortDescription);
+
+public sealed record AdminLeadRowDto(
+    int Id,
+    string Code,
+    string CustomerName,
+    string Phone,
+    string? Zalo,
+    string? ScrapType,
+    string? QuantityText,
+    string? Area,
+    string? Message,
+    string SourceForm,
+    string? SourceUrl,
+    string Status,
+    DateTime CreatedAt,
+    IReadOnlyList<string> ImageUrls);
 
 public sealed record AdminPriceRowDto(
     int Id,
@@ -162,6 +227,8 @@ public sealed record AdminSeoRowDto(
     string RoutePath,
     string SeoTitle,
     string MetaDescription,
+    string OgTitle,
+    string OgDescription,
     string OgImage,
     bool RobotsIndex,
     bool RobotsFollow,

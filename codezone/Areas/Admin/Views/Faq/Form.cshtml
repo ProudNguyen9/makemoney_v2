@@ -1,71 +1,76 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Forms.FaqFormViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Form FAQ";
+    ViewData["Title"] = Model.Id == 0 ? "Thêm FAQ" : $"Sửa FAQ: {Model.Question}";
     ViewData["AdminSection"] = "faq";
     ViewData["AdminSubSection"] = "form";
 }
 
-<!-- backend: POST /admin/faq — tạo câu hỏi thường gặp mới -->
-      <div class="admin-page-head">
-        <h1>Thêm câu hỏi<small>Nội dung dùng chung — gán vào nhóm trang cần hiển thị</small></h1>
-        <div class="aph-actions">
-          <button class="btn btn-primary" type="submit" form="faqForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+<div class="admin-page-head">
+  <h1>@(Model.Id == 0 ? "Thêm câu hỏi" : $"Sửa: {Model.Question}")<small>Nội dung dùng chung - gán vào nhóm trang cần hiển thị</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-outline-dark" href="/admin/faq"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách</a>
+    <button class="btn btn-primary" type="submit" form="faqForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+  </div>
+</div>
+
+<form id="faqForm" action="/admin/faq/Save" method="post">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="Id" value="@Model.Id">
+  <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+  <div class="row">
+    <div class="col-xxl-7 col-xl-8 col-lg-9">
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Nội dung câu hỏi</h2>
         </div>
-      </div>
-
-      <form id="faqForm" action="#" method="post">
-        <div class="row">
-          <div class="col-xxl-7 col-xl-8 col-lg-9">
-            <!-- Nội dung câu hỏi -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Nội dung câu hỏi</h2>
-              </div>
-              <div class="panel-body">
-                <div class="row g-3">
-                  <div class="col-12">
-                    <label class="form-label-tech" for="faqQuestion">Câu hỏi<span class="required-mark">*</span></label>
-                    <input class="form-control" id="faqQuestion" type="text" value="Chỉ có ít phế liệu có bán được không?" required>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label-tech" for="faqAnswer">Câu trả lời<span class="required-mark">*</span></label>
-                    <textarea class="form-control" id="faqAnswer" rows="5" required>Bán được. Chúng tôi nhận thu mua từ 10 kg trở lên — quý khách chỉ cần chụp hình hoặc mô tả loại phế liệu, nhân viên sẽ báo giá và đến cân tại chỗ. Với số lượng ít, giá có thể thấp hơn một chút so với bảng giá niêm yết do chi phí vận chuyển.</textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="faqAssign">Gán vào</label>
-                    <select class="form-select" id="faqAssign">
-                      <option value="home" selected>Trang chủ</option>
-                      <option value="scrap">Loại phế liệu</option>
-                      <option value="service">Dịch vụ</option>
-                      <option value="location">Khu vực</option>
-                    </select>
-                    <p class="small text-muted mt-1 mb-0">Chọn trang hiển thị FAQ này</p>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="faqOrder">Thứ tự</label>
-                    <input class="form-control" id="faqOrder" type="number" min="0" value="8">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="faqStatus">Trạng thái</label>
-                    <select class="form-select" id="faqStatus">
-                      <option value="published" selected>Đã xuất bản</option>
-                      <option value="draft">Bản nháp</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label-tech" for="faqQuestion">Câu hỏi<span class="required-mark">*</span></label>
+              <input class="form-control" id="faqQuestion" name="Question" type="text" value="@Model.Question" required maxlength="500">
+              <span class="text-danger small" asp-validation-for="Question"></span>
             </div>
-
-            <!-- SEO (tuỳ chọn) -->
-            <div class="admin-panel mb-0">
-              <div class="panel-head">
-                <h2>SEO (tuỳ chọn)</h2>
-              </div>
-              <div class="panel-body">
-                <!-- backend: FAQPage schema tự sinh từ Câu hỏi / Câu trả lời -->
-                <p class="small text-muted mb-0">FAQPage schema tự sinh từ nội dung — không cần nhập tay.</p>
-              </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="faqAnswer">Câu trả lời<span class="required-mark">*</span></label>
+              <textarea class="form-control" id="faqAnswer" name="Answer" rows="5" required>@Model.Answer</textarea>
+              <span class="text-danger small" asp-validation-for="Answer"></span>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="faqAssign">Gán vào</label>
+              <select class="form-select" id="faqAssign" name="EntityType">
+                <option value="home" selected="@(Model.EntityType == "home")">Trang chủ</option>
+                <option value="scrap" selected="@(Model.EntityType == "scrap")">Loại phế liệu</option>
+                <option value="services" selected="@(Model.EntityType == "services" || Model.EntityType == "service")">Dịch vụ</option>
+                <option value="location" selected="@(Model.EntityType == "location")">Khu vực</option>
+                <option value="referral" selected="@(Model.EntityType == "referral")">Hoa hồng</option>
+              </select>
+              <p class="small text-muted mt-1 mb-0">Chọn nhóm trang hiển thị FAQ này.</p>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="faqOrder">Thứ tự</label>
+              <input class="form-control" id="faqOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các FAQ khác trong cùng nhóm.">
+              <p class="small text-muted mt-1 mb-0">Lưu sẽ đánh lại số liên tục.</p>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label-tech" for="faqStatus">Trạng thái</label>
+              <select class="form-select" id="faqStatus" name="Status">
+                <option value="published" selected="@(Model.Status == "published")">Đã xuất bản</option>
+                <option value="draft" selected="@(Model.Status != "published")">Bản nháp</option>
+              </select>
             </div>
           </div>
         </div>
-      </form>
+      </div>
+
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>SEO</h2>
+        </div>
+        <div class="panel-body">
+          <p class="small text-muted mb-0">FAQPage schema tự sinh từ nội dung - không cần nhập tay.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

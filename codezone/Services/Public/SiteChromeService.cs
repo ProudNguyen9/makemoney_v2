@@ -20,8 +20,12 @@ public sealed class SiteChromeService : ISiteChromeService
         "contact.warehouse_address",
         "contact.working_hours",
         "company.tax_code",
+        "site.logo",
+        "site.footer_logo",
+        "site.favicon",
         "brand.logo",
         "brand.logo_footer",
+        "social.facebook",
         "contact.purchase_areas",
         "brand.default_hero_image",
         "brand.default_cta_image",
@@ -53,6 +57,7 @@ public sealed class SiteChromeService : ISiteChromeService
             var companyName = Get(settings, "site.name", "Thành Trung");
             var hotline = Get(settings, "contact.phone", "0974640626");
             var zalo = Get(settings, "contact.zalo", hotline);
+            var zaloHref = ToZaloHref(zalo);
             var address = Get(settings, "contact.address", "Hóc Môn, TP. Hồ Chí Minh");
 
             return new SiteChromeViewModel(
@@ -61,13 +66,15 @@ public sealed class SiteChromeService : ISiteChromeService
                 HotlineHref: ToPhoneHref(hotline),
                 Email: Get(settings, "contact.email", "phelieuthanhtrung@gmail.com"),
                 Zalo: zalo,
-                ZaloHref: ToZaloHref(zalo),
+                ZaloHref: zaloHref,
+                MessengerHref: ToMessengerHref(Get(settings, "social.facebook", string.Empty)),
                 Address: address,
                 WarehouseAddress: Get(settings, "contact.warehouse_address", address),
                 WorkingHours: Get(settings, "contact.working_hours", "7:00 - 20:00"),
                 TaxCode: Get(settings, "company.tax_code", "Đang cập nhật"),
-                LogoUrl: Get(settings, "brand.logo", "/assets/images/imported/brand/logo.png"),
-                FooterLogoUrl: Get(settings, "brand.logo_footer", "/assets/images/imported/brand/logo-footer.png"),
+                LogoUrl: Get(settings, "site.logo", Get(settings, "brand.logo", "/assets/images/imported/brand/logo.png")),
+                FooterLogoUrl: Get(settings, "site.footer_logo", Get(settings, "brand.logo_footer", "/assets/images/imported/brand/logo-footer.png")),
+                FaviconUrl: Get(settings, "site.favicon", "/assets/images/imported/brand/favicon.png"),
                 PurchaseAreas: Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
                 DefaultHeroImage: Get(settings, "brand.default_hero_image", "/assets/images/imported/brand/banner-1.jpg"),
                 DefaultCtaImage: Get(settings, "brand.default_cta_image", "/assets/images/imported/brand/banner-3.jpg"),
@@ -98,5 +105,18 @@ public sealed class SiteChromeService : ISiteChromeService
 
         var digits = new string(zalo.Where(char.IsDigit).ToArray());
         return string.IsNullOrWhiteSpace(digits) ? "#" : $"https://zalo.me/{digits}";
+    }
+
+    private static string ToMessengerHref(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "#";
+        }
+
+        return value.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+               value.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? value
+            : $"https://m.me/{value.Trim().TrimStart('@')}";
     }
 }

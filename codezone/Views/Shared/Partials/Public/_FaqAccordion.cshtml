@@ -13,7 +13,7 @@
         </button>
       </h3>
       <div id="@itemId" class="accordion-collapse collapse@(isOpen ? " show" : string.Empty)" data-bs-parent="#@Model.Id">
-        <div class="accordion-body">@item.Answer</div>
+        <div class="accordion-body">@Html.Raw(item.Answer)</div>
       </div>
     </div>
   }

@@ -8,13 +8,35 @@ namespace ScrapWebsite.Areas.Admin.Controllers;
 [Authorize(AuthenticationSchemes = AdminAuthDefaults.AuthenticationScheme)]
 public class LeadsController : Controller
 {
-    public IActionResult Index()
+    private readonly IAdminLeadQueryService _leadQueryService;
+    private readonly IAdminLeadCommandService _leadCommandService;
+
+    public LeadsController(IAdminLeadQueryService leadQueryService, IAdminLeadCommandService leadCommandService)
     {
-        return View();
+        _leadQueryService = leadQueryService;
+        _leadCommandService = leadCommandService;
     }
 
-    public IActionResult Detail()
+    public async Task<IActionResult> Index(string? status, string? scrap, [FromQuery] string? leadArea, string? query, int page = 1, CancellationToken cancellationToken = default)
     {
-        return View();
+        var model = await _leadQueryService.GetLeadListAsync(Clean(status), Clean(scrap), Clean(leadArea), Clean(query), Math.Max(1, page), cancellationToken);
+        return View(model);
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkContacted(int id, string? status, string? scrap, [FromForm] string? leadArea, string? query, int page = 1, CancellationToken cancellationToken = default)
+    {
+        var updated = await _leadCommandService.MarkContactedAsync(id, cancellationToken);
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            return Json(new { ok = updated });
+        }
+
+        TempData[updated ? "Success" : "Error"] = updated ? "Đã đánh dấu lead là đã liên hệ." : "Không tìm thấy lead.";
+        return RedirectToAction(nameof(Index), new { area = "Admin", status, scrap, leadArea, query, page });
+    }
+
+    private static string? Clean(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }

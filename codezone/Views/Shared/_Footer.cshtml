@@ -70,10 +70,10 @@
         <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Khu vực">
           <h2 class="footer-col-title">Khu vực</h2>
           <ul class="footer-links">
-            <li><a href="/khu-vuc/dong-nai">Đồng Nai</a></li>
-            <li><a href="/khu-vuc/dong-nai">TP. Hồ Chí Minh</a></li>
-            <li><a href="/khu-vuc/dong-nai">Bình Dương</a></li>
-            <li><a href="/khu-vuc/dong-nai">Bà Rịa – Vũng Tàu</a></li>
+            <li><a href="/khu-vuc">Đồng Nai</a></li>
+            <li><a href="/khu-vuc">TP. Hồ Chí Minh</a></li>
+            <li><a href="/khu-vuc">Bình Dương</a></li>
+            <li><a href="/khu-vuc">Bà Rịa – Vũng Tàu</a></li>
             <li><a href="/khu-vuc">Xem tất cả</a></li>
           </ul>
         </nav>
@@ -121,7 +121,7 @@
 <!-- FLOATING CONTACT (desktop) START -->
 <div class="floating-contact" aria-label="Liên hệ nhanh">
   <a class="fc-phone" href="@Model.HotlineHref" aria-label="Gọi hotline"><i class="bi bi-telephone-fill" aria-hidden="true"></i></a>
-  <a class="fc-messenger" href="@Model.ZaloHref" target="_blank" rel="noopener" aria-label="Chat Messenger"><i class="bi bi-messenger" aria-hidden="true"></i></a>
+  <a class="fc-messenger" href="@Model.MessengerHref" target="@(Model.MessengerHref == "#" ? null : "_blank")" rel="noopener" aria-label="Chat Messenger"><i class="bi bi-messenger" aria-hidden="true"></i></a>
   <a class="fc-zalo" href="@Model.ZaloHref" target="_blank" rel="noopener" aria-label="Chat Zalo">Zalo</a>
 </div>
 <!-- FLOATING CONTACT END -->

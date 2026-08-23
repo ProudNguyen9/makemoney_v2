@@ -4,14 +4,15 @@
     ViewData["Title"] = "Bảng giá";
     ViewData["AdminSection"] = "prices";
     ViewData["AdminSubSection"] = "";
+    var rowIndex = 0;
 }
 
 <div class="admin-page-head">
-  <h1>Bảng giá thu mua<small>Cập nhật gần nhất @(Model.LastUpdatedAt?.ToString("dd/MM/yyyy") ?? "chưa có lịch sử") — read-only phase</small></h1>
+  <h1>Bảng giá thu mua<small>Cập nhật gần nhất @(Model.LastUpdatedAt?.ToString("dd/MM/yyyy") ?? "chưa có lịch sử") — tick chọn dòng để lưu giá hoặc xóa nhiều dòng cùng lúc</small></h1>
   <div class="aph-actions">
-    <button class="btn btn-outline-dark" type="button" disabled><i class="bi bi-files" aria-hidden="true"></i> Copy phiên trước</button>
-    <button class="btn btn-outline-dark" type="button" disabled><i class="bi bi-arrow-down-up" aria-hidden="true"></i> Cập nhật hàng loạt</button>
-    <button class="btn btn-primary" type="button" disabled><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm dòng giá</button>
+    <a class="btn btn-outline-dark" href="/admin/scrap"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm dòng giá (tại loại phế liệu)</a>
+    <button class="btn btn-outline-danger" type="submit" form="priceBulkForm" formaction="/admin/prices/DeleteBulk" formmethod="post" onclick="return confirm('Xóa các dòng giá đang được tick chọn? (Xóa mềm — dữ liệu vẫn được giữ trong hệ thống)')"><i class="bi bi-trash" aria-hidden="true"></i> Xóa đã chọn</button>
+    <button class="btn btn-primary" type="submit" form="priceBulkForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu bảng giá</button>
   </div>
 </div>
 
@@ -24,54 +25,94 @@
       <option value="@category.Slug" selected="@(Model.Group == category.Slug)">@category.Name</option>
     }
   </select>
+  <select class="form-select" name="status" aria-label="Lọc theo trạng thái">
+    <option value="">Mọi trạng thái</option>
+    <option value="published" selected="@(Model.Status == "published")">Đang hiển thị</option>
+    <option value="draft" selected="@(Model.Status == "draft")">Đang ẩn</option>
+  </select>
   <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm loại phế liệu..." aria-label="Tìm loại phế liệu">
   <div class="spacer"></div>
-  <span class="admin-pagination">@Model.Items.Count dòng đang hiển thị / tổng @Model.TotalCount</span>
   <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
 </form>
 
-<div class="admin-panel mb-0">
-  <div class="table-admin-wrap">
-    <table class="table table-admin align-middle">
-      <thead>
-        <tr>
-          <th>Nhóm</th>
-          <th>Loại</th>
-          <th>Giá hiện tại</th>
-          <th>Giá số</th>
-          <th>Đơn vị</th>
-          <th>Cập nhật</th>
-          <th>Bật/Tắt</th>
-          <th><span class="visually-hidden">Thao tác</span></th>
-        </tr>
-      </thead>
-      <tbody>
-      @foreach (var row in Model.Items)
-      {
-        <tr>
-          <td>@row.CategoryName</td>
-          <td><strong>@row.ScrapName</strong></td>
-          <td>@row.PriceText</td>
-          <td><input class="form-control form-control-sm" type="number" min="0" step="500" value="@(row.PriceValue?.ToString("0") ?? "")" aria-label="Giá @row.ScrapName" disabled></td>
-          <td>@row.Unit</td>
-          <td>@(row.EffectiveDate?.ToString("dd/MM/yyyy") ?? "Chưa rõ")</td>
-          <td>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" checked disabled aria-label="Bật dòng giá @row.ScrapName">
-            </div>
-          </td>
-          <td>
-            <div class="ta-actions">
-              <button type="button" disabled aria-label="Sửa dòng @row.ScrapName"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-              <button class="act-danger" type="button" disabled aria-label="Xóa dòng @row.ScrapName"><i class="bi bi-trash" aria-hidden="true"></i></button>
-            </div>
-          </td>
-        </tr>
-      }
-      </tbody>
-    </table>
+<form id="priceBulkForm" action="/admin/prices/SaveBulk" method="post">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="group" value="@Model.Group">
+  <input type="hidden" name="status" value="@Model.Status">
+  <input type="hidden" name="q" value="@Model.Query">
+  <input type="hidden" name="page" value="@Model.Page">
+  <div class="admin-panel mb-0">
+    <div class="table-admin-wrap">
+      <table class="table table-admin align-middle">
+        <thead>
+          <tr>
+            <th><input class="form-check-input" type="checkbox" data-check-all aria-label="Chọn tất cả dòng giá"></th>
+            <th>Nhóm</th>
+            <th>Loại</th>
+            <th>Phân loại</th>
+            <th>Giá số (đ)</th>
+            <th>Đơn vị</th>
+            <th>Ngày áp dụng</th>
+            <th>Ẩn / Hiện</th>
+            <th><span class="visually-hidden">Thao tác</span></th>
+          </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model.Items)
+        {
+          <tr>
+            <td>
+              <input type="hidden" name="rows[@rowIndex].PriceId" value="@row.Id">
+              <input type="hidden" name="rows[@rowIndex].ScrapItemId" value="@row.ScrapItemId">
+              <input class="form-check-input" type="checkbox" name="rows[@rowIndex].Selected" value="true" aria-label="Chọn dòng giá @row.ScrapName">
+            </td>
+            <td>@row.CategoryName</td>
+            <td><strong>@row.ScrapName</strong></td>
+            <td>
+              <input class="form-control form-control-sm" type="text" value="@row.PriceText" disabled aria-label="Phân loại @row.ScrapName" title="Sửa phân loại trong form loại phế liệu">
+            </td>
+            <td>
+              <input class="form-control form-control-sm" type="number" min="0" step="any" name="rows[@rowIndex].PriceValue" value="@(row.PriceValue?.ToString("0") ?? "")" aria-label="Giá @row.ScrapName">
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="rows[@rowIndex].Unit" aria-label="Đơn vị @row.ScrapName">
+                @{
+                    var units = new[] { "kg", "tấn", "cái", "m", "lô" };
+                }
+                @foreach (var unit in units)
+                {
+                    <option value="@unit" selected="@(row.Unit == unit)">@unit</option>
+                }
+                @if (!units.Contains(row.Unit))
+                {
+                    <option value="@row.Unit" selected>@row.Unit</option>
+                }
+              </select>
+            </td>
+            <td>@(row.EffectiveDate?.ToString("dd/MM/yyyy") ?? "Chưa rõ")</td>
+            <td>
+              <button type="submit" class="btn-switch @(row.ItemIsPublished ? "on" : "")" formaction="/admin/prices/ToggleItem" formmethod="post" name="id" value="@row.ScrapItemId" role="switch" aria-checked="@(row.ItemIsPublished ? "true" : "false")" title="@(row.ItemIsPublished ? "Đang hiển thị — bấm để ẩn loại phế liệu này" : "Đang ẩn — bấm để hiển thị lại")" aria-label="@(row.ItemIsPublished ? "Ẩn" : "Hiện") @row.ScrapName"></button>
+            </td>
+            <td>
+              <div class="ta-actions">
+                <button type="submit" class="act-danger" formaction="/admin/prices/Delete/@row.Id" formmethod="post" onclick="return confirm('Xóa dòng giá của @row.ScrapName?')" aria-label="Xóa dòng @row.ScrapName"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </div>
+            </td>
+          </tr>
+          rowIndex++;
+        }
+        @if (Model.Items.Count == 0)
+        {
+          <tr>
+            <td colspan="9" class="text-center text-muted py-4">Chưa có dòng giá nào khớp bộ lọc.</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+    <div class="panel-foot">
+      @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPagination.cshtml", Model.Pager)
+      <span class="small text-muted">Tick chọn dòng rồi bấm "Lưu bảng giá" để lưu giá, hoặc "Xóa đã chọn" để xóa mềm nhiều dòng. Bấm icon mắt để ẩn/hiện loại phế liệu ngay.</span>
+    </div>
   </div>
-  <div class="panel-foot">
-    <span class="small text-muted">Read-only phase: bảng giá chỉ đọc từ database, chưa lưu thay đổi.</span>
-  </div>
-</div>
+</form>

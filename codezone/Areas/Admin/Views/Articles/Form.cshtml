@@ -6,6 +6,11 @@
     ViewData["AdminSubSection"] = "form";
 
     var publishedAtValue = (Model.PublishedAt ?? DateTime.UtcNow).ToLocalTime().ToString("yyyy-MM-ddTHH:mm");
+    var productCategories = Model.ProductOptions
+        .Select(product => product.CategoryName)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(name => name)
+        .ToList();
 }
 
 <div class="admin-page-head">
@@ -24,89 +29,189 @@
   @Html.AntiForgeryToken()
   <input type="hidden" name="Id" value="@Model.Id">
   <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-  <div class="admin-form-grid">
-    <div>
-      <div class="admin-panel mb-0">
-        <div class="panel-head">
-          <h2>Nội dung</h2>
+
+  <div class="admin-panel mb-3">
+    <div class="panel-head">
+      <h2>Xuất bản</h2>
+    </div>
+    <div class="panel-body">
+      <div class="article-publish-grid">
+        <div class="article-publish-section">
+          <div class="article-publish-column">
+            <label class="form-label-tech" for="articleStatus">Trạng thái</label>
+            <select class="form-select" id="articleStatus" name="Status">
+              <option value="published" selected="@(Model.Status == "published")">Xuất bản</option>
+              <option value="draft" selected="@(Model.Status != "published")">Bản nháp</option>
+            </select>
+            <div class="form-check form-switch mt-3">
+              <input class="form-check-input" type="checkbox" id="articleFeatured" name="IsFeatured" value="true" checked="@(Model.IsFeatured)">
+              <label class="form-check-label" for="articleFeatured">Nổi bật</label>
+            </div>
+            <div class="article-publish-note">
+              Bài viết nổi bật sẽ được ưu tiên hiển thị tại trang chủ hoặc khu vực bài viết nổi bật.
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label-tech" for="articleTitle">Tiêu đề<span class="required-mark">*</span></label>
-              <input class="form-control" id="articleTitle" name="Title" type="text" value="@Model.Title" required maxlength="255">
-              <span class="text-danger small" asp-validation-for="Title"></span>
+        <div class="article-publish-section">
+          <div class="article-cover-box">
+            <div class="article-cover-head">
+              <span class="form-label-tech">Ảnh đại diện</span>
+              <span>1200 x 675px</span>
             </div>
-            <div class="col-md-6">
-              <label class="form-label-tech" for="articleSlug">Slug</label>
-              <input class="form-control" id="articleSlug" name="Slug" type="text" value="@Model.Slug" maxlength="255">
-              <p class="small text-muted mt-1 mb-0">Bỏ trống sẽ tự sinh từ tiêu đề, tự động tránh trùng.</p>
+            <input class="article-cover-input" id="articleCoverFile" name="CoverFile" type="file" accept="image/*">
+            <label class="article-cover-drop" for="articleCoverFile" data-empty="@string.IsNullOrWhiteSpace(Model.CurrentCoverUrl).ToString().ToLowerInvariant()">
+              @if (!string.IsNullOrWhiteSpace(Model.CurrentCoverUrl))
+              {
+                <img class="article-cover-preview" src="@Model.CurrentCoverUrl" alt="Ảnh đại diện" loading="lazy">
+              }
+              else
+              {
+                <span class="article-cover-empty">
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  <strong>Tải ảnh đại diện</strong>
+                  <small>PNG, JPG - tự chuyển WebP</small>
+                </span>
+              }
+              <span class="article-cover-overlay">
+                <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                <strong>@(string.IsNullOrWhiteSpace(Model.CurrentCoverUrl) ? "Tải ảnh đại diện" : "Thay ảnh đại diện")</strong>
+              </span>
+            </label>
+            @if (!string.IsNullOrWhiteSpace(Model.CurrentCoverUrl))
+            {
+              <div class="article-cover-info">
+                <span id="articleCoverFileName">@Model.CurrentCoverUrl.Split('/').Last()</span>
+                <label class="article-cover-remove" for="removeCover" title="Xóa ảnh">
+                  <input type="checkbox" name="RemoveCover" id="removeCover" value="true" hidden>
+                  <span aria-hidden="true">×</span>
+                </label>
+              </div>
+            }
+            else
+            {
+              <div class="article-cover-info article-cover-info--empty">
+                <span id="articleCoverFileName">Chưa chọn ảnh đại diện.</span>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="article-publish-section">
+          <div class="article-linked-box">
+            <div class="article-linked-head">
+              <span class="form-label-tech">Sản phẩm liên kết</span>
+              <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#linkedProductsModal">
+                <i class="bi bi-search" aria-hidden="true"></i> Chọn
+              </button>
             </div>
-            <div class="col-md-6">
-              <label class="form-label-tech" for="articleCategory">Chuyên mục<span class="required-mark">*</span></label>
-              <select class="form-select" id="articleCategory" name="PostCategoryId" required>
-                <option value="">— Chọn chuyên mục —</option>
-                @foreach (var category in Model.Categories)
+            <div class="article-linked-body">
+              <div class="selected-product-chips" id="selectedProductChips">
+                @foreach (var product in Model.ProductOptions.Where(product => Model.LinkedProductIds.Contains(product.Id)))
                 {
-                  <option value="@category.Id" selected="@(Model.PostCategoryId == category.Id)">@category.Name</option>
+                  <span class="selected-product-chip" data-product-id="@product.Id">
+                    <span>@product.Name</span>
+                    <button type="button" class="chip-remove" data-product-id="@product.Id" aria-label="Bỏ @product.Name">×</button>
+                  </span>
                 }
-              </select>
-              <span class="text-danger small" asp-validation-for="PostCategoryId"></span>
-            </div>
-            <div class="col-12">
-              <label class="form-label-tech" for="articleTeaser">Trích dẫn</label>
-              <textarea class="form-control" id="articleTeaser" name="Excerpt" rows="2" maxlength="700">@Model.Excerpt</textarea>
-            </div>
-            <div class="col-12">
-              <label class="form-label-tech" for="articleContent">Nội dung bài viết (HTML)</label>
-              <textarea class="form-control js-rich-editor" id="articleContent" name="Content" rows="14">@Model.Content</textarea>
-              <p class="small text-muted mt-1 mb-0">Soạn bằng trình editor, xuất HTML raw cho trang client.</p>
+                @if (!Model.ProductOptions.Any(product => Model.LinkedProductIds.Contains(product.Id)))
+                {
+                  <span class="text-muted small">Chưa chọn sản phẩm nào.</span>
+                }
+              </div>
+              <p class="small text-muted mt-2 mb-0">Chọn các sản phẩm liên quan để hiển thị trong bài viết.</p>
+              <p class="small text-muted mb-0">Đã chọn <strong id="selectedProductCount">@Model.LinkedProductIds.Count</strong> sản phẩm</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div>
-      <div class="admin-panel mb-0">
-        <div class="panel-head">
-          <h2>Xuất bản</h2>
+  <div class="admin-panel mb-3">
+    <div class="panel-head">
+      <h2>Nội dung</h2>
+    </div>
+    <div class="panel-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label-tech" for="articleTitle">Tiêu đề<span class="required-mark">*</span></label>
+          <input class="form-control" id="articleTitle" name="Title" type="text" value="@Model.Title" required maxlength="255">
+          <span class="text-danger small" asp-validation-for="Title"></span>
         </div>
-        <div class="panel-body">
-          <label class="form-label-tech" for="articleStatus">Trạng thái</label>
-          <select class="form-select" id="articleStatus" name="Status">
-            <option value="published" selected="@(Model.Status == "published")">Xuất bản</option>
-            <option value="draft" selected="@(Model.Status != "published")">Bản nháp</option>
+        <div class="col-lg-7">
+          <label class="form-label-tech" for="articleSlug">Slug</label>
+          <input class="form-control" id="articleSlug" name="Slug" type="text" value="@Model.Slug" maxlength="255">
+          <p class="small text-muted mt-1 mb-0">Bỏ trống sẽ tự sinh từ tiêu đề, tự động tránh trùng.</p>
+        </div>
+        <div class="col-lg-5">
+          <label class="form-label-tech" for="articleCategory">Chuyên mục<span class="required-mark">*</span></label>
+          <select class="form-select" id="articleCategory" name="PostCategoryId" required>
+            <option value="">— Chọn chuyên mục —</option>
+            @foreach (var category in Model.Categories)
+            {
+              <option value="@category.Id" selected="@(Model.PostCategoryId == category.Id)">@category.Name</option>
+            }
           </select>
-          <label class="form-label-tech mt-3" for="articlePublishAt">Ngày đăng</label>
-          <input class="form-control" id="articlePublishAt" name="PublishedAt" type="datetime-local" value="@publishedAtValue">
-          <label class="form-label-tech mt-3" for="articleOrder">Thứ tự</label>
-          <input class="form-control" id="articleOrder" name="SortOrder" type="number" min="0" max="9999" value="@Model.SortOrder">
-          <div class="form-check form-switch mt-3">
-            <input class="form-check-input" type="checkbox" id="articleFeatured" name="IsFeatured" value="true" checked="@(Model.IsFeatured)">
-            <label class="form-check-label" for="articleFeatured">Nổi bật</label>
-          </div>
+          <span class="text-danger small" asp-validation-for="PostCategoryId"></span>
+        </div>
+        <div class="col-12">
+          <label class="form-label-tech" for="articleTeaser">Trích dẫn</label>
+          <textarea class="form-control" id="articleTeaser" name="Excerpt" rows="4" maxlength="700">@Model.Excerpt</textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label-tech" for="articleContent">Nội dung bài viết (HTML)</label>
+          <textarea class="form-control js-rich-editor article-content-editor" id="articleContent" name="Content" rows="12">@Model.Content</textarea>
+          <p class="small text-muted mt-1 mb-0">Soạn bằng trình editor, xuất HTML raw cho trang client.</p>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="admin-panel mb-0">
-        <div class="panel-head">
-          <h2>Sản phẩm liên kết</h2>
+  <div class="modal fade" id="linkedProductsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content linked-products-modal">
+        <div class="modal-header border-0 pb-0">
+          <div>
+            <h5 class="modal-title mb-1">Chọn sản phẩm liên kết</h5>
+            <p class="text-muted small mb-0">Tìm theo tên, slug, lọc theo chuyên mục và trạng thái.</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
         </div>
-        <div class="panel-body">
-          <div class="linked-product-list">
+        <div class="modal-body pt-3">
+          <div class="linked-products-filter">
+          <select class="form-select" id="productFilterCategory">
+              <option value="">Tất cả chuyên mục</option>
+              @foreach (var category in productCategories)
+              {
+                <option value="@category">@category</option>
+              }
+            </select>
+            <select class="form-select" id="productFilterStatus">
+              <option value="">Tất cả</option>
+              <option value="published">Xuất bản</option>
+              <option value="draft">Bản nháp</option>
+            </select>
+            <input class="form-control" id="productFilterQuery" type="search" placeholder="Tìm theo tên, slug...">
+          </div>
+          <div class="linked-products-picklist" id="linkedProductsPicklist">
             @foreach (var product in Model.ProductOptions)
             {
-              <label class="form-check linked-product-item">
-                <input class="form-check-input" type="checkbox" name="LinkedProductIds" value="@product.Id" checked="@(Model.LinkedProductIds.Contains(product.Id))">
-                <span class="form-check-label">
+              <label class="linked-product-row"
+                     data-product-id="@product.Id"
+                     data-product-name="@product.Name.ToLowerInvariant()"
+                     data-product-slug="@product.Slug.ToLowerInvariant()"
+                     data-product-category="@product.CategoryName.ToLowerInvariant()"
+                     data-product-status="@product.Status.ToLowerInvariant()">
+                <input class="form-check-input linked-product-check" type="checkbox" name="LinkedProductIds" value="@product.Id" checked="@(Model.LinkedProductIds.Contains(product.Id))">
+                <span class="linked-product-meta">
                   <strong>@product.Name</strong>
                   <small>@product.Slug</small>
                 </span>
               </label>
             }
           </div>
-          <p class="small text-muted mt-2 mb-0">Chọn nhiều sản phẩm để bài viết nhúng khối liên kết SEO ở trang client.</p>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Xong</button>
         </div>
       </div>
     </div>

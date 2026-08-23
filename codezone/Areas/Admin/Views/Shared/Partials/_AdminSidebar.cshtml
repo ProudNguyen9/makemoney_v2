@@ -1,6 +1,11 @@
+@using Microsoft.EntityFrameworkCore
+@inject ScrapWebsite.Data.AppDbContext DbContext
 @{
     var section = ViewData["AdminSection"]?.ToString() ?? string.Empty;
     var subSection = ViewData["AdminSubSection"]?.ToString() ?? string.Empty;
+    var pendingLeadCount = await DbContext.ContactRequests
+        .AsNoTracking()
+        .CountAsync(request => request.DeletedAt == null && request.Status != "contacted");
 
     string Active(string name) => string.Equals(section, name, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
     string Open(string name) => string.Equals(section, name, StringComparison.OrdinalIgnoreCase) ? "open" : string.Empty;
@@ -23,7 +28,16 @@
             <li><a class="@(Active("dashboard"))" href="/admin"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
 
             <li><h2 class="nav-sec">Thu mua</h2></li>
-            <li><a class="@(Active("leads"))" href="/admin/leads"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Yêu cầu báo giá<span class="nav-badge">12</span></a></li>
+            <li>
+                <a class="@(Active("leads"))" href="/admin/leads">
+                    <i class="bi bi-inbox-fill" aria-hidden="true"></i>
+                    <span>Yêu cầu báo giá</span>
+                    @if (pendingLeadCount > 0)
+                    {
+                        <span class="nav-badge">@pendingLeadCount</span>
+                    }
+                </a>
+            </li>
             <li><a class="@(Active("prices"))" href="/admin/prices"><i class="bi bi-table" aria-hidden="true"></i>Bảng giá</a></li>
 
             <li><h2 class="nav-sec">Nội dung</h2></li>
@@ -44,7 +58,7 @@
 
             <li><h2 class="nav-sec">Website</h2></li>
             <li><a class="@(Active("homepage"))" href="/admin/homepage"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
-            <li><a class="@(Active("menu"))" href="/admin/menu"><i class="bi bi-list-nested" aria-hidden="true"></i>Menu</a></li>
+            <li><a class="@(Active("media"))" href="/admin/media"><i class="bi bi-images" aria-hidden="true"></i>Media</a></li>
             <li><a class="@(Active("seo"))" href="/admin/seo"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
 
             <li><h2 class="nav-sec">Hệ thống</h2></li>
@@ -54,6 +68,9 @@
 
     <div class="sidebar-foot">
         <a href="/" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>Xem website</a>
-        <a href="/admin/login"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</a>
+        <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+            @Html.AntiForgeryToken()
+            <button type="submit"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Đăng xuất</button>
+        </form>
     </div>
 </aside>

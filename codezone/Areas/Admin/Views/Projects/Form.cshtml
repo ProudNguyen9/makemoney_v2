@@ -1,189 +1,161 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Forms.ProjectFormViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Form dự án";
+    ViewData["Title"] = Model.Id == 0 ? "Thêm dự án" : $"Sửa dự án: {Model.Title}";
     ViewData["AdminSection"] = "projects";
     ViewData["AdminSubSection"] = "form";
+    var galleryIndex = 0;
 }
 
-<!-- backend: POST /admin/projects — tạo dự án mới -->
-      <div class="admin-page-head">
-        <h1>Thêm dự án <small>Ghi lại hợp đồng thu mua, tháo dỡ đã thực hiện</small></h1>
-        <div class="aph-actions">
-          <!-- backend: mở trang xem trước công khai (chưa publish) -->
-          <a class="btn btn-outline-dark" href="/du-an/thanh-ly-nha-xuong-bien-hoa" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
-          <button class="btn btn-primary" type="submit" form="projectForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+<div class="admin-page-head">
+  <h1>@(Model.Id == 0 ? "Thêm dự án" : $"Sửa: {Model.Title}")<small>Ảnh tải lên được tự động nén và chuyển sang WebP</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-outline-dark" href="/admin/projects"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách</a>
+    <button class="btn btn-primary" type="submit" form="projectForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+  </div>
+</div>
+
+<form id="projectForm" action="/admin/projects/Save" method="post" enctype="multipart/form-data">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="Id" value="@Model.Id">
+  <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+  <div class="admin-form-grid">
+    <div>
+      <!-- Thông tin dự án -->
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Thông tin dự án</h2>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label-tech" for="projectName">Tên dự án<span class="required-mark">*</span></label>
+              <input class="form-control" id="projectName" name="Title" type="text" value="@Model.Title" required maxlength="255">
+              <span class="text-danger small" asp-validation-for="Title"></span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-tech" for="projectLocation">Địa điểm</label>
+              <input class="form-control" id="projectLocation" name="LocationText" type="text" value="@Model.LocationText" maxlength="255" placeholder="Biên Hòa, Đồng Nai">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="projectType">Loại</label>
+              <input class="form-control" id="projectType" name="ProjectType" type="text" value="@Model.ProjectType" maxlength="120" list="projectTypeOptions" placeholder="Nhà xưởng, Công trình, Máy móc…">
+              <datalist id="projectTypeOptions">
+                <option value="Nhà xưởng"></option>
+                <option value="Công trình"></option>
+                <option value="Máy móc"></option>
+                <option value="Đồng"></option>
+                <option value="Sắt"></option>
+                <option value="Khác"></option>
+              </datalist>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="projectDate">Ngày hoàn thành</label>
+              <input class="form-control" id="projectDate" name="CompletedAt" type="date" value="@(Model.CompletedAt?.ToString("yyyy-MM-dd"))">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="projectQuantity">Khối lượng / Sản lượng</label>
+              <input class="form-control" id="projectQuantity" name="QuantityText" type="text" value="@Model.QuantityText" maxlength="120" placeholder="45 tấn sắt thép">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="projectDuration">Thời gian thi công</label>
+              <input class="form-control" id="projectDuration" name="DurationText" type="text" value="@Model.DurationText" maxlength="120" placeholder="7 ngày">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="projectTeaser">Mô tả ngắn</label>
+              <textarea class="form-control" id="projectTeaser" name="Excerpt" rows="2" maxlength="700">@Model.Excerpt</textarea>
+            </div>
+            <div class="col-12">
+              <span class="form-label-tech">Nội dung</span>
+              <textarea class="form-control js-rich-editor" name="ContentHtml" rows="12">@Model.ContentHtml</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Ảnh cover -->
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Ảnh cover (16:10)</h2>
+        </div>
+        <div class="panel-body">
+          @if (!string.IsNullOrWhiteSpace(Model.CurrentCoverUrl))
+          {
+            <div class="mb-2">
+              <img src="@Model.CurrentCoverUrl" alt="Ảnh cover hiện tại" width="96" height="60" class="rounded border" style="object-fit:cover" loading="lazy">
+              <div class="form-check mt-1">
+                <input class="form-check-input" type="checkbox" name="RemoveCover" id="removeCover" value="true">
+                <label class="form-check-label small" for="removeCover">Xóa ảnh cover hiện tại</label>
+              </div>
+            </div>
+          }
+          @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000, tự chuyển WebP", "CoverFile", false))
         </div>
       </div>
 
-      <form id="projectForm" action="#" method="post">
-        <div class="admin-form-grid">
-          <div>
-            <!-- Thông tin dự án -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Thông tin dự án</h2>
-              </div>
-              <div class="panel-body">
-                <div class="row g-3">
-                  <div class="col-md-8">
-                    <label class="form-label-tech" for="projectName">Tên dự án<span class="required-mark">*</span></label>
-                    <input class="form-control" id="projectName" type="text" value="Tháo dỡ — thanh lý nhà xưởng 2.000m²" required>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label-tech" for="projectLocation">Địa điểm</label>
-                    <input class="form-control" id="projectLocation" type="text" value="Biên Hòa, Đồng Nai">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="projectType">Loại</label>
-                    <select class="form-select" id="projectType">
-                      <option value="nha-xuong" selected>Nhà xưởng</option>
-                      <option value="cong-trinh">Công trình</option>
-                      <option value="may-moc">Máy móc</option>
-                      <option value="dong">Đồng</option>
-                      <option value="sat">Sắt</option>
-                      <option value="khac">Khác</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="projectService">Dịch vụ liên quan</label>
-                    <select class="form-select" id="projectService">
-                      <option value="thu-mua-thanh-ly-nha-xuong" selected>Thu mua &amp; thanh lý nhà xưởng</option>
-                      <option value="thu-mua-phe-lieu-tan-noi">Thu mua phế liệu tận nơi</option>
-                      <option value="thu-mua-phe-lieu-doanh-nghiep">Thu mua phế liệu doanh nghiệp</option>
-                      <option value="thu-mua-phe-lieu-cong-trinh">Thu mua phế liệu công trình</option>
-                      <option value="thu-mua-may-moc-cu">Thu mua máy móc cũ</option>
-                      <option value="thu-gom-dinh-ky">Thu gom định kỳ</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="projectDate">Ngày thực hiện</label>
-                    <input class="form-control" id="projectDate" type="date" value="2026-07-22">
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label-tech" for="projectTeaser">Mô tả ngắn</label>
-                    <textarea class="form-control" id="projectTeaser" rows="2">Tháo dỡ kèo thép, tôn, hệ điện và thu mua toàn bộ phế liệu trong 5 ngày — thanh toán một lần sau khi cân.</textarea>
-                  </div>
-                  <div class="col-12">
-                    <span class="form-label-tech">Nội dung</span>
-                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung dự án -->
-                    <div class="editor-placeholder">
-                      <div>
-                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
-                        <span>Rich editor — mô tả hiện trạng, khối lượng, tiến độ và kết quả hợp đồng…</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Thách thức & giải pháp -->
-            <div class="admin-panel mb-0">
-              <div class="panel-head">
-                <h2>Thách thức &amp; Giải pháp</h2>
-              </div>
-              <div class="panel-body">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="projectChallenge">Thách thức</label>
-                    <textarea class="form-control" id="projectChallenge" rows="3">Xưởng đang sản xuất, chỉ có 2 ngày nghỉ cuối tuần để tháo dỡ; kèo thép liên kết với hệ thống điện 3 pha đang hoạt động.</textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="projectSolution">Giải pháp</label>
-                    <textarea class="form-control" id="projectSolution" rows="3">Tổ chức 2 đội làm việc luân phiên ngày — đêm, ngắt điện từng khu theo lịch của nhà máy, cắt và phân loại tại chỗ để rút ngắn thời gian cân.</textarea>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <!-- Ảnh cover -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Ảnh cover (16:10)</h2>
-              </div>
-              <div class="panel-body">
-                <!-- backend: upload — trả về URL ảnh gắn vào trường cover -->
-                <label class="upload-drop">
-                  <input type="file" accept="image/*" hidden>
-                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
-                  <p class="upload-title">Tải ảnh lên</p>
-                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×1000</p>
-                </label>
-              </div>
-            </div>
-
-            <!-- Thư viện ảnh dự án -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Thư viện ảnh dự án</h2>
-              </div>
-              <div class="panel-body">
-                <!-- backend: upload nhiều ảnh — trả về danh sách URL gắn vào gallery -->
-                <label class="upload-drop">
-                  <input type="file" accept="image/*" multiple hidden>
-                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
-                  <p class="upload-title">Tải nhiều ảnh lên</p>
-                  <p class="upload-hint">Chọn nhiều file — PNG, JPG, tối đa 20 ảnh</p>
-                </label>
-                <div class="upload-previews">
-                  <div class="upload-thumb">
-                    <img src="~/assets/images/projects/project-01-cover.svg" alt="Ảnh dự án 1" width="86" height="86" loading="lazy">
-                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 1"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-                  </div>
-                  <div class="upload-thumb">
-                    <img src="~/assets/images/projects/project-02-cover.svg" alt="Ảnh dự án 2" width="86" height="86" loading="lazy">
-                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 2"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-                  </div>
-                  <div class="upload-thumb">
-                    <img src="~/assets/images/projects/project-03-cover.svg" alt="Ảnh dự án 3" width="86" height="86" loading="lazy">
-                    <button class="upload-remove" type="button" aria-label="Xóa ảnh dự án 3"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cấu hình -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Cấu hình</h2>
-              </div>
-              <div class="panel-body">
-                <div class="form-check form-switch mb-3">
-                  <input class="form-check-input" type="checkbox" id="projectFeatured" checked>
-                  <label class="form-check-label" for="projectFeatured">Nổi bật</label>
-                </div>
-                <label class="form-label-tech" for="projectStatus">Trạng thái</label>
-                <select class="form-select" id="projectStatus">
-                  <option value="published" selected>Đang hiển thị</option>
-                  <option value="hidden">Ẩn</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- SEO -->
-            <div class="admin-panel mb-0">
-              <div class="panel-head">
-                <h2>SEO</h2>
-              </div>
-              <div class="panel-body">
-                <label class="form-label-tech" for="projectSeoTitle">SEO Title</label>
-                <input class="form-control" id="projectSeoTitle" type="text" value="Tháo dỡ nhà xưởng 2.000m² tại Biên Hòa — [TÊN CÔNG TY]">
-                <p class="small text-muted mb-3 mt-1">52/70 ký tự</p>
-                <label class="form-label-tech" for="projectSeoMeta">Meta description</label>
-                <textarea class="form-control" id="projectSeoMeta" rows="3">Hợp đồng tháo dỡ và thanh lý nhà xưởng 2.000m² tại Biên Hòa: hoàn tất trong 5 ngày, thu mua toàn bộ kèo thép, tôn và hệ điện.</textarea>
-                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="projectSeoIndex" checked>
-                  <label class="form-check-label" for="projectSeoIndex">Index</label>
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="projectSeoFollow" checked>
-                  <label class="form-check-label" for="projectSeoFollow">Follow</label>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Thư viện ảnh dự án -->
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Thư viện ảnh dự án</h2>
         </div>
-      </form>
+        <div class="panel-body">
+          @if (Model.Gallery.Count > 0)
+          {
+            <div class="table-admin-wrap mb-3">
+              <table class="table table-admin align-middle">
+                <thead>
+                  <tr>
+                    <th>Ảnh</th>
+                    <th>Mô tả ảnh (alt)</th>
+                    <th>Thứ tự</th>
+                    <th>Xóa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                @foreach (var image in Model.Gallery)
+                {
+                  <tr>
+                    <td class="ta-title">
+                      <img src="@image.ImageUrl" alt="Ảnh gallery @(galleryIndex + 1)" width="56" height="42" loading="lazy">
+                      <input type="hidden" name="Gallery[@galleryIndex].Id" value="@image.Id">
+                      <input type="hidden" name="Gallery[@galleryIndex].ImageUrl" value="@image.ImageUrl">
+                    </td>
+                    <td><input class="form-control form-control-sm" type="text" name="Gallery[@galleryIndex].AltText" value="@image.AltText" maxlength="255" aria-label="Mô tả ảnh @(galleryIndex + 1)"></td>
+                    <td><input class="form-control form-control-sm" type="number" min="0" max="9999" name="Gallery[@galleryIndex].SortOrder" value="@image.SortOrder" style="max-width:80px" aria-label="Thứ tự ảnh @(galleryIndex + 1)"></td>
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="Gallery[@galleryIndex].Remove" value="true" id="galleryRemove@(galleryIndex)" aria-label="Xóa ảnh @(galleryIndex + 1)">
+                      </div>
+                    </td>
+                  </tr>
+                  galleryIndex++;
+                }
+                </tbody>
+              </table>
+            </div>
+          }
+          @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải nhiều ảnh lên", "Chọn nhiều file — PNG, JPG, tối đa 20 ảnh, tự chuyển WebP", "GalleryFiles", true))
+        </div>
+      </div>
+
+      <!-- Cấu hình -->
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Cấu hình</h2>
+        </div>
+        <div class="panel-body">
+          <label class="form-label-tech" for="projectStatus">Trạng thái</label>
+          <select class="form-select" id="projectStatus" name="Status">
+            <option value="published" selected="@(Model.Status == "published")">Đang hiển thị</option>
+            <option value="draft" selected="@(Model.Status != "published")">Ẩn</option>
+          </select>
+          <label class="form-label-tech mt-3" for="projectOrder">Vị trí hiển thị</label>
+          <input class="form-control" id="projectOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các dự án khác.">
+          <p class="small text-muted mt-1 mb-0">Số nhỏ hiện trước. Lưu sẽ tự động chèn vào đúng vị trí và đánh lại số liên tục (không trùng).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

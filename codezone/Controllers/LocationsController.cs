@@ -9,8 +9,9 @@ public class LocationsController : Controller
         return View();
     }
 
+    // Trang chi tiết khu vực đã được bỏ — mọi link cũ chuyển về trang danh sách.
     public IActionResult Detail(string? slug)
     {
-        return View();
+        return RedirectPermanent("/khu-vuc");
     }
 }

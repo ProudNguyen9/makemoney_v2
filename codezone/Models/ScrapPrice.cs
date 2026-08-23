@@ -14,5 +14,7 @@ public class ScrapPrice
 
     public DateOnly EffectiveDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
+    public DateTime? DeletedAt { get; set; }
+
     public ScrapItem? ScrapItem { get; set; }
 }

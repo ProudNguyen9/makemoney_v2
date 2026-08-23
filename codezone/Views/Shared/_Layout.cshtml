@@ -1,6 +1,8 @@
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     var seo = ViewData["Seo"] as SeoDto;
     var title = seo?.Title ?? ViewData["Title"]?.ToString() ?? "ScrapWebsite";
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <partial name="_Seo" model="seo" />
     <title>@title - ScrapWebsite</title>
-    <link rel="icon" href="~/assets/images/imported/brand/favicon.png" type="image/png" />
+    <link rel="icon" href="@chrome.FaviconUrl" type="image/png" />
     <link rel="apple-touch-icon" href="~/assets/images/imported/brand/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

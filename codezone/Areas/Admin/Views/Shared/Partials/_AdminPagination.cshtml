@@ -1,0 +1,33 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminPaginationViewModel
+@{
+    // Preserve current filter querystring, only swap the page number.
+    var query = Context.Request.Query.Where(pair => pair.Key != "page" && pair.Key != "handler").ToList();
+    string PageUrl(int pageNumber)
+    {
+        var parameters = query.SelectMany(pair => pair.Value.Select(value => $"{Uri.EscapeDataString(pair.Key)}={Uri.EscapeDataString(value!)}")).ToList();
+        parameters.Add($"page={pageNumber}");
+        var qs = string.Join("&", parameters);
+        return "?" + qs;
+    }
+}
+@if (Model.TotalCount > 0)
+{
+    <div class="admin-pagination">Hiển thị @((Model.Page - 1) * Model.PageSize + 1)–@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) / @Model.TotalCount mục</div>
+}
+@if (Model.TotalPages > 1)
+{
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+            <a class="page-link" href="@PageUrl(Model.Page - 1)" aria-label="Trang trước">‹</a>
+        </li>
+        @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+        {
+            <li class="page-item @(pageNumber == Model.Page ? "active" : "")">
+                <a class="page-link" href="@PageUrl(pageNumber)">@pageNumber</a>
+            </li>
+        }
+        <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" href="@PageUrl(Model.Page + 1)" aria-label="Trang sau">›</a>
+        </li>
+    </ul>
+}

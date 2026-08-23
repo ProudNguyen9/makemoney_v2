@@ -1,242 +1,326 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminLeadListViewModel
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Yêu cầu báo giá";
     ViewData["AdminSection"] = "leads";
     ViewData["AdminSubSection"] = "";
+
+    string StatusLabel(string status) => status switch
+    {
+        "contacted" => "Đã liên hệ",
+        "processing" => "Đang xử lý",
+        "done" => "Hoàn tất",
+        "cancel" => "Đã hủy",
+        _ => "Mới"
+    };
+
+    string StatusClass(string status) => status switch
+    {
+        "contacted" => "st-done",
+        "processing" => "st-processing",
+        "done" => "st-done",
+        "cancel" => "st-cancel",
+        _ => "st-new"
+    };
 }
 
-<!-- backend: GET /admin/leads — danh sách yêu cầu báo giá -->
-      <div class="admin-page-head">
-        <h1>Yêu cầu báo giá<small>Quản lý lead từ form, hotline và Zalo</small></h1>
-        <div class="aph-actions">
-          <!-- backend: xuất danh sách lead theo bộ lọc hiện tại ra Excel -->
-          <button class="btn btn-outline-dark" type="button"><i class="bi bi-funnel" aria-hidden="true"></i> Xuất Excel</button>
-        </div>
-      </div>
+<div class="admin-page-head">
+  <h1>Yêu cầu báo giá<small>Lead gửi từ popup báo giá trên website</small></h1>
+</div>
 
-      <!-- backend: GET /admin/leads?status=&amp;scrap=&amp;area=&amp;from=&amp;q= -->
-      <form class="admin-filter" action="#" method="get">
-        <span class="admin-filter-label">Lọc</span>
-        <select class="form-select" aria-label="Lọc theo trạng thái">
-          <option value="" selected>Tất cả</option>
-          <option value="new">Mới</option>
-          <option value="processing">Đang xử lý</option>
-          <option value="done">Hoàn tất</option>
-          <option value="cancel">Đã hủy</option>
-        </select>
-        <select class="form-select" aria-label="Lọc theo loại phế liệu">
-          <option value="" selected>Tất cả</option>
-          <option value="dong">Nhóm đồng</option>
-          <option value="sat">Sắt</option>
-          <option value="nhom">Nhôm</option>
-          <option value="inox">Inox</option>
-          <option value="may-moc">Máy móc</option>
-        </select>
-        <select class="form-select" aria-label="Lọc theo khu vực">
-          <option value="" selected>Tất cả</option>
-          <option value="dong-nai">Đồng Nai</option>
-          <option value="tp-hcm">TP.HCM</option>
-          <option value="binh-duong">Bình Dương</option>
-        </select>
-        <input class="form-control" type="date" aria-label="Lọc từ ngày">
-        <input class="form-control" type="search" placeholder="Tìm SĐT, tên…" aria-label="Tìm SĐT, tên">
-        <div class="spacer"></div>
-        <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
-      </form>
+<form class="admin-filter leads-filter" action="/admin/leads" method="get">
+  <span class="admin-filter-label">Lọc</span>
+  <select class="form-select" name="status" aria-label="Lọc theo trạng thái">
+    <option value="">Tất cả trạng thái</option>
+    @if (Model.Status == "new")
+    {
+        <option value="new" selected>Mới</option>
+    }
+    else
+    {
+        <option value="new">Mới</option>
+    }
+    @if (Model.Status == "contacted")
+    {
+        <option value="contacted" selected>Đã liên hệ</option>
+    }
+    else
+    {
+        <option value="contacted">Đã liên hệ</option>
+    }
+  </select>
+  <select class="form-select" name="scrap" aria-label="Lọc theo loại phế liệu">
+    <option value="">Tất cả phế liệu</option>
+    @foreach (var scrap in Model.ScrapTypes)
+    {
+        if (Model.Scrap == scrap)
+        {
+            <option value="@scrap" selected>@scrap</option>
+        }
+        else
+        {
+            <option value="@scrap">@scrap</option>
+        }
+    }
+  </select>
+  <select class="form-select" name="leadArea" aria-label="Lọc theo khu vực">
+    <option value="">Tất cả khu vực</option>
+    @foreach (var area in Model.Areas)
+    {
+        if (Model.Area == area)
+        {
+            <option value="@area" selected>@area</option>
+        }
+        else
+        {
+            <option value="@area">@area</option>
+        }
+    }
+  </select>
+  <input class="form-control" name="query" type="search" value="@Model.Query" placeholder="Tìm SĐT, tên, Zalo, ghi chú…" aria-label="Tìm lead">
+  <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+  <a class="btn btn-outline-dark" href="/admin/leads">Xóa lọc</a>
+</form>
 
-      <div class="admin-panel">
-        <div class="table-admin-wrap">
-          <table class="table table-admin align-middle">
-            <thead>
-              <tr>
-                <th><input class="form-check-input" type="checkbox" data-check-all aria-label="Chọn tất cả lead"></th>
-                <th>ID</th>
-                <th>Khách hàng</th>
-                <th>Điện thoại</th>
-                <th>Phế liệu</th>
-                <th>Khu vực</th>
-                <th>Trạng thái</th>
-                <th>Ngày tạo</th>
-                <th><span class="visually-hidden">Thao tác</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0248"></td>
-                <td><a href="/admin/leads/detail">LE-0248</a></td>
-                <td>
-                  <strong>Nguyễn Văn A</strong>
-                  <small class="d-block text-muted">Qua Website</small>
-                </td>
-                <td>0908.625.341</td>
-                <td>Đồng đỏ, Dây điện</td>
-                <td>Biên Hòa</td>
-                <td><span class="badge-status st-done">Hoàn tất</span></td>
-                <td>12/08/2026 09:24</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0908625341" aria-label="Gọi Nguyễn Văn A"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0248"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0248"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0247"></td>
-                <td><a href="/admin/leads/detail">LE-0247</a></td>
-                <td>
-                  <strong>Trần Thị B</strong>
-                  <small class="d-block text-muted">Qua Zalo</small>
-                </td>
-                <td>0917.284.905</td>
-                <td>Nhôm thanh</td>
-                <td>Thủ Đức</td>
-                <td><span class="badge-status st-new">Mới</span></td>
-                <td>12/08/2026 08:05</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0917284905" aria-label="Gọi Trần Thị B"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0247"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0247"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0246"></td>
-                <td><a href="/admin/leads/detail">LE-0246</a></td>
-                <td>
-                  <strong>Lê Văn C</strong>
-                  <small class="d-block text-muted">Qua Hotline</small>
-                </td>
-                <td>0938.114.726</td>
-                <td>Sắt vụn</td>
-                <td>Dĩ An</td>
-                <td><span class="badge-status st-processing">Đang xử lý</span></td>
-                <td>11/08/2026 16:47</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0938114726" aria-label="Gọi Lê Văn C"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0246"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0246"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0245"></td>
-                <td><a href="/admin/leads/detail">LE-0245</a></td>
-                <td>
-                  <strong>Phạm Văn D</strong>
-                  <small class="d-block text-muted">Qua Website</small>
-                </td>
-                <td>0902.765.158</td>
-                <td>Inox 304</td>
-                <td>Long Thành</td>
-                <td><span class="badge-status st-cancel">Đã hủy</span></td>
-                <td>11/08/2026 14:10</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0902765158" aria-label="Gọi Phạm Văn D"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0245"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0245"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0244"></td>
-                <td><a href="/admin/leads/detail">LE-0244</a></td>
-                <td>
-                  <strong>Nguyễn Thị E</strong>
-                  <small class="d-block text-muted">Qua Zalo</small>
-                </td>
-                <td>0919.430.682</td>
-                <td>Motor điện</td>
-                <td>Bình Thạnh</td>
-                <td><span class="badge-status st-new">Mới</span></td>
-                <td>10/08/2026 11:32</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0919430682" aria-label="Gọi Nguyễn Thị E"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0244"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0244"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0243"></td>
-                <td><a href="/admin/leads/detail">LE-0243</a></td>
-                <td>
-                  <strong>Hồ Văn F</strong>
-                  <small class="d-block text-muted">Qua Hotline</small>
-                </td>
-                <td>0907.352.914</td>
-                <td>Bo mạch</td>
-                <td>Thuận An</td>
-                <td><span class="badge-status st-processing">Đang xử lý</span></td>
-                <td>10/08/2026 08:58</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0907352914" aria-label="Gọi Hồ Văn F"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0243"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0243"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0242"></td>
-                <td><a href="/admin/leads/detail">LE-0242</a></td>
-                <td>
-                  <strong>Đặng Văn G</strong>
-                  <small class="d-block text-muted">Qua Website</small>
-                </td>
-                <td>0936.871.240</td>
-                <td>Nhà xưởng</td>
-                <td>Nhơn Trạch</td>
-                <td><span class="badge-status st-done">Hoàn tất</span></td>
-                <td>09/08/2026 15:20</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0936871240" aria-label="Gọi Đặng Văn G"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0242"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0242"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><input class="form-check-input" type="checkbox" aria-label="Chọn lead LE-0241"></td>
-                <td><a href="/admin/leads/detail">LE-0241</a></td>
-                <td>
-                  <strong>Bùi Thị H</strong>
-                  <small class="d-block text-muted">Qua Zalo</small>
-                </td>
-                <td>0913.506.478</td>
-                <td>Đồng đỏ</td>
-                <td>Biên Hòa</td>
-                <td><span class="badge-status st-cancel">Đã hủy</span></td>
-                <td>09/08/2026 10:14</td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="tel:0913506478" aria-label="Gọi Bùi Thị H"><i class="bi bi-telephone" aria-hidden="true"></i></a>
-                    <a href="/admin/leads/detail" aria-label="Xem chi tiết LE-0241"><i class="bi bi-eye" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa lead LE-0241"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="panel-foot">
-          <div class="admin-pagination">Hiển thị 1–8 / 240 lead</div>
-          <!-- backend: phân trang server-side, ?page=n -->
-          <nav aria-label="Phân trang lead">
-            <ul class="pagination pagination-sm mb-0">
-              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Trang trước">«</a></li>
-              <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item disabled"><span class="page-link">…</span></li>
-              <li class="page-item"><a class="page-link" href="#">30</a></li>
-              <li class="page-item"><a class="page-link" href="#" aria-label="Trang sau">»</a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
+<div class="admin-panel">
+  <div class="table-admin-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th>Mã</th>
+          <th>Khách hàng</th>
+          <th>Phế liệu</th>
+          <th>Khu vực</th>
+          <th>Ghi chú</th>
+          <th>Ảnh</th>
+          <th>Trạng thái</th>
+          <th>Ngày tạo</th>
+          <th><span class="visually-hidden">Thao tác</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (Model.Items.Count == 0)
+        {
+          <tr>
+            <td colspan="9" class="text-center text-muted py-4">Chưa có yêu cầu báo giá phù hợp.</td>
+          </tr>
+        }
+        @foreach (var lead in Model.Items)
+        {
+          <tr data-lead-row="@lead.Id">
+            <td><strong>@lead.Code</strong></td>
+            <td>
+              <strong>@lead.CustomerName</strong>
+              <small class="d-block text-muted"><a href="tel:@lead.Phone">@lead.Phone</a>@(string.IsNullOrWhiteSpace(lead.Zalo) ? "" : $" · Zalo: {lead.Zalo}")</small>
+            </td>
+            <td>
+              <strong>@(lead.ScrapType ?? "Chưa chọn")</strong>
+              @if (!string.IsNullOrWhiteSpace(lead.QuantityText))
+              {
+                <small class="d-block text-muted">@lead.QuantityText</small>
+              }
+            </td>
+            <td>@(lead.Area ?? "Chưa chọn")</td>
+            <td class="lead-note-cell">@(string.IsNullOrWhiteSpace(lead.Message) ? "Không có ghi chú" : lead.Message)</td>
+            <td>
+              @if (lead.ImageUrls.Count > 0)
+              {
+                <button class="lead-thumb-button js-lead-images" type="button" data-images='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(lead.ImageUrls))' data-title="Ảnh @lead.Code - @lead.CustomerName" aria-label="Xem ảnh @lead.Code">
+                  <img src="@lead.ImageUrls[0]" alt="Ảnh báo giá @lead.Code" loading="lazy">
+                  @if (lead.ImageUrls.Count > 1)
+                  {
+                    <span>+@(lead.ImageUrls.Count - 1)</span>
+                  }
+                </button>
+              }
+              else
+              {
+                <span class="text-muted small">Không có</span>
+              }
+            </td>
+            <td><span class="badge-status @StatusClass(lead.Status)" data-lead-status>@StatusLabel(lead.Status)</span></td>
+            <td>@lead.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            <td>
+              <div class="ta-actions">
+                @if (lead.Status != "contacted")
+                {
+                  <form class="d-inline js-lead-contacted-form" action="/admin/leads/MarkContacted" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@lead.Id">
+                    <input type="hidden" name="status" value="@Model.Status">
+                    <input type="hidden" name="scrap" value="@Model.Scrap">
+                    <input type="hidden" name="leadArea" value="@Model.Area">
+                    <input type="hidden" name="query" value="@Model.Query">
+                    <input type="hidden" name="page" value="@Model.Page">
+                    <button class="lead-contacted-btn" type="submit" aria-label="Đánh dấu đã liên hệ @lead.Code">
+                      <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                      <span>Đã liên hệ</span>
+                    </button>
+                  </form>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-foot">
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPagination.cshtml", Model.Pager)
+  </div>
+</div>
+
+<div class="lead-viewer" id="leadImageViewer" aria-hidden="true">
+  <div class="lead-viewer-backdrop" data-lead-viewer-close></div>
+  <div class="lead-viewer-dialog" role="dialog" aria-modal="true" aria-labelledby="leadImageViewerTitle">
+    <div class="lead-viewer-head">
+      <h2 id="leadImageViewerTitle">Ảnh báo giá</h2>
+      <button type="button" class="lead-viewer-close" data-lead-viewer-close aria-label="Đóng"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <div class="lead-viewer-stage">
+      <button type="button" class="lead-viewer-nav lead-viewer-prev" data-lead-viewer-prev aria-label="Ảnh trước"><i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+      <a class="lead-viewer-link" href="#" target="_blank" rel="noopener" title="Mở ảnh gốc">
+        <img class="lead-viewer-image" src="" alt="Ảnh báo giá">
+      </a>
+      <button type="button" class="lead-viewer-nav lead-viewer-next" data-lead-viewer-next aria-label="Ảnh sau"><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+    </div>
+    <div class="lead-viewer-foot">
+      <span class="lead-viewer-count">1 / 1</span>
+      <div class="lead-viewer-dots" aria-label="Danh sách ảnh"></div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    (() => {
+      const viewer = document.getElementById('leadImageViewer');
+      if (!viewer) return;
+
+      const title = viewer.querySelector('#leadImageViewerTitle');
+      const image = viewer.querySelector('.lead-viewer-image');
+      const link = viewer.querySelector('.lead-viewer-link');
+      const count = viewer.querySelector('.lead-viewer-count');
+      const dots = viewer.querySelector('.lead-viewer-dots');
+      const prev = viewer.querySelector('[data-lead-viewer-prev]');
+      const next = viewer.querySelector('[data-lead-viewer-next]');
+      let images = [];
+      let index = 0;
+
+      const render = () => {
+        if (!images.length) return;
+        const current = images[index];
+        image.src = current;
+        link.href = current;
+        count.textContent = `${index + 1} / ${images.length}`;
+        prev.hidden = images.length < 2;
+        next.hidden = images.length < 2;
+        dots.innerHTML = '';
+        images.forEach((_, dotIndex) => {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = dotIndex === index ? 'active' : '';
+          dot.setAttribute('aria-label', `Xem ảnh ${dotIndex + 1}`);
+          dot.addEventListener('click', () => {
+            index = dotIndex;
+            render();
+          });
+          dots.appendChild(dot);
+        });
+      };
+
+      const open = button => {
+        try {
+          images = JSON.parse(button.dataset.images || '[]').filter(Boolean);
+        } catch {
+          images = [];
+        }
+        if (!images.length) return;
+        index = 0;
+        title.textContent = button.dataset.title || 'Ảnh báo giá';
+        render();
+        viewer.classList.add('is-open');
+        viewer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('lead-viewer-open');
+      };
+
+      const close = () => {
+        viewer.classList.remove('is-open');
+        viewer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('lead-viewer-open');
+        image.removeAttribute('src');
+      };
+
+      const move = step => {
+        if (images.length < 2) return;
+        index = (index + step + images.length) % images.length;
+        render();
+      };
+
+      document.addEventListener('click', event => {
+        const button = event.target.closest?.('.js-lead-images');
+        if (button) {
+          event.preventDefault();
+          open(button);
+          return;
+        }
+
+        if (event.target.closest?.('[data-lead-viewer-close]')) {
+          close();
+        }
+      });
+
+      document.addEventListener('submit', async event => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement) || !form.classList.contains('js-lead-contacted-form')) {
+          return;
+        }
+
+        event.preventDefault();
+        if (!confirm('Xác nhận đã liên hệ với khách này?')) {
+          return;
+        }
+
+        const button = form.querySelector('button[type="submit"]');
+        if (button) {
+          button.disabled = true;
+        }
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin'
+          });
+          const payload = await response.json().catch(() => null);
+          if (!response.ok || !payload?.ok) {
+            throw new Error('Không cập nhật được trạng thái.');
+          }
+
+          const row = form.closest('[data-lead-row]');
+          const status = row?.querySelector('[data-lead-status]');
+          if (status) {
+            status.className = 'badge-status st-done';
+            status.textContent = 'Đã liên hệ';
+          }
+          form.remove();
+        } catch (error) {
+          alert(error.message || 'Không cập nhật được trạng thái.');
+          if (button) {
+            button.disabled = false;
+          }
+        }
+      });
+
+      prev.addEventListener('click', () => move(-1));
+      next.addEventListener('click', () => move(1));
+      document.addEventListener('keydown', event => {
+        if (!viewer.classList.contains('is-open')) return;
+        if (event.key === 'Escape') close();
+        if (event.key === 'ArrowLeft') move(-1);
+        if (event.key === 'ArrowRight') move(1);
+      });
+    })();
+  </script>
+}

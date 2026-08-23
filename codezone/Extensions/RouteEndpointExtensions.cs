@@ -36,6 +36,18 @@ public static class RouteEndpointExtensions
             .WithStaticAssets();
 
         app.MapControllerRoute(
+                name: "sitemap",
+                pattern: "sitemap.xml",
+                defaults: new { controller = "Seo", action = "Sitemap" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
+                name: "robots",
+                pattern: "robots.txt",
+                defaults: new { controller = "Seo", action = "Robots" })
+            .WithStaticAssets();
+
+        app.MapControllerRoute(
                 name: "about",
                 pattern: "gioi-thieu",
                 defaults: new { controller = "Home", action = "About" })

@@ -1,0 +1,92 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminMediaListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Media";
+    ViewData["AdminSection"] = "media";
+    ViewData["AdminSubSection"] = "";
+
+    var totalItems = Model.Groups.Sum(group => group.Items.Count);
+}
+
+<div class="admin-page-head">
+  <h1>Media <small>Quản lý ảnh banner, trang chủ và ảnh public dùng chung</small></h1>
+</div>
+
+<form class="admin-filter media-admin-filter" method="get" action="/admin/media">
+  <label class="admin-filter-label" for="mediaQuery">Tìm ảnh</label>
+  <input class="form-control" id="mediaQuery" name="query" type="search" value="@Model.Query" placeholder="Tìm theo tên ảnh, key, khu vực...">
+  @if (!string.IsNullOrWhiteSpace(Model.Group))
+  {
+      <input type="hidden" name="group" value="@Model.Group">
+  }
+  <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+  <a class="btn btn-outline-dark" href="/admin/media">Xóa lọc</a>
+</form>
+
+<nav class="media-area-tabs" aria-label="Lọc khu vực media">
+  <a class="@(string.IsNullOrWhiteSpace(Model.Group) ? "active" : "")" href="/admin/media@(string.IsNullOrWhiteSpace(Model.Query) ? "" : $"?query={Uri.EscapeDataString(Model.Query)}")">
+    Tất cả <span>@Model.GroupOptions.Sum(group => group.Count)</span>
+  </a>
+  @foreach (var group in Model.GroupOptions)
+  {
+      var href = string.IsNullOrWhiteSpace(Model.Query)
+          ? $"/admin/media?group={Uri.EscapeDataString(group.Key)}"
+          : $"/admin/media?group={Uri.EscapeDataString(group.Key)}&query={Uri.EscapeDataString(Model.Query)}";
+      <a class="@(string.Equals(Model.Group, group.Key, StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@href">
+        @group.Name <span>@group.Count</span>
+      </a>
+  }
+</nav>
+
+@if (totalItems == 0)
+{
+  <section class="admin-panel">
+    <div class="panel-body">
+      <p class="mb-0 text-muted">Không tìm thấy ảnh phù hợp.</p>
+    </div>
+  </section>
+}
+else
+{
+  foreach (var group in Model.Groups)
+  {
+    <section class="admin-panel media-section">
+      <div class="panel-head">
+        <h2>@group.Name</h2>
+        <span class="text-muted small">@group.Items.Count ảnh</span>
+      </div>
+      <div class="panel-body">
+        <div class="media-setting-grid">
+          @foreach (var item in group.Items)
+          {
+            var previewId = "mediaPreview-" + item.Key.Replace(".", "-").Replace("_", "-");
+            <form class="media-setting-card" action="/admin/media/SaveSettingImage" method="post" enctype="multipart/form-data">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="Key" value="@item.Key">
+              <input type="hidden" name="group" value="@Model.Group">
+              <input type="hidden" name="query" value="@Model.Query">
+              <div class="media-setting-preview">
+                <img id="@previewId" class="media-setting-image" src="@item.Url" alt="@item.Label" loading="lazy">
+                <span class="media-setting-fallback"><i class="bi bi-image" aria-hidden="true"></i> Không tải được ảnh</span>
+              </div>
+              <div class="media-setting-body">
+                <div class="media-setting-title">
+                  <strong>@item.Label</strong>
+                  <code>@item.Key</code>
+                </div>
+                <p>@item.Description</p>
+                <small>Gợi ý: @item.RecommendedSize</small>
+                <label class="btn btn-outline-dark media-file-button">
+                  <i class="bi bi-upload" aria-hidden="true"></i>
+                  <span>Chọn ảnh</span>
+                  <input class="js-image-preview-input" type="file" name="ImageFile" accept="image/*" data-preview-target="@previewId" hidden>
+                </label>
+                <button class="btn btn-primary w-100" type="submit"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu ảnh này</button>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </section>
+  }
+}

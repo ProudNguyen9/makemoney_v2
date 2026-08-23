@@ -1,5 +1,6 @@
 using ScrapWebsite.Services;
 using ScrapWebsite.Services.Interfaces;
+using ScrapWebsite.Services.Media;
 using ScrapWebsite.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -43,8 +44,28 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminScrapQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
         services.AddScoped<IAdminArticleQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
         services.AddScoped<IAdminPriceQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminLeadQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
         services.AddScoped<IAdminSeoQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
         services.AddScoped<IAdminSettingsQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminMediaQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminServiceQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminLocationQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminProjectQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+        services.AddScoped<IAdminFaqQueryService>(provider => provider.GetRequiredService<AdminQueryService>());
+
+        services.AddScoped<IImageUploadService, ImageUploadService>();
+        services.AddScoped<AdminCommandService>();
+        services.AddScoped<IAdminPriceCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminLeadCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminScrapCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminServiceCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminLocationCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminProjectCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminFaqCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminArticleCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminSettingsCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminMediaCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
+        services.AddScoped<IAdminSeoCommandService>(provider => provider.GetRequiredService<AdminCommandService>());
 
         return services;
     }

@@ -131,6 +131,75 @@
     });
   }
 
+  /* ---------------------------------------------------------------
+   * Upload drop: hiện preview ảnh + tên tệp sau khi chọn
+   * --------------------------------------------------------------- */
+  function initUploadPreview() {
+    document.querySelectorAll('.upload-drop input[type="file"]').forEach(function (input) {
+      var drop = input.closest('.upload-drop');
+      if (!drop || drop.querySelector('.upload-preview')) return;
+
+      var preview = document.createElement('div');
+      preview.className = 'upload-preview mt-2';
+      preview.hidden = true;
+      drop.appendChild(preview);
+
+      input.addEventListener('change', function () {
+        var file = input.files && input.files[0];
+        if (!file) {
+          preview.hidden = true;
+          preview.innerHTML = '';
+          return;
+        }
+        var sizeMb = (file.size / 1024 / 1024).toFixed(2);
+        preview.innerHTML =
+          '<span class="small text-muted d-block text-truncate"><i class="bi bi-image" aria-hidden="true"></i> ' +
+          file.name + ' (' + sizeMb + ' MB)</span>';
+        preview.hidden = false;
+        if (typeof FileReader !== 'undefined' && /^image\//.test(file.type)) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'Xem trước ảnh đã chọn';
+            img.width = 96;
+            img.height = 72;
+            img.style.objectFit = 'cover';
+            img.className = 'rounded border';
+            img.loading = 'lazy';
+            preview.insertBefore(img, preview.firstChild);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+   * Xóa dòng trong bảng con (phân loại giá, gallery...) — data-row-remove
+   * --------------------------------------------------------------- */
+  function initRowRemove() {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-row-remove]');
+      if (!btn) return;
+      var row = btn.closest('tr');
+      if (row) row.remove();
+    });
+  }
+
+  /* ---------------------------------------------------------------
+   * Form tự submit khi đổi control (switch bật/tắt...)
+   * --------------------------------------------------------------- */
+  function initAutoSubmit() {
+    document.querySelectorAll('form[data-autosubmit]').forEach(function (form) {
+      form.querySelectorAll('input, select').forEach(function (control) {
+        control.addEventListener('change', function () {
+          form.submit();
+        });
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initSidebar();
     initTopbarSearch();
@@ -138,5 +207,8 @@
     initCheckAll();
     initMediaToggle();
     initCopyUrl();
+    initUploadPreview();
+    initRowRemove();
+    initAutoSubmit();
   });
 })();

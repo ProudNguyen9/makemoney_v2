@@ -1,186 +1,104 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminLocationListViewModel
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Khu vực";
     ViewData["AdminSection"] = "locations";
     ViewData["AdminSubSection"] = "";
+
+    string StatusLabel(string status) => status == "published" ? "Đã xuất bản" : "Bản nháp";
 }
 
-<!-- backend: GET /admin/locations — danh sách khu vực thu mua -->
-      <div class="admin-page-head">
-        <h1>Khu vực thu mua<small>Trang landing riêng cho từng tỉnh / huyện (local SEO)</small></h1>
-        <div class="aph-actions">
-          <a class="btn btn-primary" href="/admin/locations/form"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm khu vực</a>
-        </div>
-      </div>
+<div class="admin-page-head">
+  <h1>Khu vực thu mua<small>Trang landing riêng cho từng tỉnh / huyện (local SEO) — @Model.TotalCount khu vực</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-primary" href="/admin/locations/Form"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm khu vực</a>
+  </div>
+</div>
 
-      <!-- backend: GET /admin/locations?province=&status=&q= -->
-      <form class="admin-filter" action="#" method="get">
-        <span class="admin-filter-label">Tỉnh</span>
-        <select class="form-select" aria-label="Lọc theo tỉnh">
-          <option value="" selected>Tất cả</option>
-          <option value="dong-nai">Đồng Nai</option>
-          <option value="tp-hcm">TP.HCM</option>
-          <option value="binh-duong">Bình Dương</option>
-          <option value="ba-ria-vung-tau">Bà Rịa – Vũng Tàu</option>
-          <option value="long-an">Long An</option>
-        </select>
-        <span class="admin-filter-label">Trạng thái</span>
-        <select class="form-select" aria-label="Lọc theo trạng thái">
-          <option value="" selected>Tất cả</option>
-          <option value="published">Đã xuất bản</option>
-          <option value="draft">Bản nháp</option>
-        </select>
-        <input class="form-control" type="search" placeholder="Tìm theo huyện, slug…" aria-label="Tìm theo huyện, slug">
-        <div class="spacer"></div>
-        <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
-      </form>
+<form class="admin-filter" action="/admin/locations" method="get">
+  <span class="admin-filter-label">Tỉnh</span>
+  <select class="form-select" name="province" aria-label="Lọc theo tỉnh">
+    <option value="" selected="@(string.IsNullOrEmpty(Model.Province))">Tất cả</option>
+    @foreach (var province in Model.Provinces)
+    {
+      <option value="@province" selected="@(Model.Province == province)">@province</option>
+    }
+  </select>
+  <span class="admin-filter-label">Trạng thái</span>
+  <select class="form-select" name="status" aria-label="Lọc theo trạng thái">
+    <option value="" selected="@(string.IsNullOrEmpty(Model.Status))">Tất cả</option>
+    <option value="published" selected="@(Model.Status == "published")">Đã xuất bản</option>
+    <option value="draft" selected="@(Model.Status == "draft")">Bản nháp</option>
+  </select>
+  <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm theo tên khu vực, slug…" aria-label="Tìm theo tên khu vực, slug">
+  <div class="spacer"></div>
+  <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
+</form>
 
-      <div class="admin-panel">
-        <div class="table-admin-wrap">
-          <table class="table table-admin align-middle">
-            <thead>
-              <tr>
-                <th>Tỉnh</th>
-                <th>Huyện / Thành phố</th>
-                <th>Slug</th>
-                <th>Số loại phế liệu</th>
-                <th>Trạng thái</th>
-                <th><span class="visually-hidden">Thao tác</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Đồng Nai</strong></td>
-                <td>Biên Hòa</td>
-                <td><code>thu-mua-phe-lieu-bien-hoa</code></td>
-                <td>6</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Biên Hòa"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Biên Hòa"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Đồng Nai</strong></td>
-                <td>Long Thành</td>
-                <td><code>thu-mua-phe-lieu-long-thanh</code></td>
-                <td>6</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Long Thành"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Long Thành"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Đồng Nai</strong></td>
-                <td>Nhơn Trạch</td>
-                <td><code>thu-mua-phe-lieu-nhon-trach</code></td>
-                <td>4</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Nhơn Trạch"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Nhơn Trạch"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Đồng Nai</strong></td>
-                <td>Trảng Bom</td>
-                <td><code>thu-mua-phe-lieu-trang-bom</code></td>
-                <td>4</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Trảng Bom"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Trảng Bom"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>TP.HCM</strong></td>
-                <td>Thủ Đức</td>
-                <td><code>thu-mua-phe-lieu-thu-duc</code></td>
-                <td>6</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Thủ Đức"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Thủ Đức"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>TP.HCM</strong></td>
-                <td>Quận 12</td>
-                <td><code>thu-mua-phe-lieu-quan-12</code></td>
-                <td>5</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Quận 12"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Quận 12"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Bình Dương</strong></td>
-                <td>Dĩ An</td>
-                <td><code>thu-mua-phe-lieu-di-an</code></td>
-                <td>5</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Dĩ An"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Dĩ An"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Bình Dương</strong></td>
-                <td>Thuận An</td>
-                <td><code>thu-mua-phe-lieu-thuan-an</code></td>
-                <td>4</td>
-                <td><span class="badge-status st-published">Đã xuất bản</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Thuận An"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Thuận An"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Đồng Nai</strong></td>
-                <td>Định Quán</td>
-                <td><code>thu-mua-phe-lieu-dinh-quan</code></td>
-                <td>4</td>
-                <td><span class="badge-status st-draft">Bản nháp</span></td>
-                <td>
-                  <div class="ta-actions">
-                    <a href="/admin/locations/form" aria-label="Sửa khu vực Định Quán"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-                    <button class="act-danger" type="button" aria-label="Xóa khu vực Định Quán"><i class="bi bi-trash" aria-hidden="true"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="panel-foot">
-          <div class="admin-pagination">Hiển thị 1–9 / 32 khu vực</div>
-          <!-- backend: phân trang server-side, ?page=n -->
-          <nav aria-label="Phân trang khu vực thu mua">
-            <ul class="pagination pagination-sm mb-0">
-              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Trang trước">«</a></li>
-              <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item"><a class="page-link" href="#" aria-label="Trang sau">»</a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
+<div class="admin-panel">
+  <div class="table-admin-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th>Ảnh</th>
+          <th>Tỉnh</th>
+          <th>Huyện / Thành phố</th>
+          <th>Tên khu vực</th>
+          <th>Slug</th>
+          <th>Trạng thái</th>
+          <th><span class="visually-hidden">Thao tác</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var item in Model.Items)
+      {
+        <tr>
+          <td class="ta-title">
+            <a href="/admin/locations/Form/@item.Id"><img src="@(string.IsNullOrWhiteSpace(item.CoverImage) ? "/assets/images/company/company-yard.svg" : item.CoverImage)" alt="@item.Name" width="56" height="42" loading="lazy"></a>
+          </td>
+          <td><strong>@item.Province</strong></td>
+          <td>@(item.District ?? "—")</td>
+          <td><strong><a class="text-decoration-none" href="/admin/locations/Form/@item.Id">@item.Name</a></strong></td>
+          <td><code>@item.Slug</code></td>
+          <td>
+            <form method="post" action="/admin/locations/ToggleStatus" data-autosubmit>
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="id" value="@item.Id">
+              <input type="hidden" name="province" value="@Model.Province">
+              <input type="hidden" name="status" value="@Model.Status">
+              <input type="hidden" name="q" value="@Model.Query">
+              <input type="hidden" name="page" value="@Model.Page">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" @(item.Status == "published" ? "checked" : "") aria-label="Hiển thị @item.Name">
+              </div>
+            </form>
+          </td>
+          <td>
+            <div class="ta-actions">
+              <a href="/admin/locations/Form/@item.Id" aria-label="Sửa khu vực @item.Name"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+              <form method="post" action="/admin/locations/Delete" class="d-inline" onsubmit="return confirm('Xóa khu vực &quot;@item.Name&quot;?')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@item.Id">
+                <input type="hidden" name="province" value="@Model.Province">
+                <input type="hidden" name="status" value="@Model.Status">
+                <input type="hidden" name="q" value="@Model.Query">
+                <input type="hidden" name="page" value="@Model.Page">
+                <button class="act-danger" type="submit" aria-label="Xóa khu vực @item.Name"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      }
+      @if (Model.Items.Count == 0)
+      {
+        <tr>
+          <td colspan="7" class="text-center text-muted py-4">Chưa có khu vực nào khớp bộ lọc.</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-foot">
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPagination.cshtml", Model.Pager)
+  </div>
+</div>

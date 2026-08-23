@@ -7,10 +7,6 @@
     </form>
 
     <div class="at-right">
-        <button class="at-icon" type="button" aria-label="Thông báo">
-            <i class="bi bi-bell" aria-hidden="true"></i>
-            <span class="dot" aria-hidden="true"></span>
-        </button>
         <form asp-area="Admin" asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
             @Html.AntiForgeryToken()
             <button class="at-user" type="submit" aria-label="Đăng xuất">

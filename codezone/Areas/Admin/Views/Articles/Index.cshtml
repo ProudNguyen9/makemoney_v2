@@ -10,9 +10,9 @@
 }
 
 <div class="admin-page-head">
-  <h1>Bài viết <small>Tin tức, bảng giá và kiến thức phế liệu từ database</small></h1>
+  <h1>Bài viết <small>Tin tức, bảng giá và kiến thức phế liệu</small></h1>
   <div class="aph-actions">
-    <button class="btn btn-primary" type="button" disabled><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Viết bài mới</button>
+    <a class="btn btn-primary" href="/admin/articles/Form"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Viết bài mới</a>
   </div>
 </div>
 
@@ -29,6 +29,8 @@
     <option value="">Tất cả</option>
     <option value="published" selected="@(Model.Status == "published")">Xuất bản</option>
     <option value="draft" selected="@(Model.Status == "draft")">Bản nháp</option>
+    <option value="featured" selected="@(Model.Status == "featured")">Nổi bật</option>
+    <option value="deleted" selected="@(Model.Status == "deleted")">Đã xóa</option>
   </select>
   <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm tiêu đề..." aria-label="Tìm tiêu đề">
   <div class="spacer"></div>
@@ -48,7 +50,7 @@
           <th scope="col">Tiêu đề</th>
           <th scope="col">Chuyên mục</th>
           <th scope="col">Trạng thái</th>
-          <th scope="col">Ngày đăng</th>
+          <th scope="col">@(Model.IsTrashView ? "Ngày xóa" : "Ngày đăng")</th>
           <th scope="col">Tác giả</th>
           <th scope="col">Thao tác</th>
         </tr>
@@ -60,14 +62,71 @@
           <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
           <td><span class="ta-title"><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></span></td>
           <td>@post.CategoryName</td>
-          <td><span class="badge-status @StatusClass(post.Status)">@StatusLabel(post.Status)</span></td>
-          <td class="text-nowrap">@(post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              @if (Model.IsTrashView)
+              {
+                <span class="badge-status st-draft">Đã xóa</span>
+              }
+              else
+              {
+                <form method="post" action="/admin/articles/ToggleStatus" data-autosubmit>
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@post.Id">
+                  <input type="hidden" name="category" value="@Model.Category">
+                  <input type="hidden" name="status" value="@Model.Status">
+                  <input type="hidden" name="q" value="@Model.Query">
+                  <div class="form-check form-switch m-0">
+                    <input class="form-check-input" type="checkbox" @(post.Status == "published" ? "checked" : "") aria-label="Xuất bản @post.Title">
+                  </div>
+                </form>
+                <span class="badge-status @StatusClass(post.Status)">@StatusLabel(post.Status)</span>
+              }
+            </div>
+          </td>
+          <td class="text-nowrap">@(Model.IsTrashView ? post.DeletedAt?.ToString("dd/MM/yyyy HH:mm") : post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
           <td>@(string.IsNullOrWhiteSpace(post.AuthorName) ? "Admin" : post.AuthorName)</td>
           <td>
             <div class="ta-actions">
-              <button type="button" disabled aria-label="Sửa @post.Title"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-              <button type="button" disabled aria-label="Nhân bản @post.Title"><i class="bi bi-copy" aria-hidden="true"></i></button>
-              <button class="act-danger" type="button" disabled aria-label="Xóa @post.Title"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              @if (Model.IsTrashView)
+              {
+                <form method="post" action="/admin/articles/Restore" class="d-inline">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@post.Id">
+                  <input type="hidden" name="category" value="@Model.Category">
+                  <input type="hidden" name="status" value="@Model.Status">
+                  <input type="hidden" name="q" value="@Model.Query">
+                  <button type="submit" aria-label="Khôi phục @post.Title" title="Khôi phục"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i></button>
+                </form>
+                <form method="post" action="/admin/articles/PermanentDelete" class="d-inline" onsubmit="return confirm('Xóa hẳn bài viết &quot;@post.Title&quot;? Thao tác này không thể hoàn tác.')">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@post.Id">
+                  <input type="hidden" name="category" value="@Model.Category">
+                  <input type="hidden" name="status" value="@Model.Status">
+                  <input type="hidden" name="q" value="@Model.Query">
+                  <button class="act-danger" type="submit" aria-label="Xóa hẳn @post.Title" title="Xóa hẳn"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                </form>
+              }
+              else
+              {
+                <a href="/admin/articles/Form/@post.Id" aria-label="Sửa @post.Title"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                <form method="post" action="/admin/articles/ToggleFeatured" class="d-inline">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@post.Id">
+                  <input type="hidden" name="category" value="@Model.Category">
+                  <input type="hidden" name="status" value="@Model.Status">
+                  <input type="hidden" name="q" value="@Model.Query">
+                  <button type="submit" class="@(post.IsFeatured ? "act-featured" : "")" aria-label="Nổi bật @post.Title" title="@(post.IsFeatured ? "Bỏ nổi bật" : "Nổi bật")"><i class="bi bi-star@(post.IsFeatured ? "-fill" : "")" aria-hidden="true"></i></button>
+                </form>
+                <form method="post" action="/admin/articles/Delete" class="d-inline" onsubmit="return confirm('Xóa mềm bài viết &quot;@post.Title&quot;? Bài sẽ được ẩn khỏi danh sách và website.')">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@post.Id">
+                  <input type="hidden" name="category" value="@Model.Category">
+                  <input type="hidden" name="status" value="@Model.Status">
+                  <input type="hidden" name="q" value="@Model.Query">
+                  <button class="act-danger" type="submit" aria-label="Xóa @post.Title"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </form>
+              }
             </div>
           </td>
         </tr>
@@ -77,6 +136,6 @@
   </div>
   <div class="panel-foot">
     <span class="admin-pagination">Hiển thị @Model.Items.Count / @Model.TotalCount</span>
-    <span class="small text-muted">Read-only phase: chưa bật lưu, nhân bản hoặc xóa bài.</span>
+    <span class="small text-muted">@(Model.IsTrashView ? "Bài đã xóa có thể khôi phục hoặc xóa hẳn khỏi hệ thống." : "Xóa bài là xóa mềm: dữ liệu vẫn được giữ trong hệ thống.")</span>
   </div>
 </section>

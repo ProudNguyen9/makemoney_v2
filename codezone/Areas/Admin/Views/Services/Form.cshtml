@@ -1,156 +1,137 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Forms.ServiceFormViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Form dịch vụ";
+    ViewData["Title"] = Model.Id == 0 ? "Thêm dịch vụ" : $"Sửa dịch vụ: {Model.Title}";
     ViewData["AdminSection"] = "services";
     ViewData["AdminSubSection"] = "form";
 }
 
-<!-- backend: POST /admin/services — tạo nhóm dịch vụ mới -->
-      <div class="admin-page-head">
-        <h1>Thêm dịch vụ <small>Tạo nhóm dịch vụ thu mua mới hiển thị trên website</small></h1>
-        <div class="aph-actions">
-          <!-- backend: mở trang xem trước công khai (chưa publish) -->
-          <a class="btn btn-outline-dark" href="/dich-vu/thu-mua-tan-noi" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
-          <button class="btn btn-primary" type="submit" form="serviceForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+<div class="admin-page-head">
+  <h1>@(Model.Id == 0 ? "Thêm dịch vụ" : $"Sửa: {Model.Title}")<small>Ảnh bìa tải lên được tự động nén và chuyển sang WebP</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-outline-dark" href="/admin/services"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách</a>
+    <button class="btn btn-primary" type="submit" form="serviceForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+  </div>
+</div>
+
+<form id="serviceForm" action="/admin/services/Save" method="post" enctype="multipart/form-data">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="Id" value="@Model.Id">
+  <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+  <div class="admin-form-grid">
+    <div>
+      <!-- Thông tin dịch vụ -->
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Thông tin dịch vụ</h2>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-tech" for="serviceName">Tên dịch vụ<span class="required-mark">*</span></label>
+              <input class="form-control" id="serviceName" name="Title" type="text" value="@Model.Title" required maxlength="220">
+              <span class="text-danger small" asp-validation-for="Title"></span>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="serviceSlug">Slug</label>
+              <div class="input-with-suffix">
+                <input class="form-control" id="serviceSlug" name="Slug" type="text" value="@Model.Slug" maxlength="180" placeholder="Tự sinh từ tên nếu bỏ trống">
+                <span class="input-suffix">.html</span>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="serviceTeaser">Mô tả ngắn</label>
+              <textarea class="form-control" id="serviceTeaser" name="Excerpt" rows="2" maxlength="600">@Model.Excerpt</textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="serviceIcon">Icon (Bootstrap Icons)</label>
+              <select class="form-select" id="serviceIcon" name="IconCss">
+                @{
+                    var icons = new (string Value, string Label)[]
+                    {
+                        ("bi-truck", "bi-truck — Vận chuyển tận nơi"),
+                        ("bi-buildings", "bi-buildings — Nhà xưởng, doanh nghiệp"),
+                        ("bi-gear", "bi-gear — Máy móc"),
+                        ("bi-tools", "bi-tools — Tháo dỡ, lắp đặt"),
+                        ("bi-recycle", "bi-recycle — Thu gom tái chế"),
+                        ("bi-calendar-check", "bi-calendar-check — Định kỳ"),
+                        ("bi-house-gear", "bi-house-gear — Nhà xưởng"),
+                        ("bi-cone-striped", "bi-cone-striped — Công trình")
+                    };
+                    var currentIcon = Model.IconCss;
+                }
+                @foreach (var icon in icons)
+                {
+                    <option value="@icon.Value" selected="@(currentIcon == icon.Value)">@icon.Label</option>
+                }
+                @if (!string.IsNullOrEmpty(currentIcon) && icons.All(icon => icon.Value != currentIcon))
+                {
+                    <option value="@currentIcon" selected>@currentIcon</option>
+                }
+              </select>
+            </div>
+            <div class="col-12">
+              <span class="form-label-tech">Nội dung</span>
+              <textarea class="form-control js-rich-editor" name="ContentHtml" rows="12">@Model.ContentHtml</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Ảnh đại diện -->
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Ảnh đại diện (16:10)</h2>
+        </div>
+        <div class="panel-body">
+          @if (!string.IsNullOrWhiteSpace(Model.CurrentCoverUrl))
+          {
+            <div class="mb-2">
+              <img src="@Model.CurrentCoverUrl" alt="Ảnh bìa hiện tại" width="96" height="60" class="rounded border" style="object-fit:cover" loading="lazy">
+              <div class="form-check mt-1">
+                <input class="form-check-input" type="checkbox" name="RemoveCover" id="removeCover" value="true">
+                <label class="form-check-label small" for="removeCover">Xóa ảnh bìa hiện tại</label>
+              </div>
+            </div>
+          }
+          @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000, tự chuyển WebP", "CoverFile", false))
         </div>
       </div>
 
-      <form id="serviceForm" action="#" method="post">
-        <div class="admin-form-grid">
-          <div>
-            <!-- Thông tin dịch vụ -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Thông tin dịch vụ</h2>
-              </div>
-              <div class="panel-body">
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="serviceName">Tên dịch vụ<span class="required-mark">*</span></label>
-                    <input class="form-control" id="serviceName" type="text" value="Thu mua phế liệu tận nơi" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="serviceSlug">Slug</label>
-                    <div class="input-with-suffix">
-                      <input class="form-control" id="serviceSlug" type="text" value="thu-mua-phe-lieu-tan-noi">
-                      <span class="input-suffix">.html</span>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label-tech" for="serviceTeaser">Mô tả ngắn</label>
-                    <textarea class="form-control" id="serviceTeaser" rows="2">Nhận thu mua phế liệu tận nhà, xưởng — khảo sát miễn phí, cân tại chỗ, thanh toán ngay trong ngày.</textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label-tech" for="serviceIcon">Icon (Bootstrap Icons)</label>
-                    <select class="form-select" id="serviceIcon">
-                      <option value="bi-truck" selected>bi-truck — Vận chuyển tận nơi</option>
-                      <option value="bi-buildings">bi-buildings — Nhà xưởng, doanh nghiệp</option>
-                      <option value="bi-gear">bi-gear — Máy móc</option>
-                      <option value="bi-tools">bi-tools — Tháo dỡ, lắp đặt</option>
-                      <option value="bi-recycle">bi-recycle — Thu gom tái chế</option>
-                      <option value="bi-calendar-check">bi-calendar-check — Định kỳ</option>
-                    </select>
-                  </div>
-                  <div class="col-12">
-                    <span class="form-label-tech">Nội dung</span>
-                    <!-- backend: gắn rich editor (CKEditor/TinyMCE) cho trường nội dung dịch vụ -->
-                    <div class="editor-placeholder">
-                      <div>
-                        <i class="bi bi-file-richtext" aria-hidden="true"></i>
-                        <span>Rich editor — mô tả phạm vi thu mua, quy trình thực hiện, khu vực phục vụ…</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- FAQ dịch vụ -->
-            <div class="admin-panel mb-0">
-              <div class="panel-head">
-                <h2>FAQ dịch vụ</h2>
-              </div>
-              <div class="panel-body">
-                <!-- BACKEND: danh sách câu hỏi — trả lời gắn với dịch vụ -->
-                <div class="row g-3">
-                  <div class="col-12">
-                    <label class="form-label-tech" for="serviceFaqQ1">Câu hỏi 1</label>
-                    <textarea class="form-control" id="serviceFaqQ1" rows="2">Bạn có thu mua với số lượng ít không?</textarea>
-                    <label class="form-label-tech mt-2" for="serviceFaqA1">Câu trả lời 1</label>
-                    <textarea class="form-control" id="serviceFaqA1" rows="2">Có, chúng tôi nhận thu mua từ 10kg trở lên, cân tại chỗ và thanh toán ngay sau khi cân.</textarea>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label-tech" for="serviceFaqQ2">Câu hỏi 2</label>
-                    <textarea class="form-control" id="serviceFaqQ2" rows="2">Sau bao lâu đội thu mua có mặt tại nhà xưởng?</textarea>
-                    <label class="form-label-tech mt-2" for="serviceFaqA2">Câu trả lời 2</label>
-                    <textarea class="form-control" id="serviceFaqA2" rows="2">Trong vòng 2–4 giờ tại TP.HCM, Đồng Nai, Bình Dương sau khi tiếp nhận yêu cầu báo giá.</textarea>
-                  </div>
-                </div>
-                <!-- backend: thêm cặp câu hỏi — câu trả lời mới vào form -->
-                <button class="btn btn-outline-dark btn-sm mt-3" type="button"><i class="bi bi-plus" aria-hidden="true"></i> Thêm câu hỏi</button>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <!-- Ảnh đại diện -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Ảnh đại diện (16:10)</h2>
-              </div>
-              <div class="panel-body">
-                <!-- backend: upload — trả về URL ảnh gắn vào trường thumbnail -->
-                <label class="upload-drop">
-                  <input type="file" accept="image/*" hidden>
-                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
-                  <p class="upload-title">Tải ảnh lên</p>
-                  <p class="upload-hint">PNG, JPG — tối thiểu 1600×1000</p>
-                </label>
-              </div>
-            </div>
-
-            <!-- Cấu hình -->
-            <div class="admin-panel">
-              <div class="panel-head">
-                <h2>Cấu hình</h2>
-              </div>
-              <div class="panel-body">
-                <label class="form-label-tech" for="serviceStatus">Trạng thái</label>
-                <select class="form-select" id="serviceStatus">
-                  <option value="published" selected>Đang hiển thị</option>
-                  <option value="hidden">Ẩn</option>
-                </select>
-                <label class="form-label-tech mt-3" for="serviceOrder">Thứ tự</label>
-                <input class="form-control" id="serviceOrder" type="number" min="1" value="1">
-                <div class="form-check form-switch mt-3">
-                  <input class="form-check-input" type="checkbox" id="serviceHome" checked>
-                  <label class="form-check-label" for="serviceHome">Hiển thị ở trang chủ</label>
-                </div>
-              </div>
-            </div>
-
-            <!-- SEO -->
-            <div class="admin-panel mb-0">
-              <div class="panel-head">
-                <h2>SEO</h2>
-              </div>
-              <div class="panel-body">
-                <label class="form-label-tech" for="serviceSeoTitle">SEO Title</label>
-                <input class="form-control" id="serviceSeoTitle" type="text" value="Thu mua phế liệu tận nơi giá cao — [TÊN CÔNG TY]">
-                <p class="small text-muted mb-3 mt-1">47/70 ký tự</p>
-                <label class="form-label-tech" for="serviceSeoMeta">Meta description</label>
-                <textarea class="form-control" id="serviceSeoMeta" rows="3">Dịch vụ thu mua phế liệu tận nơi: khảo sát miễn phí, cân tại chỗ, thanh toán ngay. Phục vụ TP.HCM, Đồng Nai, Bình Dương.</textarea>
-                <p class="small text-muted mb-3 mt-1">Tối đa 160 ký tự</p>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="serviceSeoIndex" checked>
-                  <label class="form-check-label" for="serviceSeoIndex">Index</label>
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="serviceSeoFollow" checked>
-                  <label class="form-check-label" for="serviceSeoFollow">Follow</label>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Cấu hình -->
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Cấu hình</h2>
         </div>
-      </form>
+        <div class="panel-body">
+          <label class="form-label-tech" for="serviceStatus">Trạng thái</label>
+          <select class="form-select" id="serviceStatus" name="Status">
+            <option value="published" selected="@(Model.Status == "published")">Đang hiển thị</option>
+            <option value="draft" selected="@(Model.Status != "published")">Ẩn</option>
+          </select>
+          <label class="form-label-tech mt-3" for="serviceOrder">Vị trí hiển thị</label>
+          <input class="form-control" id="serviceOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các dịch vụ khác.">
+          <p class="small text-muted mt-1 mb-0">Số nhỏ hiện trước. Lưu sẽ tự động chèn vào đúng vị trí và đánh lại số liên tục (không trùng).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@section Scripts {
+<script>
+  (function () {
+    'use strict';
+    var nameInput = document.getElementById('serviceName');
+    var slugInput = document.getElementById('serviceSlug');
+    function toSlug(value) {
+      return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+    }
+    nameInput.addEventListener('blur', function () {
+      if (!slugInput.value.trim()) slugInput.value = toSlug(nameInput.value);
+    });
+  })();
+</script>
+}

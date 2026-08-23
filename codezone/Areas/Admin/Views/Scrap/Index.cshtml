@@ -6,13 +6,12 @@
     ViewData["AdminSubSection"] = "index";
 
     string StatusLabel(string status) => status == "published" ? "Đang hiển thị" : status == "draft" ? "Ẩn" : status;
-    string StatusClass(string status) => status == "published" ? "st-published" : status == "draft" ? "st-draft" : "st-processing";
 }
 
 <div class="admin-page-head">
-  <h1>Loại phế liệu<small>Đọc dữ liệu thật từ database hiện có</small></h1>
+  <h1>Loại phế liệu<small>Quản lý @Model.TotalCount loại phế liệu — bấm vào tên hoặc biểu tượng bút chì để sửa</small></h1>
   <div class="aph-actions">
-    <button class="btn btn-primary" type="button" disabled title="Phase sau mới mở thêm mới"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm loại phế liệu</button>
+    <a class="btn btn-primary" href="/admin/scrap/Form"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm loại phế liệu</a>
   </div>
 </div>
 
@@ -45,9 +44,8 @@
           <th>Nhóm</th>
           <th>Slug</th>
           <th>Giá tham khảo</th>
-          <th>Nổi bật</th>
           <th>Trạng thái</th>
-          <th>Thứ tự</th>
+          <th>Vị trí</th>
           <th><span class="visually-hidden">Thao tác</span></th>
         </tr>
       </thead>
@@ -56,28 +54,63 @@
       {
         <tr>
           <td class="ta-title">
-            <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/assets/images/imported/brand/banner-1.jpg" : item.ImageUrl)" alt="@item.Name" width="56" height="42" loading="lazy">
+            <a href="/admin/scrap/Form/@item.Id"><img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/assets/images/imported/brand/banner-1.jpg" : item.ImageUrl)" alt="@item.Name" width="56" height="42" loading="lazy"></a>
           </td>
-          <td><strong>@item.Name</strong></td>
+          <td><strong><a class="text-decoration-none" href="/admin/scrap/Form/@item.Id">@item.Name</a></strong></td>
           <td>@item.CategoryName</td>
           <td><code>@item.Slug</code></td>
           <td>@item.PriceText</td>
-          <td><span class="tag-min @(item.IsFeatured ? "tag-min--primary" : "")">@(item.IsFeatured ? "Nổi bật" : "Thường")</span></td>
-          <td><span class="badge-status @StatusClass(item.Status)">@StatusLabel(item.Status)</span></td>
-          <td><input class="form-control form-control-sm" type="number" min="0" value="@item.SortOrder" aria-label="Thứ tự @item.Name" disabled></td>
+          <td>
+            <form method="post" action="/admin/scrap/ToggleStatus" data-autosubmit>
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="id" value="@item.Id">
+              <input type="hidden" name="group" value="@Model.Group">
+              <input type="hidden" name="status" value="@Model.Status">
+              <input type="hidden" name="q" value="@Model.Query">
+              <input type="hidden" name="page" value="@Model.Page">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" @(item.Status == "published" ? "checked" : "") aria-label="Hiển thị @item.Name">
+              </div>
+            </form>
+          </td>
+          <td>
+            <form method="post" action="/admin/scrap/UpdateSort" class="d-flex gap-1" style="max-width:110px">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="id" value="@item.Id">
+              <input type="hidden" name="group" value="@Model.Group">
+              <input type="hidden" name="status" value="@Model.Status">
+              <input type="hidden" name="q" value="@Model.Query">
+              <input type="hidden" name="page" value="@Model.Page">
+              <input class="form-control form-control-sm" type="number" min="1" max="9999" name="sortOrder" value="@item.SortOrder" title="Vị trí hiển thị (1 = đầu danh sách). Lưu sẽ tự dồn các dòng khác." aria-label="Vị trí @item.Name">
+              <button class="btn btn-outline-dark btn-sm" type="submit" aria-label="Lưu vị trí @item.Name"><i class="bi bi-check" aria-hidden="true"></i></button>
+            </form>
+          </td>
           <td>
             <div class="ta-actions">
-              <button type="button" disabled aria-label="Sửa @item.Name"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-              <button class="act-danger" type="button" disabled aria-label="Xóa @item.Name"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              <a href="/admin/scrap/Form/@item.Id" aria-label="Sửa @item.Name"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+              <form method="post" action="/admin/scrap/Delete" class="d-inline" onsubmit="return confirm('Xóa loại phế liệu &quot;@item.Name&quot; kèm dòng giá và ảnh?')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@item.Id">
+                <input type="hidden" name="group" value="@Model.Group">
+                <input type="hidden" name="status" value="@Model.Status">
+                <input type="hidden" name="q" value="@Model.Query">
+                <input type="hidden" name="page" value="@Model.Page">
+                <button class="act-danger" type="submit" aria-label="Xóa @item.Name"><i class="bi bi-trash" aria-hidden="true"></i></button>
+              </form>
             </div>
           </td>
+        </tr>
+      }
+      @if (Model.Items.Count == 0)
+      {
+        <tr>
+          <td colspan="8" class="text-center text-muted py-4">Chưa có loại phế liệu nào khớp bộ lọc.</td>
         </tr>
       }
       </tbody>
     </table>
   </div>
   <div class="panel-foot">
-    <div class="admin-pagination">Hiển thị @Model.Items.Count / @Model.TotalCount loại</div>
-    <span class="small text-muted">Read-only phase: dữ liệu lấy từ ScrapWebsiteLocal, chưa mở lưu thay đổi.</span>
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPagination.cshtml", Model.Pager)
   </div>
 </div>

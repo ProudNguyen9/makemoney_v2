@@ -7,11 +7,52 @@
 }
 
 <div class="admin-page-head">
-  <h1>SEO <small>Cấu hình SEO đọc từ database</small></h1>
+  <h1>SEO <small>Quản lý title, mô tả và index/follow</small></h1>
   <div class="aph-actions">
-    <button class="btn btn-primary" type="button" disabled><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+    <a class="btn btn-outline-dark" href="/sitemap.xml" target="_blank" rel="noopener"><i class="bi bi-diagram-3" aria-hidden="true"></i> Sitemap</a>
+    <a class="btn btn-outline-dark" href="/robots.txt" target="_blank" rel="noopener"><i class="bi bi-file-earmark-text" aria-hidden="true"></i> Robots</a>
   </div>
 </div>
+
+<form class="admin-panel mb-3" method="get" action="/admin/seo">
+  <div class="panel-body">
+    <div class="row g-3 align-items-end">
+      <div class="col-lg-3 col-md-6">
+        <label class="form-label-tech" for="seoEntityType">Entity</label>
+        <select class="form-select" id="seoEntityType" name="entityType">
+          <option value="">Tất cả</option>
+          @foreach (var type in Model.EntityTypes)
+          {
+            <option value="@type" selected="@(Model.EntityType == type)">@type</option>
+          }
+        </select>
+      </div>
+      <div class="col-lg-2 col-md-6">
+        <label class="form-label-tech" for="seoStatus">Trạng thái</label>
+        <select class="form-select" id="seoStatus" name="status">
+          <option value="">Tất cả</option>
+          <option value="active" selected="@(Model.Status == "active")">Active</option>
+          <option value="inactive" selected="@(Model.Status == "inactive")">Inactive</option>
+        </select>
+      </div>
+      <div class="col-lg-2 col-md-6">
+        <label class="form-label-tech" for="seoIndexState">Index</label>
+        <select class="form-select" id="seoIndexState" name="indexState">
+          <option value="">Tất cả</option>
+          <option value="index" selected="@(Model.IndexState == "index")">Index</option>
+          <option value="noindex" selected="@(Model.IndexState == "noindex")">Noindex</option>
+        </select>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <label class="form-label-tech" for="seoQuery">Tìm kiếm</label>
+        <input class="form-control" id="seoQuery" name="query" type="search" value="@Model.Query" placeholder="Route, title, description, entity...">
+      </div>
+      <div class="col-lg-1 col-md-12 d-grid">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+</form>
 
 <div class="admin-panel seo-pages-panel">
   <div class="panel-head">
@@ -22,61 +63,129 @@
     <table class="table table-admin align-middle">
       <thead>
         <tr>
-          <th scope="col">Route</th>
-          <th scope="col">Entity</th>
-          <th scope="col">SEO Title</th>
-          <th scope="col">Index</th>
-          <th scope="col">Follow</th>
+          <th scope="col">Route / Entity</th>
+          <th scope="col">Robots</th>
           <th scope="col">Trạng thái</th>
+          <th scope="col" class="text-end"></th>
         </tr>
       </thead>
       <tbody>
       @foreach (var seo in Model.Items)
       {
-        <tr>
-          <td><strong>@(string.IsNullOrWhiteSpace(seo.RoutePath) ? "(entity)" : seo.RoutePath)</strong><br><small class="text-muted">@seo.MetaDescription</small></td>
-          <td>@seo.EntityType @(seo.EntityId.HasValue ? $"#{seo.EntityId}" : "")</td>
-          <td><input class="form-control form-control-sm" type="text" value="@seo.SeoTitle" aria-label="SEO title @seo.RoutePath" disabled></td>
-          <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked="@seo.RobotsIndex" disabled></div></td>
-          <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked="@seo.RobotsFollow" disabled></div></td>
-          <td><span class="badge-status st-published">@seo.Status</span></td>
+        var detailsId = $"seoDetails-{seo.Id}";
+        <tr class="seo-summary-row">
+          <td style="min-width: 420px">
+            <strong>@(string.IsNullOrWhiteSpace(seo.RoutePath) ? "(entity)" : seo.RoutePath)</strong>
+            <small class="text-muted d-block">@seo.EntityType @(seo.EntityId.HasValue ? $"#{seo.EntityId}" : "")</small>
+          </td>
+          <td>
+            <span class="small @(seo.RobotsIndex ? "text-success" : "text-muted")">@(seo.RobotsIndex ? "Index" : "Noindex")</span>
+            <span class="small text-muted">/</span>
+            <span class="small @(seo.RobotsFollow ? "text-success" : "text-muted")">@(seo.RobotsFollow ? "Follow" : "Nofollow")</span>
+          </td>
+          <td>
+            <span class="badge-status @(seo.Status == "active" ? "st-published" : "st-draft")">@seo.Status</span>
+          </td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#@detailsId" aria-expanded="false" aria-controls="@detailsId">
+              <i class="bi bi-chevron-down" aria-hidden="true"></i> Sửa SEO
+            </button>
+          </td>
+        </tr>
+        <tr class="seo-details-row">
+          <td colspan="4">
+            <div class="collapse seo-details-collapse" id="@detailsId">
+            <form id="seoForm-@seo.Id" action="/admin/seo/SaveMetadata" method="post">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="Id" value="@seo.Id">
+              <input type="hidden" name="OgTitle" value="@seo.OgTitle">
+              <input type="hidden" name="OgDescription" value="@seo.OgDescription">
+              <input type="hidden" name="OgImage" value="@seo.OgImage">
+              <div class="row g-3 align-items-end">
+                <div class="col-lg-7">
+                  <label class="form-label-tech" for="seoTitle-@seo.Id">SEO title</label>
+                  <input class="form-control form-control-sm mb-2" id="seoTitle-@seo.Id" name="SeoTitle" type="text" value="@seo.SeoTitle" maxlength="255" required>
+                  <label class="form-label-tech" for="seoMeta-@seo.Id">Meta description</label>
+                  <textarea class="form-control form-control-sm" id="seoMeta-@seo.Id" name="MetaDescription" rows="2" maxlength="500">@seo.MetaDescription</textarea>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-check form-switch seo-robot-switch">
+                    <input class="form-check-input" type="checkbox" name="RobotsIndex" value="true" checked="@seo.RobotsIndex" id="robotsIndex-@seo.Id">
+                    <label class="form-check-label" for="robotsIndex-@seo.Id">Index</label>
+                  </div>
+                  <div class="form-check form-switch seo-robot-switch">
+                    <input class="form-check-input" type="checkbox" name="RobotsFollow" value="true" checked="@seo.RobotsFollow" id="robotsFollow-@seo.Id">
+                    <label class="form-check-label" for="robotsFollow-@seo.Id">Follow</label>
+                  </div>
+                  <div class="seo-status-toggle mt-2" role="group" aria-label="Trạng thái SEO">
+                    <input class="btn-check" type="radio" name="Status" id="seoActive-@seo.Id" value="active" checked="@(seo.Status == "active")">
+                    <label class="btn btn-sm btn-outline-dark" for="seoActive-@seo.Id">Active</label>
+                    <input class="btn-check" type="radio" name="Status" id="seoInactive-@seo.Id" value="inactive" checked="@(seo.Status != "active")">
+                    <label class="btn btn-sm btn-outline-dark" for="seoInactive-@seo.Id">Inactive</label>
+                  </div>
+                </div>
+                <div class="col-lg-2 d-grid">
+                  <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+                </div>
+              </div>
+            </form>
+            </div>
+          </td>
         </tr>
       }
       </tbody>
     </table>
-  </div>
-  <div class="panel-foot">
-    <span class="small text-muted">Read-only phase: chỉnh SEO sẽ mở ở phase CRUD sau.</span>
   </div>
 </div>
 
 <div class="seo-meta-grid">
   <div class="admin-panel seo-compact-panel">
     <div class="panel-head"><h2>Cấu hình toàn site</h2></div>
-    <div class="panel-body">
+    <form class="panel-body" action="/admin/seo/SaveSiteSettings" method="post" enctype="multipart/form-data">
+      @Html.AntiForgeryToken()
       <div class="row g-3">
         <div class="col-12">
           <label class="form-label-tech" for="seoSiteTitle">Site title</label>
-          <input class="form-control" id="seoSiteTitle" type="text" value="@Model.SiteTitle" disabled>
+          <input class="form-control" id="seoSiteTitle" name="SiteTitle" type="text" value="@Model.SiteTitle" maxlength="255">
         </div>
         <div class="col-12">
           <label class="form-label-tech" for="seoMetaDefault">Meta description mặc định</label>
-          <textarea class="form-control" id="seoMetaDefault" rows="2" disabled>@Model.DefaultDescription</textarea>
+          <textarea class="form-control" id="seoMetaDefault" name="DefaultDescription" rows="2" maxlength="500">@Model.DefaultDescription</textarea>
         </div>
         <div class="col-12">
-          <label class="form-label-tech" for="seoOgDefault">Ảnh OG mặc định</label>
-          <input class="form-control" id="seoOgDefault" type="text" value="@Model.DefaultOgImage" disabled>
+          <label class="form-label-tech" for="seoOgTitleDefault">Tiêu đề khi chia sẻ link (OG title)</label>
+          <input class="form-control" id="seoOgTitleDefault" name="DefaultOgTitle" type="text" value="@Model.DefaultOgTitle" maxlength="255">
+        </div>
+        <div class="col-12">
+          <label class="form-label-tech">Ảnh khi chia sẻ link (OG image)</label>
+          <div class="media-item seo-og-picker mb-2">
+            <span class="media-thumb"><img id="defaultOgPreview" src="@Model.DefaultOgImage" alt="Ảnh preview khi share link" loading="lazy"></span>
+            <div class="media-meta">
+              <strong>Ảnh share link</strong>
+              <small id="defaultOgFileName">@Model.DefaultOgImage</small>
+              <small>Khuyến nghị ảnh tỷ lệ 1200 x 630.</small>
+            </div>
+          </div>
+          <input type="hidden" name="DefaultOgImage" value="@Model.DefaultOgImage">
+          <input class="form-control js-image-preview-input" id="seoOgImageFile" name="DefaultOgImageFile" type="file" accept="image/*" data-preview-target="defaultOgPreview" data-name-target="defaultOgFileName">
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu SEO toàn site</button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 
   <div class="admin-panel mb-0">
     <div class="panel-head"><h2>Sitemap &amp; Redirect</h2></div>
     <div class="panel-body">
       <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
-        <p class="mb-0">Sitemap entries<small class="d-block text-muted">Sinh từ dữ liệu public đã có</small></p>
+        <p class="mb-0">Sitemap động<small class="d-block text-muted">Tự sinh tại /sitemap.xml từ dữ liệu publish</small></p>
         <strong>@Model.SitemapCount</strong>
+      </div>
+      <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+        <p class="mb-0">Domain sitemap<small class="d-block text-muted">Cố định production</small></p>
+        <strong>phelieuminhduc.com</strong>
       </div>
       <div class="d-flex justify-content-between align-items-center gap-2 py-2">
         <p class="mb-0">Redirects<small class="d-block text-muted">Chỉ seed khi có path cũ rõ ràng</small></p>

@@ -6,7 +6,8 @@
     <p class="quote-panel-sub">@Model.Subtitle</p>
 }
 
-<form class="js-quote-form" novalidate>
+<form class="js-quote-form" action="/contact/quick-quote" method="post" enctype="multipart/form-data" novalidate>
+  @Html.AntiForgeryToken()
   <div class="quote-form-body row g-3">
     <div class="col-md-6">
       <div class="form-field">
@@ -70,8 +71,8 @@
         <div class="upload-drop" role="button" tabindex="0" aria-label="Tải ảnh phế liệu lên">
           <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
           <p class="upload-title mb-0">Kéo thả ảnh vào đây hoặc bấm chọn file</p>
-          <p class="upload-hint">Hỗ trợ nhiều ảnh JPG/PNG — chụp gần loại phế liệu để báo giá chính xác</p>
-          <input type="file" accept="image/*" multiple hidden>
+          <p class="upload-hint">Tối đa 3 ảnh JPG/PNG — chụp gần loại phế liệu để báo giá chính xác</p>
+          <input type="file" name="Images" accept="image/*" multiple hidden>
         </div>
         <div class="upload-previews" aria-live="polite"></div>
       </div>

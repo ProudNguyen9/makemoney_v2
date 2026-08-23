@@ -3,11 +3,13 @@
 <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
   if (window.tinymce) {
+    const editorMinHeight = 900;
     tinymce.init({
       selector: '.js-rich-editor',
-      height: 360,
+      height: editorMinHeight,
+      min_height: editorMinHeight,
       menubar: false,
-      plugins: 'lists link table image code',
+      plugins: 'lists link table image code autoresize',
       toolbar: 'undo redo | blocks | bold italic | bullist numlist | link image table | alignleft aligncenter alignright | removeformat | code',
       branding: false,
       license_key: 'gpl',
@@ -18,7 +20,237 @@
       image_title: true,
       image_caption: true,
       image_advtab: true,
-      resize: 'both'
+      resize: 'both',
+      autoresize_min_height: editorMinHeight,
+      autoresize_bottom_margin: 24,
+      paste_data_images: true,
+      automatic_uploads: true,
+      images_upload_url: '/admin/media/UploadEditorImage',
+      images_upload_credentials: true,
+      images_upload_handler: async (blobInfo, progress) => {
+        const formData = new FormData();
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        const token = document.querySelector('#articleForm input[name="__RequestVerificationToken"]')?.value;
+
+        const response = await fetch('/admin/media/UploadEditorImage', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+          headers: token ? { 'RequestVerificationToken': token } : {}
+        });
+
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null);
+          throw new Error(payload?.error || 'Không tải được ảnh lên.');
+        }
+
+        const payload = await response.json();
+        return payload.location;
+      },
+      setup: editor => {
+        const lockMinHeight = () => {
+          const container = editor.getContainer();
+          const iframe = editor.getContentAreaContainer()?.querySelector('iframe');
+          const editArea = container?.querySelector('.tox-edit-area');
+
+          if (container) {
+            container.style.minHeight = `${editorMinHeight}px`;
+          }
+
+          if (editArea instanceof HTMLElement) {
+            editArea.style.minHeight = `${editorMinHeight - 120}px`;
+          }
+
+          if (iframe instanceof HTMLElement) {
+            iframe.style.minHeight = `${editorMinHeight - 120}px`;
+          }
+        };
+
+        editor.on('init SetContent NodeChange input change keyup paste', () => {
+          window.requestAnimationFrame(lockMinHeight);
+        });
+      }
     });
   }
+
+  (() => {
+    const input = document.getElementById('articleCoverFile');
+    const drop = document.querySelector('.article-cover-drop');
+    const fileName = document.getElementById('articleCoverFileName');
+    const removeCover = document.getElementById('removeCover');
+
+    if (!input || !drop) {
+      return;
+    }
+
+    input.addEventListener('change', () => {
+      const file = input.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      if (removeCover) {
+        removeCover.checked = false;
+      }
+
+      let preview = drop.querySelector('.article-cover-preview');
+      if (!preview) {
+        preview = document.createElement('img');
+        preview.className = 'article-cover-preview';
+        preview.alt = 'Ảnh đại diện';
+        drop.prepend(preview);
+      }
+
+      preview.src = URL.createObjectURL(file);
+      drop.querySelector('.article-cover-empty')?.remove();
+      drop.dataset.empty = 'false';
+
+      if (fileName) {
+        fileName.textContent = file.name;
+      }
+    });
+  })();
+
+  (() => {
+    document.addEventListener('change', event => {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement) || !input.classList.contains('js-image-preview-input')) {
+        return;
+      }
+
+      const file = input.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      const preview = document.getElementById(input.dataset.previewTarget || '');
+      const name = document.getElementById(input.dataset.nameTarget || '');
+
+      if (preview instanceof HTMLImageElement) {
+        preview.classList.remove('is-error');
+        preview.src = URL.createObjectURL(file);
+      }
+
+      if (name) {
+        name.textContent = file.name;
+      }
+    });
+  })();
+
+  (() => {
+    const updatePreview = input => {
+      const preview = document.getElementById(input.dataset.previewTarget || '');
+      if (!(preview instanceof HTMLImageElement)) {
+        return;
+      }
+
+      preview.classList.remove('is-error');
+      preview.src = input.value.trim() || '/assets/images/imported/brand/banner-1.jpg';
+    };
+
+    document.addEventListener('input', event => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.classList.contains('js-url-image-preview')) {
+        updatePreview(input);
+      }
+    });
+
+    document.addEventListener('error', event => {
+      const image = event.target;
+      if (image instanceof HTMLImageElement && image.classList.contains('seo-og-preview')) {
+        image.classList.add('is-error');
+      }
+      if (image instanceof HTMLImageElement && image.classList.contains('media-setting-image')) {
+        image.classList.add('is-error');
+      }
+    }, true);
+  })();
+
+  (() => {
+    const modal = document.getElementById('linkedProductsModal');
+    if (!modal) {
+      return;
+    }
+
+    const categoryFilter = document.getElementById('productFilterCategory');
+    const statusFilter = document.getElementById('productFilterStatus');
+    const queryFilter = document.getElementById('productFilterQuery');
+    const rows = Array.from(modal.querySelectorAll('.linked-product-row'));
+    const chips = document.getElementById('selectedProductChips');
+    const count = document.getElementById('selectedProductCount');
+    const syncChips = () => {
+      if (!chips) return;
+      const checked = Array.from(modal.querySelectorAll('.linked-product-check:checked'));
+      chips.innerHTML = '';
+      if (count) {
+        count.textContent = checked.length.toString();
+      }
+      if (checked.length === 0) {
+        chips.innerHTML = '<span class="text-muted small">Chưa chọn sản phẩm nào.</span>';
+        return;
+      }
+      checked.forEach(input => {
+        const row = input.closest('.linked-product-row');
+        const label = row?.querySelector('strong')?.textContent?.trim();
+        if (!label) return;
+        const chip = document.createElement('span');
+        chip.className = 'selected-product-chip';
+        chip.dataset.productId = input.value;
+        const labelNode = document.createElement('span');
+        labelNode.textContent = label;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'chip-remove';
+        remove.dataset.productId = input.value;
+        remove.setAttribute('aria-label', `Bỏ ${label}`);
+        remove.textContent = '×';
+        chip.append(labelNode, remove);
+        chips.appendChild(chip);
+      });
+    };
+
+    const applyFilters = () => {
+      const category = (categoryFilter?.value || '').toLowerCase();
+      const status = (statusFilter?.value || '').toLowerCase();
+      const query = (queryFilter?.value || '').trim().toLowerCase();
+
+      rows.forEach(row => {
+        const rowCategory = (row.dataset.productCategory || '');
+        const rowStatus = (row.dataset.productStatus || '');
+        const rowName = (row.dataset.productName || '');
+        const rowSlug = (row.dataset.productSlug || '');
+        const matchesCategory = !category || rowCategory === category;
+        const matchesStatus = !status || rowStatus === status;
+        const matchesQuery = !query || rowName.includes(query) || rowSlug.includes(query);
+        row.style.display = matchesCategory && matchesStatus && matchesQuery ? '' : 'none';
+      });
+    };
+
+    categoryFilter?.addEventListener('change', applyFilters);
+    statusFilter?.addEventListener('change', applyFilters);
+    queryFilter?.addEventListener('input', applyFilters);
+    modal.addEventListener('change', event => {
+      if (event.target?.classList?.contains('linked-product-check')) {
+        syncChips();
+      }
+    });
+    modal.addEventListener('shown.bs.modal', () => {
+      applyFilters();
+      syncChips();
+      queryFilter?.focus();
+    });
+    chips?.addEventListener('click', event => {
+      const button = event.target?.closest?.('.chip-remove');
+      if (!button) {
+        return;
+      }
+
+      const input = modal.querySelector(`.linked-product-check[value="${button.dataset.productId}"]`);
+      if (input) {
+        input.checked = false;
+        syncChips();
+      }
+    });
+    syncChips();
+  })();
 </script>

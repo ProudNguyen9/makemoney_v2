@@ -10,8 +10,10 @@ public sealed class AdminQueryService :
     IAdminScrapQueryService,
     IAdminArticleQueryService,
     IAdminPriceQueryService,
+    IAdminLeadQueryService,
     IAdminSeoQueryService,
     IAdminSettingsQueryService,
+    IAdminMediaQueryService,
     IAdminServiceQueryService,
     IAdminLocationQueryService,
     IAdminProjectQueryService,
@@ -32,6 +34,10 @@ public sealed class AdminQueryService :
         var postCount = await _dbContext.Posts.AsNoTracking().CountAsync(cancellationToken);
         var mediaCount = await _dbContext.MediaFiles.AsNoTracking().CountAsync(cancellationToken);
         var seoCount = await _dbContext.SeoMetadata.AsNoTracking().CountAsync(cancellationToken);
+        var leadCount = await _dbContext.ContactRequests.AsNoTracking()
+            .CountAsync(request => request.DeletedAt == null && request.Status != "contacted", cancellationToken);
+        var locationCount = await _dbContext.Locations.AsNoTracking()
+            .CountAsync(location => location.DeletedAt == null, cancellationToken);
         var latestPriceDate = await _dbContext.ScrapPriceHistory.AsNoTracking()
             .OrderByDescending(price => price.EffectiveDate)
             .Select(price => (DateOnly?)price.EffectiveDate)
@@ -55,7 +61,8 @@ public sealed class AdminQueryService :
             postCount,
             mediaCount,
             seoCount,
-            LeadCount: 0,
+            locationCount,
+            leadCount,
             latestPriceDate,
             latestPosts,
             featuredScrap);
@@ -242,11 +249,20 @@ public sealed class AdminQueryService :
 
         form.Categories = categories;
         form.ProductOptions = await _dbContext.ScrapItems.AsNoTracking()
+            .Include(item => item.Category)
             .Where(item => item.Status == "published")
             .OrderByDescending(item => item.IsFeatured)
             .ThenBy(item => item.SortOrder)
             .ThenBy(item => item.Name)
-            .Select(item => new AdminCategoryOptionDto(item.Id, item.Name, item.Slug))
+            .Select(item => new AdminLinkedProductDto(
+                item.Id,
+                item.Name,
+                item.Slug,
+                item.Category != null ? item.Category.Name : "Chưa phân loại",
+                item.Status,
+                item.PrimaryImage,
+                item.PriceLabel ?? (item.PriceFrom.HasValue ? $"{item.PriceFrom.Value:N0} đ/{(item.Unit ?? "kg")}" : null),
+                item.ShortDescription))
             .ToListAsync(cancellationToken);
         return form;
     }
@@ -303,6 +319,82 @@ public sealed class AdminQueryService :
             .FirstOrDefaultAsync(cancellationToken);
 
         return new AdminPriceListViewModel(categories, items, group, status, query, page, totalCount, lastUpdatedAt);
+    }
+
+    public async Task<AdminLeadListViewModel> GetLeadListAsync(string? status, string? scrap, string? area, string? query, int page, CancellationToken cancellationToken)
+    {
+        status = CleanOptional(status);
+        scrap = CleanOptional(scrap);
+        area = CleanOptional(area);
+        query = CleanOptional(query);
+
+        var baseQuery = _dbContext.ContactRequests
+            .AsNoTracking()
+            .Include(request => request.Files)
+            .Where(request => request.DeletedAt == null);
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = baseQuery.Where(request => request.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(scrap))
+        {
+            baseQuery = baseQuery.Where(request => request.ScrapType == scrap);
+        }
+
+        if (!string.IsNullOrWhiteSpace(area))
+        {
+            baseQuery = baseQuery.Where(request => request.Area == area);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(request =>
+                (request.Name != null && request.Name.Contains(query)) ||
+                request.Phone.Contains(query) ||
+                (request.Zalo != null && request.Zalo.Contains(query)) ||
+                (request.Message != null && request.Message.Contains(query)));
+        }
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var items = await baseQuery
+            .OrderBy(request => request.Status == "contacted")
+            .ThenByDescending(request => request.CreatedAt)
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
+            .Select(request => new AdminLeadRowDto(
+                request.Id,
+                $"LE-{request.Id:0000}",
+                string.IsNullOrWhiteSpace(request.Name) ? "Khách chưa nhập tên" : request.Name!,
+                request.Phone,
+                request.Zalo,
+                request.ScrapType,
+                request.QuantityText,
+                request.Area,
+                request.Message,
+                request.SourceForm,
+                request.SourceUrl,
+                request.Status,
+                request.CreatedAt,
+                request.Files.OrderBy(file => file.Id).Select(file => file.FileUrl).ToList()))
+            .ToListAsync(cancellationToken);
+
+        var scrapTypes = await _dbContext.ContactRequests.AsNoTracking()
+            .Where(request => request.DeletedAt == null && request.ScrapType != null && request.ScrapType != "")
+            .Select(request => request.ScrapType!)
+            .Distinct()
+            .OrderBy(value => value)
+            .ToListAsync(cancellationToken);
+
+        var areas = await _dbContext.ContactRequests.AsNoTracking()
+            .Where(request => request.DeletedAt == null && request.Area != null && request.Area != "")
+            .Select(request => request.Area!)
+            .Distinct()
+            .OrderBy(value => value)
+            .ToListAsync(cancellationToken);
+
+        return new AdminLeadListViewModel(items, scrapTypes, areas, status, scrap, area, query, page, totalCount);
     }
 
     // ------------------------------------------------------------------
@@ -535,9 +627,45 @@ public sealed class AdminQueryService :
             };
     }
 
-    public async Task<AdminSeoListViewModel> GetSeoListAsync(CancellationToken cancellationToken)
+    public async Task<AdminSeoListViewModel> GetSeoListAsync(string? entityType, string? status, string? indexState, string? query, CancellationToken cancellationToken)
     {
-        var rows = await _dbContext.SeoMetadata.AsNoTracking()
+        var baseQuery = _dbContext.SeoMetadata.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(entityType))
+        {
+            baseQuery = baseQuery.Where(seo => seo.EntityType == entityType);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = baseQuery.Where(seo => seo.Status == status);
+        }
+
+        if (indexState == "index")
+        {
+            baseQuery = baseQuery.Where(seo => seo.RobotsIndex);
+        }
+        else if (indexState == "noindex")
+        {
+            baseQuery = baseQuery.Where(seo => !seo.RobotsIndex);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(seo =>
+                (seo.RoutePath != null && seo.RoutePath.Contains(query)) ||
+                seo.EntityType.Contains(query) ||
+                seo.SeoTitle.Contains(query) ||
+                (seo.MetaDescription != null && seo.MetaDescription.Contains(query)) ||
+                (seo.OgTitle != null && seo.OgTitle.Contains(query)));
+        }
+
+        var entityTypes = await _dbContext.SeoMetadata.AsNoTracking()
+            .Select(seo => seo.EntityType)
+            .Distinct()
+            .OrderBy(type => type)
+            .ToListAsync(cancellationToken);
+
+        var rows = await baseQuery
             .OrderBy(seo => seo.RoutePath == null)
             .ThenBy(seo => seo.RoutePath)
             .ThenBy(seo => seo.EntityType)
@@ -549,6 +677,8 @@ public sealed class AdminQueryService :
                 seo.RoutePath ?? "",
                 seo.SeoTitle ?? "",
                 seo.MetaDescription ?? "",
+                seo.OgTitle ?? "",
+                seo.OgDescription ?? "",
                 seo.OgImage ?? "",
                 seo.RobotsIndex,
                 seo.RobotsFollow,
@@ -562,11 +692,17 @@ public sealed class AdminQueryService :
 
         return new AdminSeoListViewModel(
             rows,
+            entityTypes,
             sitemapCount,
             redirectCount,
             Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Thành Trung")),
             Get(settings, "seo.default_description", "Thu mua phế liệu tận nơi giá cao, cân minh bạch, thanh toán nhanh."),
-            Get(settings, "seo.default_og_image", Get(settings, "site.default_og_image", "/assets/images/imported/brand/banner-1.jpg")));
+            Get(settings, "seo.default_og_title", Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Thành Trung"))),
+            Get(settings, "seo.default_og_image", Get(settings, "site.default_og_image", "/assets/images/imported/brand/banner-1.jpg")),
+            entityType,
+            status,
+            indexState,
+            query);
     }
 
     public async Task<AdminSettingsViewModel> GetSettingsAsync(CancellationToken cancellationToken)
@@ -581,13 +717,64 @@ public sealed class AdminQueryService :
             Get(settings, "contact.zalo", "0974640626"),
             Get(settings, "contact.email", "phelieuthanhtrung@gmail.com"),
             Get(settings, "contact.working_hours", "T2-CN: 7:00 - 20:00"),
+            Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
             Get(settings, "social.facebook", ""),
-            Get(settings, "social.youtube", ""),
-            Get(settings, "social.tiktok", ""),
             Get(settings, "site.logo", "/assets/images/imported/brand/logo.png"),
             Get(settings, "site.footer_logo", "/assets/images/imported/brand/logo-footer.png"),
             Get(settings, "site.favicon", "/favicon.ico"),
+            Get(settings, "home.price_updated_text", DateTime.Today.ToString("dd/MM/yyyy")),
+            Get(settings, "home.response_time_text", "30 phút"),
             Get(settings, "system.cache_minutes", "5"));
+    }
+
+    public async Task<AdminMediaListViewModel> GetMediaListAsync(string? group, string? query, CancellationToken cancellationToken)
+    {
+        var mediaKeys = AdminMediaCatalog.Items.Select(item => item.Key).ToArray();
+        var settings = await _dbContext.SiteSettings
+            .AsNoTracking()
+            .Where(setting => mediaKeys.Contains(setting.Key))
+            .Select(setting => new { setting.Key, setting.Value })
+            .ToDictionaryAsync(setting => setting.Key, setting => setting.Value ?? string.Empty, cancellationToken);
+
+        var normalizedGroup = string.IsNullOrWhiteSpace(group) ? null : group.Trim();
+        var normalizedQuery = string.IsNullOrWhiteSpace(query) ? null : query.Trim();
+        var items = AdminMediaCatalog.Items.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(normalizedGroup))
+        {
+            items = items.Where(item => string.Equals(item.GroupKey, normalizedGroup, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(normalizedQuery))
+        {
+            items = items.Where(item =>
+                item.Key.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase) ||
+                item.Label.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase) ||
+                item.Description.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase) ||
+                item.GroupName.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var grouped = items
+            .GroupBy(item => new { item.GroupKey, item.GroupName })
+            .Select(grouping => new AdminMediaGroupDto(
+                grouping.Key.GroupKey,
+                grouping.Key.GroupName,
+                grouping.Select(item => new AdminMediaItemDto(
+                    item.Key,
+                    item.GroupKey,
+                    item.GroupName,
+                    item.Label,
+                    item.Description,
+                    item.RecommendedSize,
+                    Get(settings, item.Key, item.FallbackUrl))).ToList()))
+            .ToList();
+
+        var groupOptions = AdminMediaCatalog.Items
+            .GroupBy(item => new { item.GroupKey, item.GroupName })
+            .Select(grouping => new AdminMediaGroupOptionDto(grouping.Key.GroupKey, grouping.Key.GroupName, grouping.Count()))
+            .ToList();
+
+        return new AdminMediaListViewModel(groupOptions, grouped, normalizedGroup, normalizedQuery);
     }
 
     // ------------------------------------------------------------------
@@ -690,6 +877,9 @@ public sealed class AdminQueryService :
             ? value
             : fallback;
     }
+
+    private static string? CleanOptional(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static string BuildPriceText(string? priceLabel, decimal? value, string? unit)
     {

@@ -20,14 +20,14 @@
     <span class="mc-delta flat"><i class="bi bi-newspaper" aria-hidden="true"></i>Đọc từ Posts</span>
   </div>
   <div class="metric-card">
-    <span class="mc-label">Media</span>
-    <span class="mc-value">@Model.MediaFileCount</span>
-    <span class="mc-delta flat"><i class="bi bi-images" aria-hidden="true"></i>File trong MediaFiles</span>
+    <span class="mc-label">Khu vực</span>
+    <span class="mc-value">@Model.LocationCount</span>
+    <span class="mc-delta flat"><i class="bi bi-geo-alt" aria-hidden="true"></i>Đọc từ Locations</span>
   </div>
   <div class="metric-card metric--success">
     <span class="mc-label">Bảng giá cập nhật</span>
     <span class="mc-value"><small>@(Model.LatestPriceDate?.ToString("dd/MM/yyyy") ?? "Chưa có")</small></span>
-    <span class="mc-delta flat"><i class="bi bi-clock-history" aria-hidden="true"></i>@Model.SeoMetadataCount SEO metadata</span>
+    <span class="mc-delta flat"><i class="bi bi-clock-history" aria-hidden="true"></i>Lịch sử giá mới nhất</span>
   </div>
 </div>
 
@@ -70,8 +70,8 @@
     <section class="admin-panel">
       <div class="panel-head"><h2>Lead website</h2></div>
       <div class="panel-body">
-        <p class="mb-2"><strong>@Model.LeadCount</strong> yêu cầu báo giá trong database.</p>
-        <p class="small text-muted mb-0">Bảng ContactRequests chưa được seed lead giả ở phase này; luồng xử lý lead sẽ làm sau.</p>
+        <p class="mb-2"><strong>@Model.LeadCount</strong> yêu cầu báo giá chưa liên hệ.</p>
+        <p class="small text-muted mb-0">Xem thông tin khách, ảnh gửi kèm và đánh dấu đã liên hệ tại trang Yêu cầu báo giá.</p>
       </div>
     </section>
   </div>

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using ScrapWebsite.Areas.Admin.ViewModels.Forms;
 using ScrapWebsite.Data;
 using ScrapWebsite.Helpers;
@@ -13,30 +14,52 @@ namespace ScrapWebsite.Services.Admin;
 /// </summary>
 public sealed class AdminCommandService :
     IAdminPriceCommandService,
+    IAdminLeadCommandService,
     IAdminScrapCommandService,
     IAdminServiceCommandService,
     IAdminLocationCommandService,
     IAdminProjectCommandService,
     IAdminFaqCommandService,
-    IAdminArticleCommandService
+    IAdminArticleCommandService,
+    IAdminSettingsCommandService,
+    IAdminMediaCommandService,
+    IAdminSeoCommandService
 {
     private const string Published = "published";
     private const string Draft = "draft";
+    private const string SiteChromeCacheKey = "public:site-chrome";
+    private const string PublicPageContentCacheKey = "public:page-content-settings";
 
     private readonly AppDbContext _dbContext;
     private readonly IImageUploadService _imageUpload;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<AdminCommandService> _logger;
 
-    public AdminCommandService(AppDbContext dbContext, IImageUploadService imageUpload, ILogger<AdminCommandService> logger)
+    public AdminCommandService(AppDbContext dbContext, IImageUploadService imageUpload, IMemoryCache cache, ILogger<AdminCommandService> logger)
     {
         _dbContext = dbContext;
         _imageUpload = imageUpload;
+        _cache = cache;
         _logger = logger;
     }
 
     // ------------------------------------------------------------------
     // Bảng giá — bulk inline edit
     // ------------------------------------------------------------------
+
+    public async Task<bool> MarkContactedAsync(int id, CancellationToken cancellationToken)
+    {
+        var lead = await _dbContext.ContactRequests.FirstOrDefaultAsync(request => request.Id == id && request.DeletedAt == null, cancellationToken);
+        if (lead is null)
+        {
+            return false;
+        }
+
+        lead.Status = "contacted";
+        lead.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 
     public async Task<int> SavePriceBulkAsync(IReadOnlyList<PriceBulkRowInput> rows, CancellationToken cancellationToken)
     {
@@ -684,6 +707,195 @@ public sealed class AdminCommandService :
     }
 
     // ------------------------------------------------------------------
+    // Cài đặt / ảnh thương hiệu
+    // ------------------------------------------------------------------
+
+    public async Task SaveSeoMetadataAsync(SeoMetadataFormViewModel form, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.SeoMetadata.FirstOrDefaultAsync(seo => seo.Id == form.Id, cancellationToken)
+            ?? throw new InvalidOperationException($"Không tìm thấy SEO #{form.Id}.");
+
+        entity.SeoTitle = form.SeoTitle.Trim();
+        entity.MetaDescription = CleanOptional(form.MetaDescription);
+        entity.OgTitle = CleanOptional(form.OgTitle);
+        entity.OgDescription = CleanOptional(form.OgDescription);
+        entity.OgImage = CleanOptional(form.OgImage);
+        entity.RobotsIndex = form.RobotsIndex;
+        entity.RobotsFollow = form.RobotsFollow;
+        entity.Status = form.Status == "inactive" ? "inactive" : "active";
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SaveSeoSiteSettingsAsync(SeoSiteSettingsFormViewModel form, CancellationToken cancellationToken)
+    {
+        await UpsertSettingAsync("seo.site_title", form.SiteTitle, "seo", "Site title", cancellationToken);
+        await UpsertSettingAsync("seo.default_description", form.DefaultDescription, "seo", "Meta description mặc định", cancellationToken);
+        await UpsertSettingAsync("seo.default_og_title", form.DefaultOgTitle, "seo", "Tiêu đề khi chia sẻ link", cancellationToken);
+        if (form.DefaultOgImageFile is not null)
+        {
+            await SaveImageSettingAsync("seo.default_og_image", form.DefaultOgImageFile, "og-image", 1200, "seo", "Ảnh OG mặc định", cancellationToken);
+        }
+        else
+        {
+            await UpsertSettingAsync("seo.default_og_image", form.DefaultOgImage, "seo", "Ảnh OG mặc định", cancellationToken);
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SaveCompanySettingsAsync(CompanySettingsFormViewModel form, CancellationToken cancellationToken)
+    {
+        await UpsertSettingAsync("site.name", form.CompanyName, "general", "Tên công ty", cancellationToken);
+        await UpsertSettingAsync("company.tax_code", form.TaxCode, "company", "Mã số thuế", cancellationToken);
+        await UpsertSettingAsync("contact.address", form.Address, "contact", "Địa chỉ", cancellationToken);
+        await UpsertSettingAsync("contact.phone", form.Hotline, "contact", "Hotline", cancellationToken);
+        await UpsertSettingAsync("contact.zalo", form.Zalo, "contact", "Zalo", cancellationToken);
+        await UpsertSettingAsync("contact.email", form.Email, "contact", "Email", cancellationToken);
+        await UpsertSettingAsync("contact.working_hours", form.WorkingHours, "contact", "Giờ làm việc", cancellationToken);
+        await UpsertSettingAsync("contact.purchase_areas", form.PurchaseAreas, "contact", "Khu vực thu mua", cancellationToken);
+        await UpsertSettingAsync("social.facebook", form.Facebook, "social", "Messenger/Facebook", cancellationToken);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+    }
+
+    public async Task SaveHomepageSettingsAsync(HomepageSettingsFormViewModel form, CancellationToken cancellationToken)
+    {
+        await UpsertSettingAsync("home.price_updated_text", form.PriceUpdatedText, "home", "Ngày cập nhật bảng giá trang chủ", cancellationToken);
+        await UpsertSettingAsync("home.response_time_text", form.ResponseTimeText, "home", "Thời gian phản hồi báo giá", cancellationToken);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+    }
+
+    public async Task SaveBrandAssetsAsync(BrandAssetsFormViewModel form, CancellationToken cancellationToken)
+    {
+        var changed = false;
+
+        if (form.LogoFile is not null)
+        {
+            await SaveImageSettingAsync("site.logo", form.LogoFile, "logo", 1200, "site", "Logo chính", cancellationToken);
+            changed = true;
+        }
+
+        if (form.FooterLogoFile is not null)
+        {
+            await SaveImageSettingAsync("site.footer_logo", form.FooterLogoFile, "logo-footer", 1200, "site", "Logo footer", cancellationToken);
+            changed = true;
+        }
+
+        if (!changed)
+        {
+            throw new InvalidOperationException("Vui lòng chọn ít nhất một ảnh để cập nhật.");
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+    }
+
+    public async Task SaveFaviconAsync(FaviconFormViewModel form, CancellationToken cancellationToken)
+    {
+        if (form.FaviconFile is null)
+        {
+            throw new InvalidOperationException("Vui lòng chọn ảnh favicon.");
+        }
+
+        await SaveImageSettingAsync("site.favicon", form.FaviconFile, "favicon", 512, "site", "Favicon", cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+    }
+
+    public async Task SaveMediaSettingImageAsync(MediaSettingImageFormViewModel form, CancellationToken cancellationToken)
+    {
+        var catalogItem = AdminMediaCatalog.Find(form.Key)
+            ?? throw new InvalidOperationException("Ảnh không nằm trong danh sách Media được phép sửa.");
+
+        if (form.ImageFile is null)
+        {
+            throw new InvalidOperationException("Vui lòng chọn ảnh cần tải lên.");
+        }
+
+        var setting = await _dbContext.SiteSettings.FirstOrDefaultAsync(item => item.Key == catalogItem.Key, cancellationToken);
+        var oldUrl = setting?.Value;
+        var upload = await _imageUpload.SaveAsWebpAsync(form.ImageFile, catalogItem.Folder, catalogItem.NameHint, catalogItem.MaxWidth, cancellationToken);
+        if (!upload.Success)
+        {
+            throw new InvalidOperationException(upload.Error);
+        }
+
+        if (setting is null)
+        {
+            setting = new SiteSetting
+            {
+                Key = catalogItem.Key,
+                Group = catalogItem.GroupKey.StartsWith("home", StringComparison.OrdinalIgnoreCase) ? "home" : catalogItem.GroupKey,
+                Description = catalogItem.Description
+            };
+            _dbContext.SiteSettings.Add(setting);
+        }
+        else
+        {
+            setting.Description = catalogItem.Description;
+        }
+
+        setting.Value = upload.Url;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _imageUpload.DeleteUploadedImageAsync(oldUrl, cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+        _cache.Remove(PublicPageContentCacheKey);
+    }
+
+    private async Task SaveImageSettingAsync(
+        string key,
+        IFormFile file,
+        string nameHint,
+        int maxWidth,
+        string group,
+        string description,
+        CancellationToken cancellationToken)
+    {
+        var setting = await _dbContext.SiteSettings.FirstOrDefaultAsync(item => item.Key == key, cancellationToken);
+        var oldUrl = setting?.Value;
+        var upload = await _imageUpload.SaveAsWebpAsync(file, "brand", nameHint, maxWidth, cancellationToken);
+        if (!upload.Success)
+        {
+            throw new InvalidOperationException(upload.Error);
+        }
+
+        if (setting is null)
+        {
+            setting = new SiteSetting
+            {
+                Key = key,
+                Group = group,
+                Description = description
+            };
+            _dbContext.SiteSettings.Add(setting);
+        }
+
+        setting.Value = upload.Url;
+        await _imageUpload.DeleteUploadedImageAsync(oldUrl, cancellationToken);
+    }
+
+    private async Task UpsertSettingAsync(string key, string? value, string group, string description, CancellationToken cancellationToken)
+    {
+        var setting = await _dbContext.SiteSettings.FirstOrDefaultAsync(item => item.Key == key, cancellationToken);
+        if (setting is null)
+        {
+            setting = new SiteSetting
+            {
+                Key = key,
+                Group = group,
+                Description = description
+            };
+            _dbContext.SiteSettings.Add(setting);
+        }
+
+        setting.Value = CleanOptional(value) ?? string.Empty;
+    }
+
+    // ------------------------------------------------------------------
     // Bài viết
     // ------------------------------------------------------------------
 
@@ -699,7 +911,9 @@ public sealed class AdminCommandService :
         Post entity;
         if (form.Id == 0)
         {
-            entity = new Post { CreatedAt = DateTime.UtcNow };
+            // Local seed database uses explicit post ids instead of an IDENTITY column.
+            var nextId = await _dbContext.Posts.AsNoTracking().MaxAsync(post => (int?)post.Id, cancellationToken) + 1 ?? 1;
+            entity = new Post { Id = nextId, CreatedAt = DateTime.UtcNow };
             _dbContext.Posts.Add(entity);
         }
         else

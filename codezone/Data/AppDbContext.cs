@@ -34,6 +34,8 @@ public class AppDbContext : DbContext
 
     public DbSet<ContactRequest> ContactRequests => Set<ContactRequest>();
 
+    public DbSet<ContactRequestFile> ContactRequestFiles => Set<ContactRequestFile>();
+
     public DbSet<MediaFile> MediaFiles => Set<MediaFile>();
 
     public DbSet<SeoMetadata> SeoMetadata => Set<SeoMetadata>();
@@ -129,6 +131,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<SiteSetting>()
             .Property(setting => setting.Group)
             .HasColumnName("SettingGroup");
+
+        modelBuilder.Entity<ContactRequest>()
+            .HasMany(request => request.Files)
+            .WithOne(file => file.ContactRequest)
+            .HasForeignKey(file => file.ContactRequestId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<AdminUser>()
             .HasIndex(user => user.Email)

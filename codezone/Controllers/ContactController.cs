@@ -37,4 +37,33 @@ public class ContactController : Controller
             IsSubmitted = true
         });
     }
+
+    [HttpPost("/contact/quick-quote")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> QuickQuote(QuickQuoteRequestViewModel request, CancellationToken cancellationToken)
+    {
+        if (request.Images.Count(file => file is { Length: > 0 }) > 3)
+        {
+            return BadRequest(new { ok = false, message = "Bạn chỉ gửi tối đa 3 ảnh." });
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new { ok = false, message = "Vui lòng kiểm tra lại số điện thoại, loại phế liệu và khu vực." });
+        }
+
+        try
+        {
+            var id = await _contactService.SaveQuickQuoteAsync(request, cancellationToken);
+            return Json(new { ok = true, id, code = $"LE-{id:0000}" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { ok = false, message = ex.Message });
+        }
+        catch
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { ok = false, message = "Không lưu được yêu cầu, vui lòng thử lại hoặc gọi hotline." });
+        }
+    }
 }

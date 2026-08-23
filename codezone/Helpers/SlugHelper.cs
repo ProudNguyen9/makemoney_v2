@@ -8,7 +8,8 @@ public static partial class SlugHelper
 {
     public static string ToSlug(string value)
     {
-        var normalized = value.Normalize(NormalizationForm.FormD);
+        // U+0111 (đ/Đ) does not decompose under NFD, so map it to a plain d first.
+        var normalized = value.Replace('đ', 'd').Replace('Đ', 'D').Normalize(NormalizationForm.FormD);
         var builder = new StringBuilder();
 
         foreach (var character in normalized)

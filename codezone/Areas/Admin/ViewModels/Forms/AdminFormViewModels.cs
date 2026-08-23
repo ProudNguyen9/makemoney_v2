@@ -197,9 +197,115 @@ public sealed class PostFormViewModel
 
     public List<int> LinkedProductIds { get; set; } = new();
 
-    public IReadOnlyList<AdminCategoryOptionDto> ProductOptions { get; set; } = Array.Empty<AdminCategoryOptionDto>();
+    public IReadOnlyList<AdminLinkedProductDto> ProductOptions { get; set; } = Array.Empty<AdminLinkedProductDto>();
 
     public IReadOnlyList<AdminCategoryOptionDto> Categories { get; set; } = Array.Empty<AdminCategoryOptionDto>();
+}
+
+public sealed class BrandAssetsFormViewModel
+{
+    public IFormFile? LogoFile { get; set; }
+
+    public IFormFile? FooterLogoFile { get; set; }
+}
+
+public sealed class CompanySettingsFormViewModel
+{
+    [Required]
+    [MaxLength(160)]
+    public string CompanyName { get; set; } = string.Empty;
+
+    [MaxLength(60)]
+    public string? TaxCode { get; set; }
+
+    [MaxLength(300)]
+    public string? Address { get; set; }
+
+    [MaxLength(40)]
+    public string? Hotline { get; set; }
+
+    [MaxLength(80)]
+    public string? Zalo { get; set; }
+
+    [MaxLength(160)]
+    public string? Email { get; set; }
+
+    [MaxLength(120)]
+    public string? WorkingHours { get; set; }
+
+    [MaxLength(300)]
+    public string? PurchaseAreas { get; set; }
+
+    [MaxLength(300)]
+    public string? Facebook { get; set; }
+}
+
+public sealed class HomepageSettingsFormViewModel
+{
+    [MaxLength(80)]
+    public string? PriceUpdatedText { get; set; }
+
+    [MaxLength(80)]
+    public string? ResponseTimeText { get; set; }
+}
+
+public sealed class FaviconFormViewModel
+{
+    public IFormFile? FaviconFile { get; set; }
+}
+
+public sealed class MediaSettingImageFormViewModel
+{
+    [Required]
+    [MaxLength(120)]
+    public string Key { get; set; } = string.Empty;
+
+    public IFormFile? ImageFile { get; set; }
+}
+
+public sealed class SeoMetadataFormViewModel
+{
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(255)]
+    public string SeoTitle { get; set; } = string.Empty;
+
+    [MaxLength(500)]
+    public string? MetaDescription { get; set; }
+
+    [MaxLength(255)]
+    public string? OgTitle { get; set; }
+
+    [MaxLength(500)]
+    public string? OgDescription { get; set; }
+
+    [MaxLength(500)]
+    public string? OgImage { get; set; }
+
+    public bool RobotsIndex { get; set; }
+
+    public bool RobotsFollow { get; set; }
+
+    [MaxLength(30)]
+    public string Status { get; set; } = "active";
+}
+
+public sealed class SeoSiteSettingsFormViewModel
+{
+    [MaxLength(255)]
+    public string? SiteTitle { get; set; }
+
+    [MaxLength(500)]
+    public string? DefaultDescription { get; set; }
+
+    [MaxLength(255)]
+    public string? DefaultOgTitle { get; set; }
+
+    [MaxLength(500)]
+    public string? DefaultOgImage { get; set; }
+
+    public IFormFile? DefaultOgImageFile { get; set; }
 }
 
 public sealed class FaqFormViewModel

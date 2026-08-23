@@ -3,6 +3,7 @@ using ScrapWebsite.Data;
 using ScrapWebsite.Services.Interfaces;
 using ScrapWebsite.ViewModels;
 using ScrapWebsite.ViewModels.Public;
+using codezone.ViewModels.Shared;
 
 namespace ScrapWebsite.Services.Public;
 
@@ -93,6 +94,14 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             .Take(6)
             .ToListAsync(cancellationToken);
 
+        var faqs = await _dbContext.FaqItems
+            .AsNoTracking()
+            .Where(faq => faq.DeletedAt == null && faq.Status == PublicConstants.Published && faq.EntityType == "home")
+            .OrderBy(faq => faq.SortOrder)
+            .ThenBy(faq => faq.Id)
+            .Select(faq => new FaqItemViewModel(faq.Question, faq.Answer))
+            .ToListAsync(cancellationToken);
+
         var categoryGroups = await _scrapQueryService.GetCategoryGroupsAsync(cancellationToken);
 
         var heroImageUrls = await _dbContext.SiteSettings
@@ -106,9 +115,10 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             .Select(value => value!)
             .ToListAsync(cancellationToken);
 
-        var primaryHeroImage = banner?.ImageUrl ?? heroImageUrls.FirstOrDefault() ?? "/assets/images/imported/brand/banner-1.jpg";
-        var allHeroImages = new[] { primaryHeroImage }
-            .Concat(heroImageUrls.Where(image => image != primaryHeroImage))
+        var allHeroImages = heroImageUrls
+            .Concat(new[] { banner?.ImageUrl }.Where(image => !string.IsNullOrWhiteSpace(image)).Select(image => image!))
+            .Where(image => !string.IsNullOrWhiteSpace(image))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .Take(3)
             .ToList();
 
@@ -166,7 +176,8 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             Chrome = chrome,
             FeaturedScrapItems = scrapItems,
             CategoryGroups = categoryGroups,
-            LatestPosts = latestPosts
+            LatestPosts = latestPosts,
+            Faq = new FaqAccordionViewModel("faqHome", faqs)
         };
     }
 
