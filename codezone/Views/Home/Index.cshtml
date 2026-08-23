@@ -9,11 +9,6 @@
     var heroImage3 = AssetHelper.NormalizePath(heroImages.ElementAtOrDefault(2) ?? heroImage);
     var featuredScrap = Model.FeaturedScrapItems;
     var latestPosts = Model.LatestPosts;
-    string ScrapImage(int index, string fallback)
-    {
-        var image = featuredScrap.ElementAtOrDefault(index)?.ImageUrl;
-        return AssetHelper.NormalizePath(string.IsNullOrWhiteSpace(image) ? fallback : image);
-    }
     string PostImage(int index, string fallback)
     {
         var image = latestPosts.ElementAtOrDefault(index)?.CoverImage;
@@ -27,19 +22,6 @@
     string PostTitle(int index, string fallback)
     {
         return latestPosts.ElementAtOrDefault(index)?.Title ?? fallback;
-    }
-    string PostCategory(int index, string fallback)
-    {
-        return latestPosts.ElementAtOrDefault(index)?.CategoryName ?? fallback;
-    }
-    string PostDate(int index)
-    {
-        var post = latestPosts.ElementAtOrDefault(index);
-        return post is null ? DateTime.Today.ToString("dd/MM/yyyy") : post.PublishedAt.ToString("dd/MM/yyyy");
-    }
-    string PostExcerpt(int index, string fallback)
-    {
-        return latestPosts.ElementAtOrDefault(index)?.Excerpt ?? fallback;
     }
     var priceRows = featuredScrap.Take(5).ToList();
 }
