@@ -107,13 +107,65 @@
     var btn = document.querySelector('.back-top');
     if (!btn) return;
 
+    var reduceMotion =
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var onScroll = function () {
       btn.classList.toggle('show', window.scrollY > 560);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
+    // Native scrollTo({behavior:'smooth'}) hay bị hủy giữa đường trên mobile,
+    // còn html đang có CSS scroll-behavior:smooth (main.css) khiến MỖI lời gọi
+    // scrollTo() lại sinh thêm một animation bị ngắt liên tục → trang "giụt"
+    // tại chỗ. Giải pháp: tắt scroll-behavior trong lúc animate thủ công rAF.
+    var rafId = 0;
+    var cleanup = function () {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      document.documentElement.style.scrollBehavior = '';
+    };
+    var cancel = function () {
+      if (rafId) cleanup();
+    };
+    ['touchstart', 'wheel'].forEach(function (ev) {
+      window.addEventListener(ev, cancel, { passive: true });
+    });
+
+    var animateToTop = function () {
+      cleanup();
+
+      var startY = window.scrollY || window.pageYOffset || 0;
+      if (startY <= 0) return;
+
+      document.documentElement.style.scrollBehavior = 'auto';
+
+      var duration = 450;
+      var startTime = null;
+      var easeOutCubic = function (t) { return 1 - Math.pow(1 - t, 3); };
+
+      var tick = function (ts) {
+        if (!rafId) return;
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        window.scrollTo(0, Math.round(startY * (1 - easeOutCubic(progress))));
+        if (progress < 1) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          cleanup();
+        }
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+
     btn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (reduceMotion) {
+        cleanup();
+        window.scrollTo(0, 0);
+        return;
+      }
+      animateToTop();
     });
   }
 
