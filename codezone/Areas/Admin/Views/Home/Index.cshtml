@@ -1,28 +1,28 @@
 @model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminDashboardViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Tổng quan";
     ViewData["AdminSection"] = "dashboard";
     ViewData["AdminSubSection"] = "";
 }
 
-@await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPageHead.cshtml", new codezone.Areas.Admin.ViewModels.AdminPageHeadViewModel("Dashboard", $"Tổng quan dữ liệu website — {DateTime.Now:dd/MM/yyyy}", "/admin/leads", "Lead mới"))
+@await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_AdminPageHead.cshtml", new codezone.Areas.Admin.ViewModels.AdminPageHeadViewModel("Tổng quan", $"Tổng quan dữ liệu website — {DateTime.Now:dd/MM/yyyy}", "/admin/leads", "Yêu cầu mới"))
 
 <div class="metric-grid">
   <div class="metric-card">
     <span class="mc-label">Loại phế liệu</span>
     <span class="mc-value">@Model.ScrapItemCount</span>
-    <span class="mc-delta flat"><i class="bi bi-database" aria-hidden="true"></i>Đọc từ ScrapItems</span>
+    <span class="mc-delta flat"><i class="bi bi-database" aria-hidden="true"></i>Từ loại phế liệu</span>
   </div>
   <div class="metric-card metric--accent">
     <span class="mc-label">Bài viết</span>
     <span class="mc-value">@Model.PostCount</span>
-    <span class="mc-delta flat"><i class="bi bi-newspaper" aria-hidden="true"></i>Đọc từ Posts</span>
+    <span class="mc-delta flat"><i class="bi bi-newspaper" aria-hidden="true"></i>Từ bài viết</span>
   </div>
   <div class="metric-card">
     <span class="mc-label">Khu vực</span>
     <span class="mc-value">@Model.LocationCount</span>
-    <span class="mc-delta flat"><i class="bi bi-geo-alt" aria-hidden="true"></i>Đọc từ Locations</span>
+    <span class="mc-delta flat"><i class="bi bi-geo-alt" aria-hidden="true"></i>Từ khu vực</span>
   </div>
   <div class="metric-card metric--success">
     <span class="mc-label">Bảng giá cập nhật</span>
@@ -56,7 +56,7 @@
               <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
               <td><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></td>
               <td>@post.CategoryName</td>
-              <td><span class="badge-status @(post.Status == "published" ? "st-published" : "st-draft")">@post.Status</span></td>
+              <td><span class="badge-status @(post.Status == "published" ? "st-published" : "st-draft")">@(post.Status == "published" ? "Đã xuất bản" : "Bản nháp")</span></td>
               <td>@(post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
             </tr>
           }
@@ -68,7 +68,7 @@
 
   <div class="col-lg-4">
     <section class="admin-panel">
-      <div class="panel-head"><h2>Lead website</h2></div>
+      <div class="panel-head"><h2>Yêu cầu từ website</h2></div>
       <div class="panel-body">
         <p class="mb-2"><strong>@Model.LeadCount</strong> yêu cầu báo giá chưa liên hệ.</p>
         <p class="small text-muted mb-0">Xem thông tin khách, ảnh gửi kèm và đánh dấu đã liên hệ tại trang Yêu cầu báo giá.</p>
@@ -103,7 +103,7 @@
               <td><a href="/phe-lieu/@item.Slug" target="_blank" rel="noopener">@item.Name</a></td>
               <td>@item.CategoryName</td>
               <td>@item.PriceText</td>
-              <td><span class="badge-status @(item.Status == "published" ? "st-published" : "st-draft")">@item.Status</span></td>
+              <td><span class="badge-status @(item.Status == "published" ? "st-published" : "st-draft")">@(item.Status == "published" ? "Đang hiển thị" : "Đang ẩn")</span></td>
             </tr>
           }
           </tbody>

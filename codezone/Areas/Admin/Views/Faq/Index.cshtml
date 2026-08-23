@@ -1,7 +1,7 @@
 @model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminFaqListViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "FAQ";
+    ViewData["Title"] = "Hỏi đáp";
     ViewData["AdminSection"] = "faq";
     ViewData["AdminSubSection"] = "";
 
@@ -18,7 +18,7 @@
 }
 
 <div class="admin-page-head">
-  <h1>Câu hỏi thường gặp<small>Gán FAQ cho từng trang - @Model.TotalCount FAQ</small></h1>
+  <h1>Câu hỏi thường gặp<small>Gán câu hỏi cho từng trang — @Model.TotalCount câu hỏi</small></h1>
   <div class="aph-actions">
     <a class="btn btn-primary" href="/admin/faq/form"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm câu hỏi</a>
   </div>
@@ -98,7 +98,7 @@
       @if (Model.Items.Count == 0)
       {
         <tr>
-          <td colspan="5" class="text-center text-muted py-4">Chưa có FAQ nào khớp bộ lọc.</td>
+          <td colspan="5" class="text-center text-muted py-4">Chưa có câu hỏi nào khớp bộ lọc.</td>
         </tr>
       }
       </tbody>

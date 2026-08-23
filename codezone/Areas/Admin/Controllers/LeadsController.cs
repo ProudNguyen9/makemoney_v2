@@ -33,7 +33,7 @@ public class LeadsController : Controller
             return Json(new { ok = updated });
         }
 
-        TempData[updated ? "Success" : "Error"] = updated ? "Đã đánh dấu lead là đã liên hệ." : "Không tìm thấy lead.";
+        TempData[updated ? "Success" : "Error"] = updated ? "Đã đánh dấu yêu cầu là đã liên hệ." : "Không tìm thấy yêu cầu.";
         return RedirectToAction(nameof(Index), new { area = "Admin", status, scrap, leadArea, query, page });
     }
 

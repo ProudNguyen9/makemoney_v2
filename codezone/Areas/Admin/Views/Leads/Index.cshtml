@@ -25,7 +25,7 @@
 }
 
 <div class="admin-page-head">
-  <h1>Yêu cầu báo giá<small>Lead gửi từ popup báo giá trên website</small></h1>
+  <h1>Yêu cầu báo giá<small>Yêu cầu gửi từ popup báo giá trên website</small></h1>
 </div>
 
 <form class="admin-filter leads-filter" action="/admin/leads" method="get">
@@ -77,7 +77,7 @@
         }
     }
   </select>
-  <input class="form-control" name="query" type="search" value="@Model.Query" placeholder="Tìm SĐT, tên, Zalo, ghi chú…" aria-label="Tìm lead">
+  <input class="form-control" name="query" type="search" value="@Model.Query" placeholder="Tìm SĐT, tên, Zalo, ghi chú…" aria-label="Tìm yêu cầu">
   <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
   <a class="btn btn-outline-dark" href="/admin/leads">Xóa lọc</a>
 </form>
