@@ -182,3 +182,110 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ==================== PRICE TABLES — mobile stacked cards ====================
+   Trên mobile biến từng dòng của bảng giá thành một thẻ dọc:
+   [tên + swatch/ảnh]        [xu hướng / chi tiết]
+   [mô tả phân loại]
+   [GIÁ THU MUA]
+   [75.000đ/kg]
+   → không phải cuộn ngang vẫn xem đủ thông tin. */
+@media (max-width: 767.98px) {
+  .price-board .table-scroll {
+    overflow: visible;
+  }
+  .price-board .table-scroll .table-price {
+    min-width: 0;
+  }
+
+  /* ---- Bảng giá 4 cột: Loại | Phân loại | Giá | Xu hướng/Chi tiết ---- */
+  .price-board .table-price {
+    border: 0;
+    background: transparent;
+  }
+  .price-board .table-price thead {
+    display: none;
+  }
+  .price-board .table-price tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name meta"
+      "type type"
+      "price price";
+    gap: 0.35rem 0.75rem;
+    padding: 0.875rem 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #E3E1DC;
+    border-radius: 10px;
+    background: #FFFFFF;
+  }
+  .price-board .table-price tbody td {
+    padding: 0;
+    text-align: left !important;
+  }
+  .price-board .table-price tbody td:nth-child(1) { grid-area: name; }
+  .price-board .table-price tbody td:nth-child(2) { grid-area: type; }
+  .price-board .table-price tbody td:nth-child(3) { grid-area: price; }
+  .price-board .table-price tbody td:nth-child(4) {
+    grid-area: meta;
+    justify-self: end;
+    align-self: start;
+  }
+  .price-board .table-price tbody .mat-name {
+    white-space: normal;
+  }
+  .price-board .table-price tbody .mat-type {
+    font-size: 0.8125rem;
+  }
+  .price-board .table-price tbody td:nth-child(3)::before {
+    content: "Giá thu mua";
+    display: block;
+    margin-bottom: 0.15rem;
+    font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #66707A;
+  }
+
+  /* ---- Bảng hoa hồng 3 cột (trang giới thiệu) ---- */
+  .price-board .commission-table {
+    border: 0;
+    background: transparent;
+  }
+  .price-board .commission-table thead {
+    display: none;
+  }
+  .price-board .commission-table tbody tr {
+    display: block;
+    padding: 0.875rem 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #E3E1DC;
+    border-radius: 10px;
+    background: #FFFFFF;
+  }
+  .price-board .commission-table tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.15rem 0;
+    border-bottom: 0;
+    text-align: right;
+  }
+  .price-board .commission-table tbody td::before {
+    flex: 0 0 auto;
+    font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #66707A;
+    text-align: left;
+  }
+  .price-board .commission-table tbody td:nth-child(1)::before { content: "Giá trị lô hàng"; }
+  .price-board .commission-table tbody td:nth-child(2)::before { content: "Mức hoa hồng"; }
+  .price-board .commission-table tbody td:nth-child(3)::before { content: "Ghi chú"; }
+}
