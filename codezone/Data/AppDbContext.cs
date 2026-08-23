@@ -26,6 +26,8 @@ public class AppDbContext : DbContext
 
     public DbSet<PostImage> PostImages => Set<PostImage>();
 
+    public DbSet<PostProductLink> PostProductLinks => Set<PostProductLink>();
+
     public DbSet<Banner> Banners => Set<Banner>();
 
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
@@ -41,6 +43,16 @@ public class AppDbContext : DbContext
     public DbSet<SeoRedirect> SeoRedirects => Set<SeoRedirect>();
 
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+
+    public DbSet<Service> Services => Set<Service>();
+
+    public DbSet<Location> Locations => Set<Location>();
+
+    public DbSet<Project> Projects => Set<Project>();
+
+    public DbSet<ProjectImage> ProjectImages => Set<ProjectImage>();
+
+    public DbSet<FaqItem> FaqItems => Set<FaqItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +107,17 @@ public class AppDbContext : DbContext
             .WithMany(post => post.Images)
             .HasForeignKey(image => image.PostId);
 
+        modelBuilder.Entity<PostProductLink>()
+            .HasOne(link => link.Post)
+            .WithMany(post => post.ProductLinks)
+            .HasForeignKey(link => link.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<PostProductLink>()
+            .HasOne(link => link.ScrapItem)
+            .WithMany()
+            .HasForeignKey(link => link.ScrapItemId);
+
         modelBuilder.Entity<SiteSetting>()
             .Property(setting => setting.Key)
             .HasColumnName("SettingKey");
@@ -138,5 +161,56 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<AdminUser>()
             .Property(user => user.Status)
             .HasMaxLength(30);
+
+        modelBuilder.Entity<Service>()
+            .Property(service => service.Title)
+            .HasMaxLength(220);
+
+        modelBuilder.Entity<Service>()
+            .Property(service => service.Slug)
+            .HasMaxLength(180);
+
+        modelBuilder.Entity<Service>()
+            .HasIndex(service => service.Slug);
+
+        modelBuilder.Entity<Location>()
+            .Property(location => location.Province)
+            .HasMaxLength(120);
+
+        modelBuilder.Entity<Location>()
+            .Property(location => location.Name)
+            .HasMaxLength(180);
+
+        modelBuilder.Entity<Location>()
+            .Property(location => location.Slug)
+            .HasMaxLength(180);
+
+        modelBuilder.Entity<Location>()
+            .Property(location => location.Latitude)
+            .HasPrecision(10, 7);
+
+        modelBuilder.Entity<Location>()
+            .Property(location => location.Longitude)
+            .HasPrecision(10, 7);
+
+        modelBuilder.Entity<Location>()
+            .HasIndex(location => location.Slug);
+
+        modelBuilder.Entity<Project>()
+            .Property(project => project.Title)
+            .HasMaxLength(255);
+
+        modelBuilder.Entity<Project>()
+            .Property(project => project.Slug)
+            .HasMaxLength(180);
+
+        modelBuilder.Entity<Project>()
+            .HasIndex(project => project.Slug);
+
+        modelBuilder.Entity<ProjectImage>()
+            .HasOne(image => image.Project)
+            .WithMany(project => project.Images)
+            .HasForeignKey(image => image.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

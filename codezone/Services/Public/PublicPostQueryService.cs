@@ -25,7 +25,7 @@ public class PublicPostQueryService : IPublicPostQueryService
         var cursor = CursorToken.Decode(query.Cursor);
         var postQuery = _dbContext.Posts
             .AsNoTracking()
-            .Where(post => post.Status == PublicConstants.Published);
+            .Where(post => post.Status == PublicConstants.Published && post.DeletedAt == null);
 
         if (cursor is not null)
         {
@@ -94,7 +94,7 @@ public class PublicPostQueryService : IPublicPostQueryService
     {
         var post = await _dbContext.Posts
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published && item.Slug == slug)
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.Slug == slug)
             .Select(item => new PostDetailDto(
                 item.Id,
                 item.Title,
@@ -121,9 +121,24 @@ public class PublicPostQueryService : IPublicPostQueryService
             .Take(6)
             .ToListAsync(cancellationToken);
 
+        var linkedProducts = await _dbContext.PostProductLinks
+            .AsNoTracking()
+            .Where(link => link.PostId == post.Id)
+            .OrderBy(link => link.SortOrder)
+            .ThenBy(link => link.Id)
+            .Select(link => new PostLinkedProductDto(
+                link.ScrapItemId,
+                link.ScrapItem != null ? link.ScrapItem.Name : "Sản phẩm liên kết",
+                link.ScrapItem != null ? link.ScrapItem.Slug : "",
+                link.ScrapItem != null && link.ScrapItem.Category != null ? link.ScrapItem.Category.Name : "Sản phẩm",
+                link.ScrapItem != null ? link.ScrapItem.PrimaryImage : null,
+                link.ScrapItem != null ? (link.ScrapItem.PriceLabel ?? (link.ScrapItem.PriceFrom.HasValue ? $"{link.ScrapItem.PriceFrom.Value:N0} đ/{(link.ScrapItem.Unit ?? "kg")}" : null)) : null,
+                link.ScrapItem != null ? link.ScrapItem.ShortDescription : null))
+            .ToListAsync(cancellationToken);
+
         var related = await _dbContext.Posts
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published && item.Id != post.Id)
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.Id != post.Id)
             .OrderByDescending(item => item.PublishedAt)
             .ThenByDescending(item => item.Id)
             .Select(item => new PostCardDto(
@@ -149,6 +164,7 @@ public class PublicPostQueryService : IPublicPostQueryService
                 cancellationToken),
             Post = post,
             Images = images,
+            LinkedProducts = linkedProducts,
             RelatedPosts = related
         };
     }

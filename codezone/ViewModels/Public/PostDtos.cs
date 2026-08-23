@@ -22,6 +22,15 @@ public sealed record PostDetailDto(
     string AuthorName,
     DateTime PublishedAt);
 
+public sealed record PostLinkedProductDto(
+    int Id,
+    string Name,
+    string Slug,
+    string CategoryName,
+    string? ImageUrl,
+    string? PriceText,
+    string? ShortDescription);
+
 public sealed record PostImageDto(
     string ImageUrl,
     string? Caption);

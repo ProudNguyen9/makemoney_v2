@@ -41,6 +41,40 @@
     </div>
   </article>
 
+  @if (Model.LinkedProducts.Count > 0)
+  {
+    <section class="section section--surface section--bordered" aria-labelledby="linked-products-title">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-label">SEO</span>
+          <h2 class="sec-title" id="linked-products-title">Sản phẩm liên kết</h2>
+        </div>
+        <div class="linked-products reveal">
+          @foreach (var product in Model.LinkedProducts)
+          {
+            <a class="lp-item" href="/phe-lieu/@product.Slug">
+              <span class="lp-media">
+                <img src="@AssetHelper.NormalizePath(product.ImageUrl)" alt="@product.Name" width="600" height="450" loading="lazy">
+              </span>
+              <span class="lp-body">
+                <span class="news-meta">@product.CategoryName</span>
+                <h3>@product.Name</h3>
+                @if (!string.IsNullOrWhiteSpace(product.PriceText))
+                {
+                  <strong class="lp-price">@product.PriceText</strong>
+                }
+                @if (!string.IsNullOrWhiteSpace(product.ShortDescription))
+                {
+                  <p>@product.ShortDescription</p>
+                }
+              </span>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
   @if (Model.RelatedPosts.Count > 0)
   {
     <section class="section section--surface section--bordered" aria-labelledby="related-title">

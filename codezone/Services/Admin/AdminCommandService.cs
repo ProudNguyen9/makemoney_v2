@@ -1,0 +1,993 @@
+using Microsoft.EntityFrameworkCore;
+using ScrapWebsite.Areas.Admin.ViewModels.Forms;
+using ScrapWebsite.Data;
+using ScrapWebsite.Helpers;
+using ScrapWebsite.Models;
+using ScrapWebsite.Services.Media;
+
+namespace ScrapWebsite.Services.Admin;
+
+/// <summary>
+/// Write side of the admin area. Follows the AdminQueryService convention:
+/// one scoped implementation forwarded to every command interface.
+/// </summary>
+public sealed class AdminCommandService :
+    IAdminPriceCommandService,
+    IAdminScrapCommandService,
+    IAdminServiceCommandService,
+    IAdminLocationCommandService,
+    IAdminProjectCommandService,
+    IAdminFaqCommandService,
+    IAdminArticleCommandService
+{
+    private const string Published = "published";
+    private const string Draft = "draft";
+
+    private readonly AppDbContext _dbContext;
+    private readonly IImageUploadService _imageUpload;
+    private readonly ILogger<AdminCommandService> _logger;
+
+    public AdminCommandService(AppDbContext dbContext, IImageUploadService imageUpload, ILogger<AdminCommandService> logger)
+    {
+        _dbContext = dbContext;
+        _imageUpload = imageUpload;
+        _logger = logger;
+    }
+
+    // ------------------------------------------------------------------
+    // Bảng giá — bulk inline edit
+    // ------------------------------------------------------------------
+
+    public async Task<int> SavePriceBulkAsync(IReadOnlyList<PriceBulkRowInput> rows, CancellationToken cancellationToken)
+    {
+        var selectedIds = rows.Where(row => row.Selected).Select(row => row.PriceId).ToList();
+        if (selectedIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var prices = await _dbContext.ScrapPrices
+            .Where(price => price.DeletedAt == null && selectedIds.Contains(price.Id))
+            .ToDictionaryAsync(price => price.Id, cancellationToken);
+
+        var changed = 0;
+        var affectedItemIds = new HashSet<int>();
+        foreach (var row in rows.Where(row => row.Selected && prices.ContainsKey(row.PriceId)))
+        {
+            var price = prices[row.PriceId];
+            var valueChanged = price.PriceValue != row.PriceValue;
+            var unitChanged = !string.Equals(price.Unit, row.Unit ?? "kg", StringComparison.Ordinal);
+            if (!valueChanged && !unitChanged)
+            {
+                continue;
+            }
+
+            price.PriceValue = row.PriceValue;
+            price.Unit = string.IsNullOrWhiteSpace(row.Unit) ? "kg" : row.Unit.Trim();
+            price.EffectiveDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            affectedItemIds.Add(price.ScrapItemId);
+
+            _dbContext.ScrapPriceHistory.Add(new ScrapPriceHistory
+            {
+                ScrapItemId = price.ScrapItemId,
+                PriceValue = row.PriceValue,
+                PriceUnit = price.Unit,
+                PriceType = "manual",
+                Note = "Cập nhật từ bảng giá quản trị",
+                EffectiveDate = price.EffectiveDate,
+                RecordedAt = DateTime.UtcNow
+            });
+
+            changed++;
+        }
+
+        if (changed > 0)
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await SyncItemPriceFromAsync(affectedItemIds, cancellationToken);
+        }
+
+        return changed;
+    }
+
+    public async Task<bool> DeletePriceAsync(int priceId, CancellationToken cancellationToken)
+    {
+        var price = await _dbContext.ScrapPrices.FindAsync([priceId], cancellationToken);
+        if (price is null || price.DeletedAt != null)
+        {
+            return false;
+        }
+
+        // Soft delete: dòng giá được giữ lại trong DB (DeletedAt) và có thể khôi phục.
+        price.DeletedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await SyncItemPriceFromAsync([price.ScrapItemId], cancellationToken);
+        return true;
+    }
+
+    public async Task<int> DeletePriceBulkAsync(IReadOnlyList<PriceBulkRowInput> rows, CancellationToken cancellationToken)
+    {
+        var selectedIds = rows.Where(row => row.Selected).Select(row => row.PriceId).ToList();
+        if (selectedIds.Count == 0)
+        {
+            return 0;
+        }
+
+        var prices = await _dbContext.ScrapPrices
+            .Where(price => price.DeletedAt == null && selectedIds.Contains(price.Id))
+            .ToListAsync(cancellationToken);
+        if (prices.Count == 0)
+        {
+            return 0;
+        }
+
+        var deletedAt = DateTime.UtcNow;
+        var affectedItemIds = new HashSet<int>();
+        foreach (var price in prices)
+        {
+            price.DeletedAt = deletedAt;
+            affectedItemIds.Add(price.ScrapItemId);
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await SyncItemPriceFromAsync(affectedItemIds, cancellationToken);
+        return prices.Count;
+    }
+
+    /// <summary>
+    /// Đồng bộ lại giá tham chiếu (PriceFrom) của các loại phế liệu theo dòng giá thấp nhất chưa xóa.
+    /// </summary>
+    private async Task SyncItemPriceFromAsync(IEnumerable<int> scrapItemIds, CancellationToken cancellationToken)
+    {
+        var ids = scrapItemIds.ToList();
+        var items = await _dbContext.ScrapItems
+            .Where(item => ids.Contains(item.Id) && string.IsNullOrWhiteSpace(item.PriceLabel))
+            .ToListAsync(cancellationToken);
+        foreach (var item in items)
+        {
+            var hasValue = await _dbContext.ScrapPrices.AsNoTracking()
+                .AnyAsync(price => price.DeletedAt == null && price.ScrapItemId == item.Id && price.PriceValue != null, cancellationToken);
+            item.PriceFrom = hasValue
+                ? await _dbContext.ScrapPrices.AsNoTracking()
+                    .Where(price => price.DeletedAt == null && price.ScrapItemId == item.Id && price.PriceValue != null)
+                    .MinAsync(price => price.PriceValue!.Value, cancellationToken)
+                : null;
+            item.UpdatedAt = DateTime.UtcNow;
+        }
+
+        if (items.Count > 0)
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Loại phế liệu
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveScrapItemAsync(ScrapItemFormViewModel form, CancellationToken cancellationToken)
+    {
+        var slug = await EnsureUniqueSlugAsync(
+            _dbContext.ScrapItems.AsNoTracking(),
+            SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? form.Name : form.Slug),
+            form.Id,
+            filterDeleted: false,
+            cancellationToken);
+
+        ScrapItem item;
+        if (form.Id == 0)
+        {
+            // ScrapItems.Id is not an IDENTITY column in the local database (seeded with explicit ids),
+            // so the next id is allocated here.
+            var nextId = await _dbContext.ScrapItems.AsNoTracking().MaxAsync(scrap => (int?)scrap.Id, cancellationToken) + 1 ?? 1;
+            item = new ScrapItem { Id = nextId, CreatedAt = DateTime.UtcNow };
+            _dbContext.ScrapItems.Add(item);
+        }
+        else
+        {
+            item = await _dbContext.ScrapItems
+                .Include(scrap => scrap.Prices)
+                .Include(scrap => scrap.Images)
+                .FirstOrDefaultAsync(scrap => scrap.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy loại phế liệu #{form.Id}.");
+        }
+
+        item.Name = form.Name.Trim();
+        item.Slug = slug;
+        item.ScrapCategoryId = form.CategoryId;
+        item.ShortDescription = CleanOptional(form.ShortDescription);
+        item.Description = CleanOptional(form.Description);
+        item.PriceLabel = CleanOptional(form.PriceLabel);
+        item.Unit = string.IsNullOrWhiteSpace(form.Unit) ? "kg" : form.Unit.Trim();
+        item.Status = form.Status == Draft ? Draft : Published;
+        item.SortOrder = form.SortOrder;
+        item.IsFeatured = form.IsFeatured;
+        item.UpdatedAt = DateTime.UtcNow;
+        if (item.Status == Published && item.PublishedAt is null)
+        {
+            item.PublishedAt = DateTime.UtcNow;
+        }
+
+        if (form.ThumbFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.ThumbFile, "scrap", item.Slug, 800, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await _imageUpload.DeleteUploadedImageAsync(item.PrimaryImage, cancellationToken);
+            item.PrimaryImage = upload.Url;
+        }
+        else if (form.RemoveThumb)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(item.PrimaryImage, cancellationToken);
+            item.PrimaryImage = null;
+        }
+
+        if (form.BannerFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.BannerFile, "scrap", item.Slug + "-banner", 1600, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await RemoveScrapBannerAsync(item, cancellationToken);
+            item.Images.Add(new ScrapImage { ImageUrl = upload.Url!, Caption = "banner", OrderIndex = 0 });
+        }
+        else if (form.RemoveBanner)
+        {
+            await RemoveScrapBannerAsync(item, cancellationToken);
+        }
+
+        _dbContext.ScrapPrices.RemoveRange(item.Prices);
+        var effectiveDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        var rowCount = 0;
+        foreach (var row in form.PriceRows.Where(row => !string.IsNullOrWhiteSpace(row.Label) || row.PriceValue.HasValue))
+        {
+            item.Prices.Add(new ScrapPrice
+            {
+                PriceLabel = CleanOptional(row.Label),
+                PriceValue = row.PriceValue,
+                Unit = string.IsNullOrWhiteSpace(row.Unit) ? "kg" : row.Unit.Trim(),
+                EffectiveDate = effectiveDate
+            });
+            rowCount++;
+        }
+
+        if (rowCount > 0 && string.IsNullOrWhiteSpace(item.PriceLabel))
+        {
+            item.PriceFrom = form.PriceRows.Where(row => row.PriceValue.HasValue).Select(row => row.PriceValue).Min();
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        // Chèn vào đúng vị trí yêu cầu và đánh lại số liên tục 1..n (không bao giờ trùng).
+        await RenumberSortAsync(_dbContext.ScrapItems, item.Id, form.SortOrder, cancellationToken);
+        return item.Id;
+    }
+
+    Task<bool> IAdminScrapCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.ScrapItems, id, cancellationToken);
+
+    Task<bool> IAdminScrapCommandService.ToggleFeaturedAsync(int id, CancellationToken cancellationToken)
+        => ToggleFeaturedAsync(_dbContext.ScrapItems, id, cancellationToken);
+
+    Task<bool> IAdminScrapCommandService.UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken)
+        => RenumberSortAsync(_dbContext.ScrapItems, id, sortOrder, cancellationToken);
+
+    public async Task<bool> DeleteScrapItemAsync(int id, CancellationToken cancellationToken)
+    {
+        var item = await _dbContext.ScrapItems
+            .Include(scrap => scrap.Images)
+            .FirstOrDefaultAsync(scrap => scrap.Id == id, cancellationToken);
+        if (item is null)
+        {
+            return false;
+        }
+
+        await _imageUpload.DeleteUploadedImageAsync(item.PrimaryImage, cancellationToken);
+        foreach (var image in item.Images)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+        }
+
+        _dbContext.ScrapItems.Remove(item); // prices + history cascade in DB
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Dịch vụ
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveServiceAsync(ServiceFormViewModel form, CancellationToken cancellationToken)
+    {
+        var slug = await EnsureUniqueSlugAsync(
+            _dbContext.Services.AsNoTracking().Where(service => service.DeletedAt == null),
+            SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? form.Title : form.Slug),
+            form.Id,
+            filterDeleted: true,
+            cancellationToken);
+
+        Service entity;
+        if (form.Id == 0)
+        {
+            entity = new Service { CreatedAt = DateTime.UtcNow };
+            _dbContext.Services.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.Services.FirstOrDefaultAsync(service => service.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy dịch vụ #{form.Id}.");
+        }
+
+        entity.Title = form.Title.Trim();
+        entity.Slug = slug;
+        entity.IconCss = CleanOptional(form.IconCss);
+        entity.Excerpt = CleanOptional(form.Excerpt);
+        entity.ContentHtml = CleanOptional(form.ContentHtml);
+        entity.Status = form.Status == Draft ? Draft : Published;
+        entity.SortOrder = form.SortOrder;
+        entity.IsFeatured = form.IsFeatured;
+        entity.UpdatedAt = DateTime.UtcNow;
+        if (entity.Status == Published && entity.PublishedAt is null)
+        {
+            entity.PublishedAt = DateTime.UtcNow;
+        }
+
+        if (form.CoverFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.CoverFile, "service", entity.Slug, 1200, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = upload.Url;
+        }
+        else if (form.RemoveCover)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = null;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        // Chèn vào đúng vị trí yêu cầu và đánh lại số liên tục 1..n (không bao giờ trùng).
+        await RenumberSortAsync(_dbContext.Services, entity.Id, form.SortOrder, cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminServiceCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.Services, id, cancellationToken);
+
+    Task<bool> IAdminServiceCommandService.ToggleFeaturedAsync(int id, CancellationToken cancellationToken)
+        => ToggleFeaturedAsync(_dbContext.Services, id, cancellationToken);
+
+    Task<bool> IAdminServiceCommandService.UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken)
+        => RenumberSortAsync(_dbContext.Services, id, sortOrder, cancellationToken);
+
+    public async Task<bool> DeleteServiceAsync(int id, CancellationToken cancellationToken)
+        => await SoftDeleteAsync(_dbContext.Services, id, cancellationToken);
+
+    // ------------------------------------------------------------------
+    // Khu vực
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveLocationAsync(LocationFormViewModel form, CancellationToken cancellationToken)
+    {
+        var slug = await EnsureUniqueSlugAsync(
+            _dbContext.Locations.AsNoTracking().Where(location => location.DeletedAt == null),
+            SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug)
+                ? $"{form.Province} {form.District} {form.Name}"
+                : form.Slug),
+            form.Id,
+            filterDeleted: true,
+            cancellationToken);
+
+        Location entity;
+        if (form.Id == 0)
+        {
+            entity = new Location { CreatedAt = DateTime.UtcNow };
+            _dbContext.Locations.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.Locations.FirstOrDefaultAsync(location => location.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy khu vực #{form.Id}.");
+        }
+
+        entity.Province = form.Province.Trim();
+        entity.District = CleanOptional(form.District);
+        entity.Name = form.Name.Trim();
+        entity.Slug = slug;
+        entity.Excerpt = CleanOptional(form.Excerpt);
+        entity.ContentHtml = CleanOptional(form.ContentHtml);
+        entity.Latitude = form.Latitude;
+        entity.Longitude = form.Longitude;
+        entity.Status = form.Status == Draft ? Draft : Published;
+        entity.SortOrder = form.SortOrder;
+        entity.IsFeatured = form.IsFeatured;
+        entity.UpdatedAt = DateTime.UtcNow;
+        if (entity.Status == Published && entity.PublishedAt is null)
+        {
+            entity.PublishedAt = DateTime.UtcNow;
+        }
+
+        if (form.CoverFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.CoverFile, "location", entity.Slug, 1200, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = upload.Url;
+        }
+        else if (form.RemoveCover)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = null;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminLocationCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.Locations, id, cancellationToken);
+
+    Task<bool> IAdminLocationCommandService.ToggleFeaturedAsync(int id, CancellationToken cancellationToken)
+        => ToggleFeaturedAsync(_dbContext.Locations, id, cancellationToken);
+
+    Task<bool> IAdminLocationCommandService.UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken)
+        => RenumberSortAsync(_dbContext.Locations, id, sortOrder, cancellationToken);
+
+    public async Task<bool> DeleteLocationAsync(int id, CancellationToken cancellationToken)
+        => await SoftDeleteAsync(_dbContext.Locations, id, cancellationToken);
+
+    // ------------------------------------------------------------------
+    // Dự án
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveProjectAsync(ProjectFormViewModel form, CancellationToken cancellationToken)
+    {
+        var slug = await EnsureUniqueSlugAsync(
+            _dbContext.Projects.AsNoTracking().Where(project => project.DeletedAt == null),
+            SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? form.Title : form.Slug),
+            form.Id,
+            filterDeleted: true,
+            cancellationToken);
+
+        Project entity;
+        if (form.Id == 0)
+        {
+            entity = new Project { CreatedAt = DateTime.UtcNow };
+            _dbContext.Projects.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.Projects
+                .Include(project => project.Images)
+                .FirstOrDefaultAsync(project => project.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy dự án #{form.Id}.");
+        }
+
+        entity.Title = form.Title.Trim();
+        entity.Slug = slug;
+        entity.ProjectType = CleanOptional(form.ProjectType);
+        entity.LocationText = CleanOptional(form.LocationText);
+        entity.Excerpt = CleanOptional(form.Excerpt);
+        entity.ContentHtml = CleanOptional(form.ContentHtml);
+        entity.CompletedAt = form.CompletedAt;
+        entity.QuantityText = CleanOptional(form.QuantityText);
+        entity.DurationText = CleanOptional(form.DurationText);
+        entity.Status = form.Status == Draft ? Draft : Published;
+        entity.SortOrder = form.SortOrder;
+        entity.IsFeatured = form.IsFeatured;
+        entity.UpdatedAt = DateTime.UtcNow;
+        if (entity.Status == Published && entity.PublishedAt is null)
+        {
+            entity.PublishedAt = DateTime.UtcNow;
+        }
+
+        if (form.CoverFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.CoverFile, "project", entity.Slug, 1200, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = upload.Url;
+        }
+        else if (form.RemoveCover)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = null;
+        }
+
+        // Existing gallery rows: apply alt/sort/remove.
+        var existingIds = form.Gallery.Select(row => row.Id).ToList();
+        foreach (var image in entity.Images.Where(image => existingIds.Contains(image.Id)).ToList())
+        {
+            var row = form.Gallery.First(input => input.Id == image.Id);
+            if (row.Remove)
+            {
+                await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+                _dbContext.ProjectImages.Remove(image);
+                continue;
+            }
+
+            image.AltText = CleanOptional(row.AltText);
+            image.SortOrder = row.SortOrder;
+        }
+
+        // Newly uploaded gallery files.
+        var nextOrder = entity.Images.Count == 0 ? 0 : entity.Images.Max(image => image.SortOrder) + 1;
+        foreach (var file in form.GalleryFiles.Where(file => file is { Length: > 0 }))
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(file, "project", entity.Slug, 1600, cancellationToken);
+            if (!upload.Success)
+            {
+                _logger.LogWarning("Bỏ qua ảnh gallery không hợp lệ: {Error}", upload.Error);
+                continue;
+            }
+
+            entity.Images.Add(new ProjectImage { ImageUrl = upload.Url!, AltText = entity.Title, SortOrder = nextOrder++ });
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        // Chèn vào đúng vị trí yêu cầu và đánh lại số liên tục 1..n (không bao giờ trùng).
+        await RenumberSortAsync(_dbContext.Projects, entity.Id, form.SortOrder, cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminProjectCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.Projects, id, cancellationToken);
+
+    Task<bool> IAdminProjectCommandService.ToggleFeaturedAsync(int id, CancellationToken cancellationToken)
+        => ToggleFeaturedAsync(_dbContext.Projects, id, cancellationToken);
+
+    Task<bool> IAdminProjectCommandService.UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken)
+        => RenumberSortAsync(_dbContext.Projects, id, sortOrder, cancellationToken);
+
+    public async Task<bool> DeleteProjectAsync(int id, CancellationToken cancellationToken)
+    {
+        var project = await _dbContext.Projects
+            .Include(item => item.Images)
+            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        if (project is null)
+        {
+            return false;
+        }
+
+        await _imageUpload.DeleteUploadedImageAsync(project.CoverImage, cancellationToken);
+        foreach (var image in project.Images)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+        }
+
+        project.DeletedAt = DateTime.UtcNow;
+        project.Status = Draft;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // FAQ
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveFaqAsync(FaqFormViewModel form, CancellationToken cancellationToken)
+    {
+        FaqItem entity;
+        if (form.Id == 0)
+        {
+            entity = new FaqItem { CreatedAt = DateTime.UtcNow };
+            _dbContext.FaqItems.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.FaqItems.FirstOrDefaultAsync(faq => faq.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy câu hỏi #{form.Id}.");
+        }
+
+        entity.EntityType = form.EntityType.Trim();
+        entity.Question = form.Question.Trim();
+        entity.Answer = form.Answer.Trim();
+        entity.Status = form.Status == Draft ? Draft : Published;
+        entity.UpdatedAt = DateTime.UtcNow;
+        if (entity.Status == Published && entity.PublishedAt is null)
+        {
+            entity.PublishedAt = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        // Vị trí áp dụng trong nhóm trang được gán, đánh lại số liên tục 1..n.
+        await RenumberFaqSortAsync(entity.Id, form.SortOrder, cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminFaqCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.FaqItems, id, cancellationToken);
+
+    Task<bool> IAdminFaqCommandService.UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken)
+        => RenumberFaqSortAsync(id, sortOrder, cancellationToken);
+
+    public async Task<bool> DeleteFaqAsync(int id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.FaqItems.FindAsync([id], cancellationToken);
+        if (entity is null || entity.DeletedAt != null)
+        {
+            return false;
+        }
+
+        // Xóa mềm — câu hỏi vẫn nằm trong DB và có thể khôi phục.
+        entity.DeletedAt = DateTime.UtcNow;
+        entity.Status = Draft;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        // Đánh lại số liên tục cho các câu còn lại trong cùng nhóm trang.
+        var siblings = await _dbContext.FaqItems
+            .Where(faq => faq.EntityType == entity.EntityType && faq.DeletedAt == null)
+            .OrderBy(faq => faq.SortOrder)
+            .ThenBy(faq => faq.Id)
+            .ToListAsync(cancellationToken);
+        var order = 1;
+        foreach (var item in siblings)
+        {
+            _dbContext.FaqItems.Entry(item).Property("SortOrder").CurrentValue = order++;
+            item.UpdatedAt = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    /// <summary>
+    /// Đặt FAQ vào vị trí mong muốn trong nhóm trang (EntityType) của nó rồi đánh lại số liên tục 1..n.
+    /// </summary>
+    private async Task<bool> RenumberFaqSortAsync(int id, int position, CancellationToken cancellationToken)
+    {
+        var target = await _dbContext.FaqItems.FirstOrDefaultAsync(faq => faq.Id == id, cancellationToken);
+        if (target is null)
+        {
+            return false;
+        }
+
+        if (position < 1)
+        {
+            position = 1;
+        }
+
+        var items = await _dbContext.FaqItems
+            .Where(faq => faq.EntityType == target.EntityType && faq.DeletedAt == null)
+            .OrderBy(faq => faq.SortOrder)
+            .ThenBy(faq => faq.Id)
+            .ToListAsync(cancellationToken);
+        items.Remove(target);
+        var index = Math.Clamp(position - 1, 0, items.Count);
+        items.Insert(index, target);
+
+        var order = 1;
+        foreach (var item in items)
+        {
+            _dbContext.FaqItems.Entry(item).Property("SortOrder").CurrentValue = order++;
+            item.UpdatedAt = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Bài viết
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveArticleAsync(PostFormViewModel form, CancellationToken cancellationToken)
+    {
+        var slug = await EnsureUniqueSlugAsync(
+            _dbContext.Posts.AsNoTracking().Where(post => post.DeletedAt == null),
+            SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? form.Title : form.Slug),
+            form.Id,
+            filterDeleted: false,
+            cancellationToken);
+
+        Post entity;
+        if (form.Id == 0)
+        {
+            entity = new Post { CreatedAt = DateTime.UtcNow };
+            _dbContext.Posts.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.Posts.FirstOrDefaultAsync(post => post.Id == form.Id && post.DeletedAt == null, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy bài viết #{form.Id}.");
+        }
+
+        entity.Title = form.Title.Trim();
+        entity.Slug = slug;
+        entity.PostCategoryId = form.PostCategoryId;
+        entity.Excerpt = CleanOptional(form.Excerpt);
+        entity.Content = CleanOptional(form.Content);
+        entity.AuthorName = CleanOptional(form.AuthorName) ?? "Quản trị viên";
+        entity.Status = form.Status == Draft ? Draft : Published;
+        entity.SortOrder = form.SortOrder;
+        entity.IsFeatured = form.IsFeatured;
+        entity.PublishedAt = form.PublishedAt ?? DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        if (form.CoverFile is not null)
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(form.CoverFile, "post", entity.Slug, 1600, cancellationToken);
+            if (!upload.Success)
+            {
+                throw new InvalidOperationException(upload.Error);
+            }
+
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = upload.Url;
+        }
+        else if (form.RemoveCover)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+            entity.CoverImage = null;
+        }
+
+        var selectedProductIds = form.LinkedProductIds
+            .Where(id => id > 0)
+            .Distinct()
+            .ToList();
+        var existingLinks = await _dbContext.PostProductLinks
+            .Where(link => link.PostId == entity.Id)
+            .ToListAsync(cancellationToken);
+        _dbContext.PostProductLinks.RemoveRange(existingLinks);
+        if (selectedProductIds.Count > 0)
+        {
+            var sortOrder = 1;
+            foreach (var productId in selectedProductIds)
+            {
+                _dbContext.PostProductLinks.Add(new PostProductLink
+                {
+                    PostId = entity.Id,
+                    ScrapItemId = productId,
+                    SortOrder = sortOrder++
+                });
+            }
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminArticleCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.Posts, id, cancellationToken);
+
+    Task<bool> IAdminArticleCommandService.ToggleFeaturedAsync(int id, CancellationToken cancellationToken)
+        => ToggleFeaturedAsync(_dbContext.Posts, id, cancellationToken);
+
+    public async Task<bool> DeleteArticleAsync(int id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.Posts.FindAsync([id], cancellationToken);
+        if (entity is null || entity.DeletedAt != null)
+        {
+            return false;
+        }
+
+        entity.DeletedAt = DateTime.UtcNow;
+        entity.Status = Draft;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> RestoreArticleAsync(int id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.Posts.FindAsync([id], cancellationToken);
+        if (entity is null || entity.DeletedAt is null)
+        {
+            return false;
+        }
+
+        entity.Slug = await EnsureUniqueSlugAsync(
+            _dbContext.Posts.AsNoTracking().Where(post => post.DeletedAt == null),
+            entity.Slug,
+            entity.Id,
+            filterDeleted: false,
+            cancellationToken);
+        entity.DeletedAt = null;
+        entity.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> PermanentDeleteArticleAsync(int id, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.Posts
+            .Include(post => post.Images)
+            .FirstOrDefaultAsync(post => post.Id == id && post.DeletedAt != null, cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        await _imageUpload.DeleteUploadedImageAsync(entity.CoverImage, cancellationToken);
+        foreach (var image in entity.Images)
+        {
+            await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+        }
+
+        _dbContext.PostProductLinks.RemoveRange(
+            _dbContext.PostProductLinks.Where(link => link.PostId == entity.Id));
+
+        _dbContext.Posts.Remove(entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Shared helpers
+    // ------------------------------------------------------------------
+
+    private async Task RemoveScrapBannerAsync(ScrapItem item, CancellationToken cancellationToken)
+    {
+        var banner = item.Images.FirstOrDefault(image => image.Caption == "banner");
+        if (banner is null)
+        {
+            return;
+        }
+
+        await _imageUpload.DeleteUploadedImageAsync(banner.ImageUrl, cancellationToken);
+        _dbContext.ScrapImages.Remove(banner);
+    }
+
+    private static string? CleanOptional(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    private async Task<string> EnsureUniqueSlugAsync<T>(
+        IQueryable<T> query,
+        string slug,
+        int currentId,
+        bool filterDeleted,
+        CancellationToken cancellationToken) where T : class
+    {
+        if (filterDeleted)
+        {
+            // Soft-deleted rows keep their slug but no longer block reuse (matches filtered unique indexes).
+            query = query.Where(entity => EF.Property<DateTime?>(entity, "DeletedAt") == null);
+        }
+
+        var candidate = slug;
+        var suffix = 2;
+        while (await query.AnyAsync(entity =>
+                   EF.Property<string>(entity, "Slug") == candidate &&
+                   EF.Property<int>(entity, "Id") != currentId,
+               cancellationToken))
+        {
+            candidate = $"{slug}-{suffix++}";
+        }
+
+        return candidate;
+    }
+
+    private async Task<bool> ToggleAsync<T>(DbSet<T> set, int id, CancellationToken cancellationToken) where T : class
+    {
+        var entity = await set.FindAsync([id], cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        var entry = set.Entry(entity).Property("Status");
+        entry.CurrentValue = (string)entry.CurrentValue! == Published ? Draft : Published;
+        if (typeof(T).GetProperty("UpdatedAt") is not null)
+        {
+            set.Entry(entity).Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    private async Task<bool> ToggleFeaturedAsync<T>(DbSet<T> set, int id, CancellationToken cancellationToken) where T : class
+    {
+        var entity = await set.FindAsync([id], cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        var entry = set.Entry(entity).Property("IsFeatured");
+        entry.CurrentValue = !(bool)entry.CurrentValue!;
+        if (typeof(T).GetProperty("UpdatedAt") is not null)
+        {
+            set.Entry(entity).Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    /// <summary>
+    /// "Insert at position" ordering: đặt mục vào vị trí mong muốn (1 = đầu danh sách)
+    /// rồi đánh lại số liên tục 1..n cho toàn bộ tập — không bao giờ trùng thứ tự.
+    /// </summary>
+    private async Task<bool> RenumberSortAsync<T>(DbSet<T> set, int id, int position, CancellationToken cancellationToken) where T : class
+    {
+        if (position < 1)
+        {
+            position = 1;
+        }
+
+        var items = await set
+            .OrderBy(item => EF.Property<int>(item, "SortOrder"))
+            .ThenBy(item => EF.Property<int>(item, "Id"))
+            .ToListAsync(cancellationToken);
+        // EF.Property chỉ hợp lệ trong query; sau khi về bộ nhớ thì đọc qua change tracker.
+        var target = items.FirstOrDefault(item => (int)set.Entry(item).Property("Id").CurrentValue! == id);
+        if (target is null)
+        {
+            return false;
+        }
+
+        items.Remove(target);
+        var index = Math.Clamp(position - 1, 0, items.Count);
+        items.Insert(index, target);
+
+        var order = 1;
+        foreach (var item in items)
+        {
+            set.Entry(item).Property("SortOrder").CurrentValue = order++;
+            if (typeof(T).GetProperty("UpdatedAt") is not null)
+            {
+                set.Entry(item).Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+            }
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    private async Task<bool> UpdateSortAsync<T>(DbSet<T> set, int id, int sortOrder, CancellationToken cancellationToken) where T : class
+    {
+        if (sortOrder is < 0 or > 9999)
+        {
+            return false;
+        }
+
+        var entity = await set.FindAsync([id], cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        set.Entry(entity).Property("SortOrder").CurrentValue = sortOrder;
+        if (typeof(T).GetProperty("UpdatedAt") is not null)
+        {
+            set.Entry(entity).Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    private async Task<bool> SoftDeleteAsync<T>(DbSet<T> set, int id, CancellationToken cancellationToken) where T : class
+    {
+        var entity = await set.FindAsync([id], cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        set.Entry(entity).Property("DeletedAt").CurrentValue = DateTime.UtcNow;
+        set.Entry(entity).Property("Status").CurrentValue = Draft;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+}

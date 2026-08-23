@@ -1,2 +1,24 @@
 <script src="~/assets/vendor/bootstrap.min.js"></script>
 <script src="~/assets/js/admin.js" asp-append-version="true"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  if (window.tinymce) {
+    tinymce.init({
+      selector: '.js-rich-editor',
+      height: 360,
+      menubar: false,
+      plugins: 'lists link table image code',
+      toolbar: 'undo redo | blocks | bold italic | bullist numlist | link image table | alignleft aligncenter alignright | removeformat | code',
+      branding: false,
+      license_key: 'gpl',
+      convert_urls: false,
+      relative_urls: false,
+      language: 'vi',
+      invalid_elements: 'script,iframe,object,embed,form',
+      image_title: true,
+      image_caption: true,
+      image_advtab: true,
+      resize: 'both'
+    });
+  }
+</script>

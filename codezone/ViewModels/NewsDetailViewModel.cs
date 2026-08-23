@@ -10,5 +10,7 @@ public class NewsDetailViewModel
 
     public IReadOnlyList<PostImageDto> Images { get; set; } = [];
 
+    public IReadOnlyList<PostLinkedProductDto> LinkedProducts { get; set; } = [];
+
     public IReadOnlyList<PostCardDto> RelatedPosts { get; set; } = [];
 }

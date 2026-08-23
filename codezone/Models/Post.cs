@@ -30,7 +30,11 @@ public class Post
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    public DateTime? DeletedAt { get; set; }
+
     public PostCategory? Category { get; set; }
 
     public ICollection<PostImage> Images { get; set; } = new List<PostImage>();
+
+    public ICollection<PostProductLink> ProductLinks { get; set; } = new List<PostProductLink>();
 }

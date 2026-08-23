@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScrapWebsite.Areas.Admin.ViewModels.Data;
+using ScrapWebsite.Areas.Admin.ViewModels.Forms;
 using ScrapWebsite.Data;
 
 namespace ScrapWebsite.Services.Admin;
@@ -10,9 +11,14 @@ public sealed class AdminQueryService :
     IAdminArticleQueryService,
     IAdminPriceQueryService,
     IAdminSeoQueryService,
-    IAdminSettingsQueryService
+    IAdminSettingsQueryService,
+    IAdminServiceQueryService,
+    IAdminLocationQueryService,
+    IAdminProjectQueryService,
+    IAdminFaqQueryService
 {
     private const int AdminListLimit = 50;
+    private const int AdminPageSize = 20;
     private readonly AppDbContext _dbContext;
 
     public AdminQueryService(AppDbContext dbContext)
@@ -55,7 +61,7 @@ public sealed class AdminQueryService :
             featuredScrap);
     }
 
-    public async Task<AdminScrapListViewModel> GetScrapListAsync(string? group, string? status, string? query, CancellationToken cancellationToken)
+    public async Task<AdminScrapListViewModel> GetScrapListAsync(string? group, string? status, string? query, int page, CancellationToken cancellationToken)
     {
         var categories = await _dbContext.ScrapCategories.AsNoTracking()
             .OrderBy(category => category.SortOrder)
@@ -84,10 +90,65 @@ public sealed class AdminQueryService :
                 .OrderByDescending(item => item.IsFeatured)
                 .ThenBy(item => item.SortOrder)
                 .ThenBy(item => item.Name))
-            .Take(AdminListLimit)
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
             .ToListAsync(cancellationToken);
 
-        return new AdminScrapListViewModel(categories, items, group, status, query, totalCount);
+        return new AdminScrapListViewModel(categories, items, group, status, query, page, totalCount);
+    }
+
+    public async Task<IReadOnlyList<AdminCategoryOptionDto>> GetCategoryOptionsAsync(CancellationToken cancellationToken)
+    {
+        return await _dbContext.ScrapCategories.AsNoTracking()
+            .OrderBy(category => category.SortOrder)
+            .ThenBy(category => category.Name)
+            .Select(category => new AdminCategoryOptionDto(category.Id, category.Name, category.Slug))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<ScrapItemFormViewModel?> GetScrapFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        ScrapItemFormViewModel form;
+        if (id is null or 0)
+        {
+            form = new ScrapItemFormViewModel();
+        }
+        else
+        {
+            var item = await _dbContext.ScrapItems.AsNoTracking()
+                .Include(scrap => scrap.Prices)
+                .Include(scrap => scrap.Images)
+                .FirstOrDefaultAsync(scrap => scrap.Id == id.Value, cancellationToken);
+            if (item is null)
+            {
+                return null;
+            }
+
+            form = new ScrapItemFormViewModel
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Slug = item.Slug,
+                CategoryId = item.ScrapCategoryId,
+                ShortDescription = item.ShortDescription,
+                Description = item.Description,
+                PriceLabel = item.PriceLabel,
+                Unit = item.Unit ?? "kg",
+                Status = item.Status,
+                SortOrder = item.SortOrder,
+                IsFeatured = item.IsFeatured,
+                CurrentThumbUrl = item.PrimaryImage,
+                CurrentBannerUrl = item.Images.FirstOrDefault(image => image.Caption == "banner")?.ImageUrl,
+                PriceRows = item.Prices
+                    .OrderByDescending(price => price.EffectiveDate)
+                    .ThenBy(price => price.Id)
+                    .Select(price => new ScrapPriceRowInput { Label = price.PriceLabel, PriceValue = price.PriceValue, Unit = price.Unit })
+                    .ToList()
+            };
+        }
+
+        form.Categories = await GetCategoryOptionsAsync(cancellationToken);
+        return form;
     }
 
     public async Task<AdminArticleListViewModel> GetArticleListAsync(string? category, string? status, string? query, CancellationToken cancellationToken)
@@ -98,13 +159,22 @@ public sealed class AdminQueryService :
             .Select(item => new AdminCategoryOptionDto(item.Id, item.Name, item.Slug))
             .ToListAsync(cancellationToken);
 
+        var showDeleted = string.Equals(status, "deleted", StringComparison.OrdinalIgnoreCase);
+        var showFeatured = string.Equals(status, "featured", StringComparison.OrdinalIgnoreCase);
         var baseQuery = _dbContext.Posts.AsNoTracking();
+        baseQuery = showDeleted
+            ? baseQuery.Where(post => post.DeletedAt != null)
+            : baseQuery.Where(post => post.DeletedAt == null);
         if (!string.IsNullOrWhiteSpace(category))
         {
             baseQuery = baseQuery.Where(post => post.Category != null && post.Category.Slug == category);
         }
 
-        if (!string.IsNullOrWhiteSpace(status))
+        if (!showDeleted && showFeatured)
+        {
+            baseQuery = baseQuery.Where(post => post.IsFeatured);
+        }
+        else if (!showDeleted && !string.IsNullOrWhiteSpace(status))
         {
             baseQuery = baseQuery.Where(post => post.Status == status);
         }
@@ -124,7 +194,64 @@ public sealed class AdminQueryService :
         return new AdminArticleListViewModel(categories, items, category, status, query, totalCount);
     }
 
-    public async Task<AdminPriceListViewModel> GetPriceListAsync(string? group, string? query, CancellationToken cancellationToken)
+    public async Task<PostFormViewModel?> GetArticleFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        var categories = await _dbContext.PostCategories.AsNoTracking()
+            .OrderBy(item => item.SortOrder)
+            .ThenBy(item => item.Name)
+            .Select(item => new AdminCategoryOptionDto(item.Id, item.Name, item.Slug))
+            .ToListAsync(cancellationToken);
+
+        PostFormViewModel form;
+        if (id is null || id == 0)
+        {
+            form = new PostFormViewModel { PublishedAt = DateTime.UtcNow };
+        }
+        else
+        {
+            var post = await _dbContext.Posts.AsNoTracking()
+                .Include(item => item.ProductLinks)
+                .Where(item => item.DeletedAt == null)
+                .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+            if (post is null)
+            {
+                return null;
+            }
+
+            form = new PostFormViewModel
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Slug = post.Slug,
+                PostCategoryId = post.PostCategoryId,
+                Excerpt = post.Excerpt,
+                Content = post.Content,
+                Status = post.Status,
+                PublishedAt = post.PublishedAt,
+                SortOrder = post.SortOrder,
+                IsFeatured = post.IsFeatured,
+                AuthorName = post.AuthorName,
+                CurrentCoverUrl = post.CoverImage,
+                LinkedProductIds = post.ProductLinks
+                    .OrderBy(link => link.SortOrder)
+                    .ThenBy(link => link.Id)
+                    .Select(link => link.ScrapItemId)
+                    .ToList()
+            };
+        }
+
+        form.Categories = categories;
+        form.ProductOptions = await _dbContext.ScrapItems.AsNoTracking()
+            .Where(item => item.Status == "published")
+            .OrderByDescending(item => item.IsFeatured)
+            .ThenBy(item => item.SortOrder)
+            .ThenBy(item => item.Name)
+            .Select(item => new AdminCategoryOptionDto(item.Id, item.Name, item.Slug))
+            .ToListAsync(cancellationToken);
+        return form;
+    }
+
+    public async Task<AdminPriceListViewModel> GetPriceListAsync(string? group, string? status, string? query, int page, CancellationToken cancellationToken)
     {
         var categories = await _dbContext.ScrapCategories.AsNoTracking()
             .OrderBy(category => category.SortOrder)
@@ -132,10 +259,17 @@ public sealed class AdminQueryService :
             .Select(category => new AdminCategoryOptionDto(category.Id, category.Name, category.Slug))
             .ToListAsync(cancellationToken);
 
-        var baseQuery = _dbContext.ScrapPrices.AsNoTracking();
+        var baseQuery = _dbContext.ScrapPrices.AsNoTracking().Where(price => price.DeletedAt == null);
         if (!string.IsNullOrWhiteSpace(group))
         {
             baseQuery = baseQuery.Where(price => price.ScrapItem != null && price.ScrapItem.Category != null && price.ScrapItem.Category.Slug == group);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = status == "published"
+                ? baseQuery.Where(price => price.ScrapItem != null && price.ScrapItem.Status == "published")
+                : baseQuery.Where(price => price.ScrapItem != null && price.ScrapItem.Status != "published");
         }
 
         if (!string.IsNullOrWhiteSpace(query))
@@ -150,14 +284,17 @@ public sealed class AdminQueryService :
             .ThenByDescending(price => price.EffectiveDate)
             .Select(price => new AdminPriceRowDto(
                 price.Id,
+                price.ScrapItemId,
                 price.ScrapItem != null ? price.ScrapItem.Name : "Chưa gắn loại",
                 price.ScrapItem != null && price.ScrapItem.Category != null ? price.ScrapItem.Category.Name : "Chưa phân nhóm",
                 price.PriceValue,
                 BuildPriceText(price.PriceLabel, price.PriceValue, price.Unit),
                 price.Unit ?? "kg",
                 price.EffectiveDate,
-                "active"))
-            .Take(AdminListLimit)
+                "active",
+                price.ScrapItem != null && price.ScrapItem.Status == "published"))
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
             .ToListAsync(cancellationToken);
 
         var lastUpdatedAt = await _dbContext.ScrapPriceHistory.AsNoTracking()
@@ -165,7 +302,237 @@ public sealed class AdminQueryService :
             .Select(price => (DateOnly?)price.EffectiveDate)
             .FirstOrDefaultAsync(cancellationToken);
 
-        return new AdminPriceListViewModel(categories, items, group, query, totalCount, lastUpdatedAt);
+        return new AdminPriceListViewModel(categories, items, group, status, query, page, totalCount, lastUpdatedAt);
+    }
+
+    // ------------------------------------------------------------------
+    // Dịch vụ
+    // ------------------------------------------------------------------
+
+    public async Task<AdminServiceListViewModel> GetServiceListAsync(string? status, string? query, int page, CancellationToken cancellationToken)
+    {
+        var baseQuery = _dbContext.Services.AsNoTracking().Where(service => service.DeletedAt == null);
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = baseQuery.Where(service => service.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(service => service.Title.Contains(query) || service.Slug.Contains(query));
+        }
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var items = await baseQuery
+            .OrderBy(service => service.SortOrder)
+            .ThenBy(service => service.Title)
+            .Select(service => new AdminServiceRowDto(
+                service.Id,
+                service.Title,
+                service.Slug,
+                service.CoverImage,
+                service.IconCss,
+                service.Status,
+                service.IsFeatured,
+                service.SortOrder,
+                service.PublishedAt))
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new AdminServiceListViewModel(items, status, query, page, totalCount);
+    }
+
+    public async Task<ServiceFormViewModel?> GetServiceFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        if (id is null or 0)
+        {
+            return new ServiceFormViewModel();
+        }
+
+        var entity = await _dbContext.Services.AsNoTracking()
+            .FirstOrDefaultAsync(service => service.Id == id.Value && service.DeletedAt == null, cancellationToken);
+        return entity is null
+            ? null
+            : new ServiceFormViewModel
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                Slug = entity.Slug,
+                IconCss = entity.IconCss,
+                Excerpt = entity.Excerpt,
+                ContentHtml = entity.ContentHtml,
+                CurrentCoverUrl = entity.CoverImage,
+                Status = entity.Status,
+                SortOrder = entity.SortOrder,
+                IsFeatured = entity.IsFeatured
+            };
+    }
+
+    // ------------------------------------------------------------------
+    // Khu vực
+    // ------------------------------------------------------------------
+
+    public async Task<AdminLocationListViewModel> GetLocationListAsync(string? province, string? status, string? query, int page, CancellationToken cancellationToken)
+    {
+        var provinces = await _dbContext.Locations.AsNoTracking()
+            .Where(location => location.DeletedAt == null && location.Province != "")
+            .Select(location => location.Province)
+            .Distinct()
+            .OrderBy(name => name)
+            .ToListAsync(cancellationToken);
+
+        var baseQuery = _dbContext.Locations.AsNoTracking().Where(location => location.DeletedAt == null);
+        if (!string.IsNullOrWhiteSpace(province))
+        {
+            baseQuery = baseQuery.Where(location => location.Province == province);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = baseQuery.Where(location => location.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(location => location.Name.Contains(query) || location.Slug.Contains(query) || location.Province.Contains(query));
+        }
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var items = await baseQuery
+            .OrderBy(location => location.Province)
+            .ThenBy(location => location.Name)
+            .Select(location => new AdminLocationRowDto(
+                location.Id,
+                location.Province,
+                location.District,
+                location.Name,
+                location.Slug,
+                location.CoverImage,
+                location.Status,
+                location.IsFeatured,
+                location.SortOrder))
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new AdminLocationListViewModel(provinces, items, province, status, query, page, totalCount);
+    }
+
+    public async Task<LocationFormViewModel?> GetLocationFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        if (id is null or 0)
+        {
+            return new LocationFormViewModel();
+        }
+
+        var entity = await _dbContext.Locations.AsNoTracking()
+            .FirstOrDefaultAsync(location => location.Id == id.Value && location.DeletedAt == null, cancellationToken);
+        return entity is null
+            ? null
+            : new LocationFormViewModel
+            {
+                Id = entity.Id,
+                Province = entity.Province,
+                District = entity.District,
+                Name = entity.Name,
+                Slug = entity.Slug,
+                Excerpt = entity.Excerpt,
+                ContentHtml = entity.ContentHtml,
+                CurrentCoverUrl = entity.CoverImage,
+                Latitude = entity.Latitude,
+                Longitude = entity.Longitude,
+                Status = entity.Status,
+                SortOrder = entity.SortOrder,
+                IsFeatured = entity.IsFeatured
+            };
+    }
+
+    // ------------------------------------------------------------------
+    // Dự án
+    // ------------------------------------------------------------------
+
+    public async Task<AdminProjectListViewModel> GetProjectListAsync(string? projectType, string? status, string? query, int page, CancellationToken cancellationToken)
+    {
+        var projectTypes = await _dbContext.Projects.AsNoTracking()
+            .Where(project => project.DeletedAt == null && project.ProjectType != null && project.ProjectType != "")
+            .Select(project => project.ProjectType!)
+            .Distinct()
+            .OrderBy(name => name)
+            .ToListAsync(cancellationToken);
+
+        var baseQuery = _dbContext.Projects.AsNoTracking().Where(project => project.DeletedAt == null);
+        if (!string.IsNullOrWhiteSpace(projectType))
+        {
+            baseQuery = baseQuery.Where(project => project.ProjectType == projectType);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            baseQuery = baseQuery.Where(project => project.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(project => project.Title.Contains(query) || project.Slug.Contains(query) || project.LocationText != null && project.LocationText.Contains(query));
+        }
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var items = await baseQuery
+            .OrderBy(project => project.SortOrder)
+            .ThenBy(project => project.Id)
+            .Select(project => new AdminProjectRowDto(
+                project.Id,
+                project.Title,
+                project.Slug,
+                project.ProjectType,
+                project.LocationText,
+                project.CompletedAt,
+                project.CoverImage,
+                project.Status,
+                project.IsFeatured,
+                project.SortOrder))
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new AdminProjectListViewModel(projectTypes, items, projectType, status, query, page, totalCount);
+    }
+
+    public async Task<ProjectFormViewModel?> GetProjectFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        if (id is null or 0)
+        {
+            return new ProjectFormViewModel();
+        }
+
+        var entity = await _dbContext.Projects.AsNoTracking()
+            .Include(project => project.Images)
+            .FirstOrDefaultAsync(project => project.Id == id.Value && project.DeletedAt == null, cancellationToken);
+        return entity is null
+            ? null
+            : new ProjectFormViewModel
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                Slug = entity.Slug,
+                ProjectType = entity.ProjectType,
+                LocationText = entity.LocationText,
+                Excerpt = entity.Excerpt,
+                ContentHtml = entity.ContentHtml,
+                CurrentCoverUrl = entity.CoverImage,
+                CompletedAt = entity.CompletedAt,
+                QuantityText = entity.QuantityText,
+                DurationText = entity.DurationText,
+                Status = entity.Status,
+                SortOrder = entity.SortOrder,
+                IsFeatured = entity.IsFeatured,
+                Gallery = entity.Images
+                    .OrderBy(image => image.SortOrder)
+                    .ThenBy(image => image.Id)
+                    .Select(image => new ProjectGalleryRowInput { Id = image.Id, ImageUrl = image.ImageUrl, AltText = image.AltText, SortOrder = image.SortOrder })
+                    .ToList()
+            };
     }
 
     public async Task<AdminSeoListViewModel> GetSeoListAsync(CancellationToken cancellationToken)
@@ -223,6 +590,63 @@ public sealed class AdminQueryService :
             Get(settings, "system.cache_minutes", "5"));
     }
 
+    // ------------------------------------------------------------------
+    // FAQ
+    // ------------------------------------------------------------------
+
+    public async Task<AdminFaqListViewModel> GetFaqListAsync(string? entityType, string? query, int page, CancellationToken cancellationToken)
+    {
+        var baseQuery = _dbContext.FaqItems.AsNoTracking().Where(faq => faq.DeletedAt == null);
+        if (!string.IsNullOrWhiteSpace(entityType))
+        {
+            baseQuery = baseQuery.Where(faq => faq.EntityType == entityType);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            baseQuery = baseQuery.Where(faq => faq.Question.Contains(query));
+        }
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var items = await baseQuery
+            .OrderBy(faq => faq.EntityType)
+            .ThenBy(faq => faq.SortOrder)
+            .ThenBy(faq => faq.Id)
+            .Select(faq => new AdminFaqRowDto(
+                faq.Id,
+                faq.Question,
+                faq.EntityType,
+                faq.Status,
+                faq.SortOrder))
+            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Take(AdminPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new AdminFaqListViewModel(items, entityType, query, page, totalCount);
+    }
+
+    public async Task<FaqFormViewModel?> GetFaqFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        if (id is null or 0)
+        {
+            return new FaqFormViewModel();
+        }
+
+        var entity = await _dbContext.FaqItems.AsNoTracking()
+            .FirstOrDefaultAsync(faq => faq.Id == id.Value && faq.DeletedAt == null, cancellationToken);
+        return entity is null
+            ? null
+            : new FaqFormViewModel
+            {
+                Id = entity.Id,
+                Question = entity.Question,
+                Answer = entity.Answer,
+                EntityType = entity.EntityType,
+                Status = entity.Status,
+                SortOrder = entity.SortOrder
+            };
+    }
+
     private static IQueryable<AdminScrapRowDto> QueryScrapRows(IQueryable<Models.ScrapItem> query)
     {
         return query.Select(item => new AdminScrapRowDto(
@@ -248,7 +672,9 @@ public sealed class AdminQueryService :
             post.CoverImage,
             post.Status,
             post.PublishedAt,
-            post.AuthorName));
+            post.AuthorName,
+            post.IsFeatured,
+            post.DeletedAt));
     }
 
     private async Task<Dictionary<string, string>> LoadSettingsAsync(CancellationToken cancellationToken)

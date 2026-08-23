@@ -1403,6 +1403,10 @@ body.admin-body {
   border-color: #C0392B;
   color: #C0392B;
 }
+.table-admin .ta-actions button.act-featured {
+  border-color: #E4570F;
+  color: #E4570F;
+}
 
 .admin-main, .admin-content, .admin-panel {
   min-width: 0;
@@ -2041,4 +2045,78 @@ body.admin-body {
 }
 .login-page .login-form-col h1 {
   margin-bottom: 1.75rem;
+}
+
+/* =============================================================================
+   Công tắc ẩn/hện trên bảng giá — nút submit được tạo hình như form-switch,
+   bấm là gửi form ngay (toggle trạng thái loại phế liệu).
+   =========================================================================== */
+.btn-switch {
+  position: relative;
+  width: 2.5em;
+  height: 1.3em;
+  border-radius: 1em;
+  border: 1px solid #C9C7C1;
+  background-color: #DFDDDA;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  flex: none;
+  box-shadow: none;
+}
+.btn-switch::after {
+  content: "";
+  position: absolute;
+  top: 0.13em;
+  left: 0.13em;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: transform 0.15s ease-in-out;
+}
+.btn-switch.on {
+  background-color: #E4570F;
+  border-color: #E4570F;
+}
+.btn-switch.on::after {
+  transform: translateX(1.13em);
+}
+.btn-switch:hover {
+  filter: brightness(1.1);
+}
+
+.linked-product-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .5rem;
+  max-height: 420px;
+  overflow: auto;
+  padding-right: .25rem;
+}
+
+.linked-product-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  margin: 0;
+  padding: .6rem .75rem;
+  border: 1px solid #D9D5CF;
+  border-radius: .5rem;
+  background: #fff;
+}
+
+.linked-product-item .form-check-input {
+  margin-top: .2rem;
+}
+
+.linked-product-item .form-check-label {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+}
+
+.linked-product-item strong,
+.linked-product-item small {
+  display: block;
 }
