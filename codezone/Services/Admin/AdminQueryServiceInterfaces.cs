@@ -22,6 +22,8 @@ public interface IAdminArticleQueryService
     Task<AdminArticleListViewModel> GetArticleListAsync(string? category, string? status, string? query, CancellationToken cancellationToken);
 
     Task<PostFormViewModel?> GetArticleFormAsync(int? id, CancellationToken cancellationToken);
+
+    Task<string?> GetArticleStatusAsync(int id, CancellationToken cancellationToken);
 }
 
 public interface IAdminPriceQueryService

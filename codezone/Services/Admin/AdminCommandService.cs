@@ -806,6 +806,54 @@ public sealed class AdminCommandService :
         _cache.Remove(SiteChromeCacheKey);
     }
 
+    public async Task SaveSmtpSettingsAsync(SmtpSettingsFormViewModel form, CancellationToken cancellationToken)
+    {
+        var host = form.Host.Trim();
+        if (string.IsNullOrWhiteSpace(host))
+        {
+            throw new InvalidOperationException("Vui lòng nhập máy chủ SMTP (Host).");
+        }
+
+        if (form.Port is < 1 or > 65535)
+        {
+            throw new InvalidOperationException("Port SMTP phải nằm trong khoảng 1 - 65535.");
+        }
+
+        var fromEmail = form.FromEmail.Trim();
+        var toEmail = form.ToEmail.Trim();
+        if (!IsValidEmail(fromEmail) || !IsValidEmail(toEmail))
+        {
+            throw new InvalidOperationException("Địa chỉ email người gửi / người nhận không hợp lệ.");
+        }
+
+        await UpsertSettingAsync("smtp.host", host, "smtp", "Máy chủ gửi email", cancellationToken);
+        await UpsertSettingAsync("smtp.port", form.Port.ToString(), "smtp", "Cổng SMTP", cancellationToken);
+        await UpsertSettingAsync("smtp.enable_ssl", form.EnableSsl ? "true" : "false", "smtp", "Bật SSL/TLS", cancellationToken);
+        await UpsertSettingAsync("smtp.username", form.UserName, "smtp", "Tên đăng nhập SMTP", cancellationToken);
+        await UpsertSettingAsync("smtp.from_email", fromEmail, "smtp", "Email người gửi", cancellationToken);
+        await UpsertSettingAsync("smtp.from_name", form.FromName, "smtp", "Tên hiển thị người gửi", cancellationToken);
+        await UpsertSettingAsync("smtp.to_email", toEmail, "smtp", "Email nhận thông báo liên hệ", cancellationToken);
+
+        // Mật khẩu để trống nghĩa là giữ nguyên mật khẩu hiện có (không cho xem lại mật khẩu trên UI).
+        var existingPassword = await _dbContext.SiteSettings.AsNoTracking()
+            .Where(setting => setting.Key == "smtp.password")
+            .Select(setting => setting.Value)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(form.Password))
+        {
+            await UpsertSettingAsync("smtp.password", form.Password.Trim(), "smtp", "Mật khẩu SMTP", cancellationToken);
+        }
+        else if (existingPassword is null)
+        {
+            // Chưa từng lưu mật khẩu trong DB: lưu giá trị rỗng để ghi đè fallback appsettings.
+            await UpsertSettingAsync("smtp.password", string.Empty, "smtp", "Mật khẩu SMTP", cancellationToken);
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SmtpSettingsProvider.CacheKey);
+    }
+
     public async Task SaveMediaSettingImageAsync(MediaSettingImageFormViewModel form, CancellationToken cancellationToken)
     {
         var catalogItem = AdminMediaCatalog.Find(form.Key)
@@ -928,6 +976,7 @@ public sealed class AdminCommandService :
         entity.Excerpt = CleanOptional(form.Excerpt);
         entity.Content = CleanOptional(form.Content);
         entity.AuthorName = CleanOptional(form.AuthorName) ?? "Quản trị viên";
+        entity.SeoKeywords = CleanOptional(form.SeoKeywords);
         entity.Status = form.Status == Draft ? Draft : Published;
         entity.SortOrder = form.SortOrder;
         entity.IsFeatured = form.IsFeatured;
@@ -974,7 +1023,48 @@ public sealed class AdminCommandService :
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await CleanupAutosaveAsync(form.AutosaveKey, entity.Id, cancellationToken);
         return entity.Id;
+    }
+
+    public async Task AutoSaveArticleDraftAsync(string postKey, PostFormViewModel form, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(postKey) || postKey.Length > 64)
+        {
+            throw new InvalidOperationException("Khóa tự lưu không hợp lệ.");
+        }
+
+        var json = PostAutosavePayloadMapper.Serialize(PostAutosavePayloadMapper.FromForm(form));
+        var autosave = await _dbContext.PostAutosaves.FirstOrDefaultAsync(item => item.PostKey == postKey, cancellationToken);
+        if (autosave is null)
+        {
+            autosave = new PostAutosave { PostKey = postKey };
+            _dbContext.PostAutosaves.Add(autosave);
+        }
+
+        autosave.DataJson = json;
+        autosave.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>Xóa bản nháp tự lưu sau khi nội dung đã được lưu chính thức.</summary>
+    private async Task CleanupAutosaveAsync(string? autosaveKey, int postId, CancellationToken cancellationToken)
+    {
+        var keys = new List<string> { $"post-{postId}" };
+        if (!string.IsNullOrWhiteSpace(autosaveKey))
+        {
+            keys.Add(autosaveKey.Trim());
+        }
+
+        var stale = await _dbContext.PostAutosaves
+            .Where(item => keys.Contains(item.PostKey))
+            .ToListAsync(cancellationToken);
+
+        if (stale.Count > 0)
+        {
+            _dbContext.PostAutosaves.RemoveRange(stale);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 
     Task<bool> IAdminArticleCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
@@ -1062,6 +1152,16 @@ public sealed class AdminCommandService :
     {
         var trimmed = value?.Trim();
         return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    private static bool IsValidEmail(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        return System.Net.Mail.MailAddress.TryCreate(value, out _);
     }
 
     private async Task<string> EnsureUniqueSlugAsync<T>(

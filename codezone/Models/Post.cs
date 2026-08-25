@@ -26,6 +26,8 @@ public class Post
 
     public string? AuthorName { get; set; }
 
+    public string? SeoKeywords { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

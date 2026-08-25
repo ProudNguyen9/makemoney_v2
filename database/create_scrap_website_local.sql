@@ -159,6 +159,7 @@ CREATE TABLE dbo.Posts (
     SortOrder INT NOT NULL CONSTRAINT DF_Posts_SortOrder DEFAULT 0,
     IsFeatured BIT NOT NULL CONSTRAINT DF_Posts_IsFeatured DEFAULT 0,
     AuthorName NVARCHAR(160) NULL,
+    SeoKeywords NVARCHAR(255) NULL,
     CreatedAt DATETIME2(0) NOT NULL,
     UpdatedAt DATETIME2(0) NOT NULL,
     CONSTRAINT FK_Posts_PostCategories FOREIGN KEY (PostCategoryId) REFERENCES dbo.PostCategories(Id)

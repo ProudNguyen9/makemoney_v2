@@ -28,6 +28,8 @@ public class AppDbContext : DbContext
 
     public DbSet<PostProductLink> PostProductLinks => Set<PostProductLink>();
 
+    public DbSet<PostAutosave> PostAutosaves => Set<PostAutosave>();
+
     public DbSet<Banner> Banners => Set<Banner>();
 
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
@@ -119,6 +121,13 @@ public class AppDbContext : DbContext
             .HasOne(link => link.ScrapItem)
             .WithMany()
             .HasForeignKey(link => link.ScrapItemId);
+
+        modelBuilder.Entity<PostAutosave>()
+            .HasKey(autosave => autosave.PostKey);
+
+        modelBuilder.Entity<PostAutosave>()
+            .Property(autosave => autosave.PostKey)
+            .HasMaxLength(64);
 
         modelBuilder.Entity<SiteSetting>()
             .Property(setting => setting.Key)

@@ -41,9 +41,90 @@ public class ArticlesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(PostFormViewModel form, CancellationToken cancellationToken = default)
     {
+        return await SaveCore(form, cancellationToken, saveAsDraft: false);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveDraft(PostFormViewModel form, CancellationToken cancellationToken = default)
+    {
+        return await SaveCore(form, cancellationToken, saveAsDraft: true);
+    }
+
+    /// <summary>
+    /// Tự lưu khi đang soạn (AJAX). Bài mới / bản nháp: lưu thành bản nháp thật.
+    /// Bài đã xuất bản: chỉ ghi bản nháp tạm, không thay đổi bài live.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AutoSave([FromForm] PostFormViewModel form, string? autosaveKey, CancellationToken cancellationToken = default)
+    {
+        // Tự lưu chấp nhận nội dung dang dở nên bỏ qua validate bắt buộc.
+        ModelState.Clear();
+
+        if (string.IsNullOrWhiteSpace(form.Title))
+        {
+            return Json(new { ok = false, reason = "Cần có tiêu đề để tự lưu." });
+        }
+
+        try
+        {
+            var isPublishedPost = false;
+            if (form.Id > 0)
+            {
+                var status = await _articleQueryService.GetArticleStatusAsync(form.Id, cancellationToken);
+                isPublishedPost = string.Equals(status, "published", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (isPublishedPost)
+            {
+                var key = $"post-{form.Id}";
+                await _articleCommandService.AutoSaveArticleDraftAsync(key, form, cancellationToken);
+                return Json(new { ok = true, mode = "temp" });
+            }
+
+            form.Status = "draft";
+            form.AuthorName = string.IsNullOrWhiteSpace(form.AuthorName)
+                ? User.FindFirstValue(ClaimTypes.Name) ?? User.Identity?.Name
+                : form.AuthorName;
+
+            foreach (var key in new[] { nameof(PostFormViewModel.PostCategoryId), nameof(PostFormViewModel.Content) })
+            {
+                ModelState[key]?.Errors.Clear();
+                ModelState[key]?.ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+
+            var savedId = await _articleCommandService.SaveArticleAsync(form, cancellationToken);
+            return Json(new
+            {
+                ok = true,
+                mode = "post",
+                id = savedId,
+                url = Url.Action(nameof(Form), new { id = savedId })
+            });
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
+        {
+            return Json(new { ok = false, reason = ex.Message });
+        }
+    }
+
+    private async Task<IActionResult> SaveCore(PostFormViewModel form, CancellationToken cancellationToken, bool saveAsDraft)
+    {
         form.AuthorName = string.IsNullOrWhiteSpace(form.AuthorName)
             ? User.FindFirstValue(ClaimTypes.Name) ?? User.Identity?.Name
             : form.AuthorName;
+
+        if (saveAsDraft)
+        {
+            form.Status = "draft";
+            // Bản nháp cho phép chưa chọn chuyên mục / chưa có nội dung đầy đủ.
+            foreach (var key in new[] { nameof(PostFormViewModel.PostCategoryId), nameof(PostFormViewModel.Content) })
+            {
+                ModelState[key]?.Errors.Clear();
+                ModelState[key]?.ValidationState = Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Valid;
+            }
+        }
 
         if (!ModelState.IsValid)
         {
@@ -68,9 +149,11 @@ public class ArticlesController : Controller
             return View(nameof(Form), form);
         }
 
-        TempData["Success"] = form.Id == 0
-            ? $"Đã tạo bài viết \"{form.Title}\"."
-            : $"Đã cập nhật bài viết \"{form.Title}\".";
+        TempData["Success"] = saveAsDraft
+            ? $"Đã lưu bản nháp \"{form.Title}\". Bài viết chưa hiển thị trên website."
+            : form.Id == 0
+                ? $"Đã tạo bài viết \"{form.Title}\"."
+                : $"Đã cập nhật bài viết \"{form.Title}\".";
         return RedirectToAction(nameof(Form), new { id });
     }
 

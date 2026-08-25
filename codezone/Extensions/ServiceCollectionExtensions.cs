@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
 
         services.AddAuthorization();
         services.AddControllersWithViews();
+        services.AddHttpContextAccessor();
         services.AddMemoryCache();
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -38,6 +39,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISiteChromeService, SiteChromeService>();
         services.AddScoped<IPublicPageContentService, PublicPageContentService>();
         services.AddScoped<IContactService, ContactService>();
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddScoped<ISmtpSettingsProvider, SmtpSettingsProvider>();
+        services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddScoped<ISmtpSettingsProvider, SmtpSettingsProvider>();
         services.AddScoped<AdminQueryService>();
         services.AddScoped<IAdminAuthService, AdminAuthService>();
         services.AddScoped<IAdminDashboardQueryService>(provider => provider.GetRequiredService<AdminQueryService>());

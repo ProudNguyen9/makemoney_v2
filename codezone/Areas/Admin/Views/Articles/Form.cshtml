@@ -16,16 +16,33 @@
 <div class="admin-page-head">
   <h1>@(Model.Id == 0 ? "Soạn bài viết" : $"Sửa: {Model.Title}")<small>Tin tức, bảng giá và kiến thức phế liệu</small></h1>
   <div class="aph-actions">
+    <span class="small text-muted me-2" id="autosaveIndicator"></span>
     <a class="btn btn-outline-dark" href="/admin/articles"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách</a>
     @if (Model.Id > 0)
     {
       <a class="btn btn-outline-dark" href="/tin-tuc/@Model.Slug" target="_blank" rel="noopener"><i class="bi bi-eye" aria-hidden="true"></i> Xem trước</a>
     }
+    <button class="btn btn-outline-dark" type="submit" form="articleForm" formaction="/admin/articles/SaveDraft" formnovalidate><i class="bi bi-file-earmark-text" aria-hidden="true"></i> Lưu bản nháp</button>
     <button class="btn btn-primary" type="submit" form="articleForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
   </div>
 </div>
 
-<form id="articleForm" action="/admin/articles/Save" method="post" enctype="multipart/form-data">
+@if (Model.RestoredFromAutosave && Model.AutosavedAtUtc.HasValue)
+{
+  <div class="alert alert-info d-flex align-items-center gap-2 py-2">
+    <i class="bi bi-clock-history" aria-hidden="true"></i>
+    <span>Đã khôi phục nội dung đang soạn dở (tự lưu lúc @Model.AutosavedAtUtc.Value.ToLocalTime().ToString("HH:mm dd/MM/yyyy")). Nội dung gốc của bài vẫn nguyên — bấm <strong>Lưu</strong> để áp dụng bản đang viết.</span>
+  </div>
+}
+
+<form id="articleForm"
+      action="/admin/articles/Save"
+      method="post"
+      enctype="multipart/form-data"
+      data-autosave-url="/admin/articles/AutoSave"
+      data-autosave-key="@Model.AutosaveKey"
+      data-status="@Model.Status"
+      data-updated-at="@(Model.UpdatedAtUtc.HasValue ? ((long)(Model.UpdatedAtUtc.Value - DateTime.UnixEpoch).TotalMilliseconds).ToString() : "0")">
   @Html.AntiForgeryToken()
   <input type="hidden" name="Id" value="@Model.Id">
   <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -49,6 +66,7 @@
             </div>
             <div class="article-publish-note">
               Bài viết nổi bật sẽ được ưu tiên hiển thị tại trang chủ hoặc khu vực bài viết nổi bật.
+              Chọn "Bản nháp" (hoặc bấm nút Lưu bản nháp) để lưu đang soạn — bản nháp không hiển thị trên website.
             </div>
           </div>
         </div>
@@ -166,6 +184,21 @@
     </div>
   </div>
 
+  <div class="admin-panel mb-3">
+    <div class="panel-head">
+      <h2>Tối ưu SEO</h2>
+    </div>
+    <div class="panel-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label-tech" for="articleSeoKeywords">Từ khóa SEO (meta keywords)</label>
+          <input class="form-control" id="articleSeoKeywords" name="SeoKeywords" type="text" value="@Model.SeoKeywords" maxlength="255" placeholder="VD: giá phế liệu, thu mua sắt vụn, bảng giá đồng hôm nay">
+          <p class="small text-muted mt-1 mb-0">Các từ khóa cách nhau bằng dấu phẩy. Từ khóa này được gắn vào thẻ &lt;meta name="keywords"&gt; của trang chi tiết bài viết.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="linkedProductsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content linked-products-modal">
@@ -217,3 +250,240 @@
     </div>
   </div>
 </form>
+
+@section Scripts {
+  <script>
+    (() => {
+      const form = document.getElementById('articleForm');
+      const indicator = document.getElementById('autosaveIndicator');
+      if (!form || !indicator) {
+        return;
+      }
+
+      const autosaveUrl = form.dataset.autosaveUrl;
+      const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+      const WATCH_SELECTOR = '#articleTitle, #articleSlug, #articleCategory, #articleTeaser, #articleContent, #articleSeoKeywords, #articleFeatured, #articleStatus';
+      const IDLE_DELAY_MS = 8000;
+      const TOLERANCE_MS = 2000;
+      const LOCAL_PREFIX = 'article-draft:';
+
+      let dirty = false;
+      let sending = false;
+      let restoring = false;
+      let timer = null;
+
+      const q = selector => form.querySelector(selector);
+      const syncEditor = () => window.tinymce?.get('articleContent')?.save();
+      const setIndicator = text => { indicator.textContent = text; };
+
+      // ----------------------------------------------------------------
+      // Lớp 1 — Bản sao trên chính máy này (localStorage): ghi ngay mỗi
+      // lần gõ, không cần mạng. Chống F5, tắt tab, mất điện, crash.
+      // ----------------------------------------------------------------
+      const localKey = () => LOCAL_PREFIX + (form.dataset.autosaveKey || 'new');
+
+      const readLocal = () => {
+        try {
+          return JSON.parse(localStorage.getItem(localKey()) || 'null');
+        } catch {
+          return null;
+        }
+      };
+
+      const writeLocal = () => {
+        if (restoring) return;
+        try {
+          syncEditor();
+          const payload = {
+            title: q('#articleTitle')?.value ?? '',
+            slug: q('#articleSlug')?.value ?? '',
+            category: q('#articleCategory')?.value ?? '',
+            excerpt: q('#articleTeaser')?.value ?? '',
+            content: q('#articleContent')?.value ?? '',
+            keywords: q('#articleSeoKeywords')?.value ?? '',
+            featured: q('#articleFeatured')?.checked ?? false,
+            products: [...form.querySelectorAll('.linked-product-check:checked')].map(item => item.value),
+            savedAt: Date.now()
+          };
+          localStorage.setItem(localKey(), JSON.stringify(payload));
+        } catch { /* localStorage đầy/bị chặn thì bỏ qua */ }
+      };
+
+      const serverUpdatedAtMs = () => Number(form.dataset.updatedAt || '0');
+
+      const restoreLocal = () => {
+        const data = readLocal();
+        if (!data?.savedAt) return;
+
+        if (data.savedAt <= serverUpdatedAtMs() + TOLERANCE_MS) {
+          // Nội dung đã được lưu chính thức mới hơn bản local -> dọn rác cũ.
+          try { localStorage.removeItem(localKey()); } catch {}
+          return;
+        }
+
+        restoring = true;
+        try {
+          if (q('#articleTitle')) q('#articleTitle').value = data.title || '';
+          if (q('#articleSlug')) q('#articleSlug').value = data.slug || '';
+          if (q('#articleCategory') && data.category) q('#articleCategory').value = data.category;
+          if (q('#articleTeaser')) q('#articleTeaser').value = data.excerpt || '';
+          if (q('#articleContent')) q('#articleContent').value = data.content || '';
+          window.tinymce?.get('articleContent')?.setContent(data.content || '');
+          if (q('#articleSeoKeywords')) q('#articleSeoKeywords').value = data.keywords || '';
+          if (q('#articleFeatured')) q('#articleFeatured').checked = !!data.featured;
+          if (Array.isArray(data.products)) {
+            form.querySelectorAll('.linked-product-check').forEach(box => {
+              box.checked = data.products.includes(box.value);
+              box.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+          }
+          setIndicator('Đã phục hồi nội dung lưu trên máy lúc ' + new Date(data.savedAt).toLocaleString('vi-VN'));
+        } finally {
+          restoring = false;
+        }
+      };
+
+      const adoptServerId = id => {
+        const oldLocalKey = localKey();
+        const idInput = q('input[name="Id"]');
+        if (idInput) {
+          idInput.value = id;
+        }
+        form.dataset.autosaveKey = 'post-' + id;
+        form.dataset.status = 'draft';
+        try {
+          const raw = localStorage.getItem(oldLocalKey);
+          if (raw) {
+            localStorage.setItem(LOCAL_PREFIX + 'post-' + id, raw);
+            localStorage.removeItem(oldLocalKey);
+          }
+        } catch {}
+        window.history.replaceState({}, '', '/admin/articles/Form?id=' + id);
+      };
+
+      // ----------------------------------------------------------------
+      // Lớp 2 — Tự lưu lên máy chủ sau khi ngừng gõ.
+      // ----------------------------------------------------------------
+      const buildFormData = () => {
+        const data = new FormData(form);
+        if (form.dataset.autosaveKey) {
+          data.set('autosaveKey', form.dataset.autosaveKey);
+        }
+        data.delete('CoverFile');
+        return data;
+      };
+
+      const scheduleSave = () => {
+        clearTimeout(timer);
+        timer = setTimeout(autoSave, IDLE_DELAY_MS);
+      };
+
+      const markDirty = () => {
+        if (restoring) return;
+        dirty = true;
+        writeLocal();
+        scheduleSave();
+      };
+
+      async function autoSave() {
+        if (!dirty || sending) {
+          return;
+        }
+
+        const titleInput = q('#articleTitle');
+        if (!titleInput?.value?.trim()) {
+          setIndicator('Nhập tiêu đề để bật tự động lưu.');
+          dirty = false;
+          return;
+        }
+
+        syncEditor();
+        sending = true;
+        dirty = false;
+        setIndicator('Đang tự lưu...');
+
+        try {
+          const response = await fetch(autosaveUrl, {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': token },
+            body: buildFormData(),
+            credentials: 'same-origin'
+          });
+
+          const payload = await response.json().catch(() => null);
+          if (!response.ok || !payload?.ok) {
+            throw new Error(payload?.reason || `HTTP ${response.status}`);
+          }
+
+          const savedAt = new Date().toLocaleTimeString('vi-VN');
+          if (payload.mode === 'post' && payload.id) {
+            if (Number(q('input[name="Id"]')?.value || 0) !== payload.id) {
+              adoptServerId(payload.id);
+            }
+            setIndicator('Đã tự lưu bản nháp lúc ' + savedAt);
+          } else {
+            setIndicator('Đã tự lưu nháp tạm lúc ' + savedAt + ' (chưa áp dụng lên bài đã xuất bản)');
+          }
+        } catch (error) {
+          dirty = true;
+          scheduleSave();
+          setIndicator('Tự lưu chưa được — sẽ thử lại. Nếu cần, bấm "Lưu bản nháp".');
+        } finally {
+          sending = false;
+        }
+      }
+
+      const sendBeaconSave = () => {
+        if (!dirty) return;
+        syncEditor();
+        try {
+          navigator.sendBeacon?.(autosaveUrl, buildFormData());
+          dirty = false;
+        } catch { /* bỏ qua */ }
+      };
+
+      document.addEventListener('input', event => {
+        if (event.target.closest('#articleForm') && event.target.matches(WATCH_SELECTOR)) {
+          markDirty();
+        }
+      });
+      document.addEventListener('change', event => {
+        if (event.target.closest('#articleForm') && event.target.matches(WATCH_SELECTOR)) {
+          markDirty();
+        }
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          sendBeaconSave();
+        }
+      });
+      window.addEventListener('pagehide', sendBeaconSave);
+
+      // TinyMCE chạy trong iframe nên phải theo dõi nội dung bằng cách so sánh định kỳ.
+      let lastEditorContent = '';
+      setInterval(() => {
+        const editor = window.tinymce?.get('articleContent');
+        if (!editor) return;
+
+        const content = editor.getContent();
+        if (content !== lastEditorContent) {
+          lastEditorContent = content;
+          markDirty();
+        }
+      }, 3000);
+
+      // Khôi phục bản sao trên máy (nếu mới hơn dữ liệu máy chủ) rồi mới bật watcher.
+      restoreLocal();
+
+      window.addEventListener('beforeunload', event => {
+        if (dirty) {
+          writeLocal();
+          sendBeaconSave();
+          event.preventDefault();
+          event.returnValue = '';
+        }
+      });
+    })();
+  </script>
+}

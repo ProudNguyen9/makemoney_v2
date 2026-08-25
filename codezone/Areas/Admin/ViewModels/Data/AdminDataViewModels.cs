@@ -131,7 +131,15 @@ public sealed record AdminSettingsViewModel(
     string FaviconUrl,
     string PriceUpdatedText,
     string ResponseTimeText,
-    string CacheMinutes);
+    string CacheMinutes,
+    string SmtpHost,
+    int SmtpPort,
+    bool SmtpEnableSsl,
+    string SmtpUserName,
+    bool SmtpHasPassword,
+    string SmtpFromEmail,
+    string SmtpFromName,
+    string SmtpToEmail);
 
 public sealed record AdminMediaListViewModel(
     IReadOnlyList<AdminMediaGroupOptionDto> GroupOptions,

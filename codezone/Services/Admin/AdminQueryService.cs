@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ScrapWebsite.Areas.Admin.ViewModels.Data;
 using ScrapWebsite.Areas.Admin.ViewModels.Forms;
 using ScrapWebsite.Data;
+using ScrapWebsite.Services;
 
 namespace ScrapWebsite.Services.Admin;
 
@@ -22,10 +24,12 @@ public sealed class AdminQueryService :
     private const int AdminListLimit = 50;
     private const int AdminPageSize = 20;
     private readonly AppDbContext _dbContext;
+    private readonly SmtpOptions _smtpFallback;
 
-    public AdminQueryService(AppDbContext dbContext)
+    public AdminQueryService(AppDbContext dbContext, IOptions<SmtpOptions> smtpOptions)
     {
         _dbContext = dbContext;
+        _smtpFallback = smtpOptions.Value;
     }
 
     public async Task<AdminDashboardViewModel> GetDashboardAsync(CancellationToken cancellationToken)
@@ -212,7 +216,7 @@ public sealed class AdminQueryService :
         PostFormViewModel form;
         if (id is null || id == 0)
         {
-            form = new PostFormViewModel { PublishedAt = DateTime.UtcNow };
+            form = new PostFormViewModel { PublishedAt = DateTime.UtcNow, AutosaveKey = $"new-{Guid.NewGuid():N}" };
         }
         else
         {
@@ -238,13 +242,40 @@ public sealed class AdminQueryService :
                 SortOrder = post.SortOrder,
                 IsFeatured = post.IsFeatured,
                 AuthorName = post.AuthorName,
+                SeoKeywords = post.SeoKeywords,
                 CurrentCoverUrl = post.CoverImage,
+                AutosaveKey = $"post-{post.Id}",
+                UpdatedAtUtc = post.UpdatedAt,
                 LinkedProductIds = post.ProductLinks
                     .OrderBy(link => link.SortOrder)
                     .ThenBy(link => link.Id)
                     .Select(link => link.ScrapItemId)
                     .ToList()
             };
+
+            // Khôi phục nội dung đang soạn dở (auto-save) nếu mới hơn lần lưu chính thức.
+            var autosaveKey = $"post-{post.Id}";
+            var autosavedAt = await _dbContext.PostAutosaves.AsNoTracking()
+                .Where(item => item.PostKey == autosaveKey)
+                .Select(item => (DateTime?)item.UpdatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (autosavedAt.HasValue && autosavedAt.Value > post.UpdatedAt.AddSeconds(-2))
+            {
+                var autosaveJson = await _dbContext.PostAutosaves.AsNoTracking()
+                    .Where(item => item.PostKey == autosaveKey)
+                    .Select(item => item.DataJson)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                var payload = autosaveJson is null ? null : PostAutosavePayloadMapper.Deserialize(autosaveJson);
+                if (payload is not null)
+                {
+                    // Giữ trạng thái gốc của bài viết, chỉ khôi phục nội dung đang soạn.
+                    PostAutosavePayloadMapper.ApplyTo(payload, form);
+                    form.AutosavedAtUtc = autosavedAt.Value;
+                    form.RestoredFromAutosave = true;
+                }
+            }
         }
 
         form.Categories = categories;
@@ -265,6 +296,14 @@ public sealed class AdminQueryService :
                 item.ShortDescription))
             .ToListAsync(cancellationToken);
         return form;
+    }
+
+    public async Task<string?> GetArticleStatusAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Posts.AsNoTracking()
+            .Where(post => post.Id == id && post.DeletedAt == null)
+            .Select(post => post.Status)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<AdminPriceListViewModel> GetPriceListAsync(string? group, string? status, string? query, int page, CancellationToken cancellationToken)
@@ -709,6 +748,12 @@ public sealed class AdminQueryService :
     {
         var settings = await LoadSettingsAsync(cancellationToken);
 
+        var smtpHost = Get(settings, "smtp.host", _smtpFallback.Host);
+        var smtpPortRaw = Get(settings, "smtp.port", _smtpFallback.Port > 0 ? _smtpFallback.Port.ToString() : "587");
+        var smtpPort = int.TryParse(smtpPortRaw, out var parsedPort) && parsedPort is > 0 and <= 65535 ? parsedPort : 587;
+        var smtpSslRaw = Get(settings, "smtp.enable_ssl", string.Empty);
+        var smtpEnableSsl = bool.TryParse(smtpSslRaw, out var sslFlag) ? sslFlag : _smtpFallback.EnableSsl;
+
         return new AdminSettingsViewModel(
             Get(settings, "site.name", "Phế Liệu Thành Trung"),
             Get(settings, "company.tax_code", "Đang cập nhật"),
@@ -724,7 +769,15 @@ public sealed class AdminQueryService :
             Get(settings, "site.favicon", "/favicon.ico"),
             Get(settings, "home.price_updated_text", DateTime.Today.ToString("dd/MM/yyyy")),
             Get(settings, "home.response_time_text", "30 phút"),
-            Get(settings, "system.cache_minutes", "5"));
+            Get(settings, "system.cache_minutes", "5"),
+            smtpHost,
+            smtpPort,
+            smtpEnableSsl,
+            Get(settings, "smtp.username", _smtpFallback.UserName),
+            !string.IsNullOrWhiteSpace(settings.GetValueOrDefault("smtp.password")),
+            Get(settings, "smtp.from_email", _smtpFallback.FromEmail),
+            Get(settings, "smtp.from_name", _smtpFallback.FromName),
+            Get(settings, "smtp.to_email", Get(settings, "contact.email", _smtpFallback.ToEmail ?? string.Empty)));
     }
 
     public async Task<AdminMediaListViewModel> GetMediaListAsync(string? group, string? query, CancellationToken cancellationToken)
