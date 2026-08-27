@@ -79,6 +79,14 @@
           <td>
             <div class="ta-actions">
               <a href="/admin/services/Form/@item.Id" aria-label="Sửa @item.Title"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+              <form method="post" action="/admin/services/ToggleFeatured" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@item.Id">
+                <input type="hidden" name="status" value="@Model.Status">
+                <input type="hidden" name="q" value="@Model.Query">
+                <input type="hidden" name="page" value="@Model.Page">
+                <button type="submit" class="@(item.IsFeatured ? "act-featured" : "")" aria-label="Nổi bật @item.Title" title="@(item.IsFeatured ? "Bỏ nổi bật" : "Nổi bật")"><i class="bi bi-star@(item.IsFeatured ? "-fill" : "")" aria-hidden="true"></i></button>
+              </form>
               <form method="post" action="/admin/services/Delete" class="d-inline" onsubmit="return confirm('Xóa dịch vụ &quot;@item.Title&quot;?')">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@item.Id">

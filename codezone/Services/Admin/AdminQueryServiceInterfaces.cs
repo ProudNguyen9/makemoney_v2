@@ -15,6 +15,10 @@ public interface IAdminScrapQueryService
     Task<IReadOnlyList<AdminCategoryOptionDto>> GetCategoryOptionsAsync(CancellationToken cancellationToken);
 
     Task<ScrapItemFormViewModel?> GetScrapFormAsync(int? id, CancellationToken cancellationToken);
+
+    Task<AdminScrapCategoryListViewModel> GetScrapCategoryListAsync(CancellationToken cancellationToken);
+
+    Task<ScrapCategoryFormViewModel?> GetScrapCategoryFormAsync(int? id, CancellationToken cancellationToken);
 }
 
 public interface IAdminArticleQueryService
@@ -34,6 +38,8 @@ public interface IAdminPriceQueryService
 public interface IAdminLeadQueryService
 {
     Task<AdminLeadListViewModel> GetLeadListAsync(string? status, string? scrap, string? area, string? query, int page, CancellationToken cancellationToken);
+
+    Task<AdminLeadDetailDto?> GetLeadDetailAsync(int id, CancellationToken cancellationToken);
 }
 
 public interface IAdminSeoQueryService

@@ -1,5 +1,7 @@
+@model ScrapWebsite.ViewModels.PriceBoardViewModel
 @{
     ViewData["Title"] = "Bảng giá";
+    var updatedText = Model.LastUpdatedAt?.ToString("dd/MM/yyyy") ?? DateTime.Today.ToString("dd/MM/yyyy");
 }
 
 <main class="price-page">
@@ -14,7 +16,7 @@
         <span class="tech-label">Bảng giá thu mua</span>
         <h1 id="prices-hero-title">Bảng giá phế liệu hôm nay</h1>
         <p class="page-hero-desc">
-          Giá thu mua tham khảo cập nhật [DD/MM/YYYY] cho phế liệu đồng, sắt, nhôm, inox và vật liệu khác.
+          Giá thu mua tham khảo cập nhật @updatedText cho phế liệu đồng, sắt, nhôm, inox và vật liệu khác.
           Gửi hình để nhận giá chính xác theo lô hàng của bạn.
         </p>
         <ol class="breadcrumb-line">
@@ -33,341 +35,81 @@
         <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
         <p class="mb-0">
           Giá mang tính tham khảo, biến động theo thị trường. Giá chốt cuối cùng phụ thuộc độ sạch, số lượng
-          và khu vực — gọi <a href="tel:[HOTLINE]"><strong>[HOTLINE]</strong></a> hoặc gửi hình để nhận báo giá chính xác.
+          và khu vực — gọi <a href="/lien-he"><strong>hotline</strong></a> hoặc gửi hình để nhận báo giá chính xác.
         </p>
       </div>
     </div>
   </section>
   <!-- ============================ PRICE NOTICE END ============================ -->
 
-  <!-- ============================ ANCHOR NAV START ============================ -->
-  <nav class="anchor-nav" aria-label="Điều hướng nhóm bảng giá">
-    <div class="container">
-      <div class="nav-scroll">
-        <a href="#gia-dong" class="active">Đồng</a>
-        <a href="#gia-sat">Sắt thép</a>
-        <a href="#gia-nhom">Nhôm</a>
-        <a href="#gia-inox">Inox</a>
-        <a href="#gia-khac">Vật liệu khác</a>
+  @if (Model.Groups.Count > 0)
+  {
+    <!-- ============================ ANCHOR NAV START ============================ -->
+    <nav class="anchor-nav" aria-label="Điều hướng nhóm bảng giá">
+      <div class="container">
+        <div class="nav-scroll">
+          @foreach (var group in Model.Groups.Select((g, i) => new { g, i }))
+          {
+            <a href="#@group.g.AnchorId" class="@(group.i == 0 ? "active" : null)">@group.g.Name</a>
+          }
+        </div>
       </div>
-    </div>
-  </nav>
-  <!-- ============================ ANCHOR NAV END ============================ -->
+    </nav>
+    <!-- ============================ ANCHOR NAV END ============================ -->
+  }
 
   <!-- ============================ PRICE GROUPS START ============================ -->
   <section class="section section--md" aria-label="Bảng giá theo nhóm chất liệu">
     <div class="container">
 
-      <!-- PRICE GROUP: ĐỒNG START -->
-      <section class="price-group" id="gia-dong" aria-labelledby="pg-dong-title">
-        <div class="price-group-head">
-          <span class="pg-swatch" aria-hidden="true" style="background:#B87333"></span>
-          <h2 id="pg-dong-title">Giá phế liệu đồng</h2>
-          <span class="pg-updated">Cập nhật [DD/MM/YYYY]</span>
-        </div>
-        <p class="price-group-desc">
-          Đồng là nhóm có giá trị cao nhất trong các loại phế liệu thông thường. Cùng là dây đồng nhưng bóc vỏ sẵn,
-          nguyên trạng hay đã qua đốt thì giá chênh nhau tới vài chục nghìn mỗi ký — phân loại càng kỹ, bạn càng bán được giá tốt.
-        </p>
-        <div class="price-board">
-          <div class="table-scroll reveal">
-          <table class="table table-price align-middle">
-            <caption class="visually-hidden">Bảng giá thu mua phế liệu đồng, đơn vị tính theo kg</caption>
-            <thead>
-              <tr>
-                <th scope="col">Loại</th>
-                <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#B87333"></span>Đồng đỏ sạch</td>
-                <td class="mat-type">Đồng đỏ bóc vỏ, không lẫn chì thiếc</td>
-                <td class="text-end"><span class="price-value">75.000 – 95.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#DAA520"></span>Đồng vàng</td>
-                <td class="mat-type">Đồng thau, cây đồng vàng nguyên trạng</td>
-                <td class="text-end"><span class="price-value">55.000 – 65.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#8E5A3B"></span>Đồng cáp</td>
-                <td class="mat-type">Cáp đồng đa sợi đã bọc tách sẵn</td>
-                <td class="text-end"><span class="price-value">50.000 – 60.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#C08552"></span>Dây điện bọc nhựa</td>
-                <td class="mat-type">Mua nguyên trạng theo ký, chưa bóc vỏ</td>
-                <td class="text-end"><span class="price-value">30.000 – 40.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#B06E3B"></span>Đồng máy lạnh</td>
-                <td class="mat-type">Ống đồng giàn nóng, đã bóc cách nhiệt</td>
-                <td class="text-end"><span class="price-value">60.000 – 70.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#C7A17A"></span>Đồng milk</td>
-                <td class="mat-type">Đồng tán mảnh, vụn từ công nghiệp</td>
-                <td class="text-end"><span class="price-value">45.000 – 52.000</span></td>
-                <td class="text-end"><span class="price-trend down"><i class="bi bi-graph-down-arrow" aria-hidden="true"></i>-2%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#D97B29"></span>Đồng super blank</td>
-                <td class="mat-type">Tấm đồng sạch, không lẫn tạp chất</td>
-                <td class="text-end"><span class="price-value">100.000 – 115.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+3%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#6B4A2F"></span>Đồng cháy</td>
-                <td class="mat-type">Đồng đã qua đốt, lẫn tro và tạp chất</td>
-                <td class="text-end"><span class="price-value">40.000 – 50.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-            </tbody>
-          </table>
+      @foreach (var group in Model.Groups)
+      {
+        <!-- PRICE GROUP: @(group.Name.ToUpperInvariant()) START -->
+        <section class="price-group" id="@group.AnchorId" aria-labelledby="pg-@group.Slug-title">
+          <div class="price-group-head">
+            <span class="pg-swatch" aria-hidden="true"></span>
+            <h2 id="pg-@group.Slug-title">Giá phế liệu @group.Name</h2>
+            <span class="pg-updated">Cập nhật @(group.UpdatedAt?.ToString("dd/MM/yyyy") ?? updatedText)</span>
           </div>
-        </div>
-      </section>
-      <!-- PRICE GROUP: ĐỒNG END -->
+          @if (!string.IsNullOrWhiteSpace(group.Description))
+          {
+            <p class="price-group-desc">@group.Description</p>
+          }
+          <div class="price-board">
+            <div class="table-scroll reveal">
+              <table class="table table-price align-middle">
+                <caption class="visually-hidden">Bảng giá thu mua phế liệu @group.Name, đơn vị tính theo kg</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Loại</th>
+                    <th scope="col">Phân loại</th>
+                    <th scope="col" class="text-end">Giá thu mua (đ/@group.Rows[0].Unit)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach (var row in group.Rows)
+                  {
+                    <tr>
+                      @if (row.IsFirstOfItem)
+                      {
+                        <td class="mat-name" rowspan="@row.RowSpan"><span class="mat-swatch" aria-hidden="true"></span>@row.ItemName</td>
+                      }
+                      <td class="mat-type">@row.ShortDescription</td>
+                      <td class="text-end"><span class="price-value">@row.PriceText</span></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <!-- PRICE GROUP: @(group.Name.ToUpperInvariant()) END -->
+      }
 
-      <!-- PRICE GROUP: SẮT THÉP START -->
-      <section class="price-group" id="gia-sat" aria-labelledby="pg-sat-title">
-        <div class="price-group-head">
-          <span class="pg-swatch" aria-hidden="true" style="background:#8B4513"></span>
-          <h2 id="pg-sat-title">Giá phế liệu sắt thép</h2>
-          <span class="pg-updated">Cập nhật [DD/MM/YYYY]</span>
-        </div>
-        <p class="price-group-desc">
-          Sắt thép thường đi theo từng đợt dọn công trình, tháo nhà xưởng. Giá theo tải — lô trên 2 tấn
-          chúng tôi điều chỉnh lên theo cân nặng thực tế sau khi cân tại kho của bạn.
-        </p>
-        <div class="price-board">
-          <div class="table-scroll reveal">
-          <table class="table table-price align-middle">
-            <caption class="visually-hidden">Bảng giá thu mua phế liệu sắt thép, đơn vị tính theo kg</caption>
-            <thead>
-              <tr>
-                <th scope="col">Loại</th>
-                <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#8B4513"></span>Sắt vụn</td>
-                <td class="mat-type">Sắt lẫn tạp, ghế sắt, phế tùy hình</td>
-                <td class="text-end"><span class="price-value">6.000 – 9.000</span></td>
-                <td class="text-end"><span class="price-trend down"><i class="bi bi-graph-down-arrow" aria-hidden="true"></i>-1%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#5E6668"></span>Sắt công trình</td>
-                <td class="mat-type">Thép xây dựng, dầm, kèo tháo dỡ</td>
-                <td class="text-end"><span class="price-value">8.000 – 11.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#4A4F52"></span>Thép phế kiện</td>
-                <td class="mat-type">Thép cuộn, thép thanh còn nguyên hình</td>
-                <td class="text-end"><span class="price-value">9.000 – 12.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#3F4447"></span>Bàn ghế sắt cũ</td>
-                <td class="mat-type">Khung sắt nội thất, sắt mỏng tán đinh</td>
-                <td class="text-end"><span class="price-value">5.000 – 7.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#6B7377"></span>Tôn mỏng cũ</td>
-                <td class="mat-type">Tôn lợp, tôn viền đã qua sử dụng</td>
-                <td class="text-end"><span class="price-value">5.000 – 8.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </section>
-      <!-- PRICE GROUP: SẮT THÉP END -->
-
-      <!-- PRICE GROUP: NHÔM START -->
-      <section class="price-group" id="gia-nhom" aria-labelledby="pg-nhom-title">
-        <div class="price-group-head">
-          <span class="pg-swatch" aria-hidden="true" style="background:#C0C0C0"></span>
-          <h2 id="pg-nhom-title">Giá phế liệu nhôm</h2>
-          <span class="pg-updated">Cập nhật [DD/MM/YYYY]</span>
-        </div>
-        <p class="price-group-desc">
-          Nhôm thanh cửa kính kệ sắt luôn đứng giá cao nhất trong nhóm nhôm. Nếu bạn tháo được riêng phần thanh định hình
-          ra khỏi gioăng và ốc vít trước khi bán, giá chênh đáng kể so với để lẫn chung một đống.
-        </p>
-        <div class="price-board">
-          <div class="table-scroll reveal">
-          <table class="table table-price align-middle">
-            <caption class="visually-hidden">Bảng giá thu mua phế liệu nhôm, đơn vị tính theo kg</caption>
-            <thead>
-              <tr>
-                <th scope="col">Loại</th>
-                <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#D8D8D4"></span>Nhôm thanh định hình</td>
-                <td class="mat-type">Thanh nhôm cửa, khung kính sạch</td>
-                <td class="text-end"><span class="price-value">30.000 – 35.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+2%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#C0C0C0"></span>Nhôm vụn</td>
-                <td class="mat-type">Nhôm cắt gọn, mảnh vụn công nghiệp</td>
-                <td class="text-end"><span class="price-value">22.000 – 26.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#B3B7BA"></span>Nhôm máy</td>
-                <td class="mat-type">Vỏ máy, chi tiết nhôm đúc nguyên khối</td>
-                <td class="text-end"><span class="price-value">25.000 – 30.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#9FA4A8"></span>Nhôm hợp kim</td>
-                <td class="mat-type">Hợp kim nhôm lẫn tạp, mâm xăng đúc</td>
-                <td class="text-end"><span class="price-value">15.000 – 20.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </section>
-      <!-- PRICE GROUP: NHÔM END -->
-
-      <!-- PRICE GROUP: INOX START -->
-      <section class="price-group" id="gia-inox" aria-labelledby="pg-inox-title">
-        <div class="price-group-head">
-          <span class="pg-swatch" aria-hidden="true" style="background:#A8A9AD"></span>
-          <h2 id="pg-inox-title">Giá phế liệu inox</h2>
-          <span class="pg-updated">Cập nhật [DD/MM/YYYY]</span>
-        </div>
-        <p class="price-group-desc">
-          Inox 304 và 201 nhìn gần giống nhau nhưng giá bán ra chênh gần gấp đôi. Nếu không chắc lô hàng của mình thuộc loại nào,
-          chụp ảnh gửi qua — nhân viên nhận biết bằng nam châm và kinh nghiệm, báo đúng loại để bạn so giá.
-        </p>
-        <div class="price-board">
-          <div class="table-scroll reveal">
-          <table class="table table-price align-middle">
-            <caption class="visually-hidden">Bảng giá thu mua phế liệu inox, đơn vị tính theo kg</caption>
-            <thead>
-              <tr>
-                <th scope="col">Loại</th>
-                <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#A8A9AD"></span>Inox 304</td>
-                <td class="mat-type">Inox không nam châm, bồn tắm inox</td>
-                <td class="text-end"><span class="price-value">13.000 – 18.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#C2C3C6"></span>Inox 201</td>
-                <td class="mat-type">Inox hút nhẹ nam châm, inox dân dụng</td>
-                <td class="text-end"><span class="price-value">8.000 – 11.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#8F9296"></span>Inox 316</td>
-                <td class="mat-type">Inox chống ăn mòn, ứng dụng hóa chất</td>
-                <td class="text-end"><span class="price-value">20.000 – 25.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#B9BCC0"></span>Phế inox tấm</td>
-                <td class="mat-type">Tấm inox đục lỗ, tấm cắt dư công trình</td>
-                <td class="text-end"><span class="price-value">10.000 – 14.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </section>
-      <!-- PRICE GROUP: INOX END -->
-
-      <!-- PRICE GROUP: VẬT LIỆU KHÁC START -->
-      <section class="price-group" id="gia-khac" aria-labelledby="pg-khac-title">
-        <div class="price-group-head">
-          <span class="pg-swatch" aria-hidden="true" style="background:#6B7377"></span>
-          <h2 id="pg-khac-title">Giá các vật liệu khác</h2>
-          <span class="pg-updated">Cập nhật [DD/MM/YYYY]</span>
-        </div>
-        <p class="price-group-desc">
-          Nhóm vật liệu lẻ ngoài kim loại phổ biến. Riêng bo mạch điện tử giá tính theo lô vì phụ thuộc tỷ lệ vàng,
-          số lượng linh kiện còn nguyên trên mạch — gọi hotline để được định giá từng thùng hàng.
-        </p>
-        <div class="price-board">
-          <div class="table-scroll reveal">
-          <table class="table table-price align-middle">
-            <caption class="visually-hidden">Bảng giá thu mua các vật liệu phế liệu khác</caption>
-            <thead>
-              <tr>
-                <th scope="col">Loại</th>
-                <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#5A6B7A"></span>Chì</td>
-                <td class="mat-type">Chì ắc quy đã tháo vỏ, chì tấm</td>
-                <td class="text-end"><span class="price-value">20.000 – 25.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#9BA8B0"></span>Kẽm</td>
-                <td class="mat-type">Tấm kẽm, kẽm đúc dư trong đúc hàng</td>
-                <td class="text-end"><span class="price-value">15.000 – 18.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#1F7A4D"></span>Bo mạch điện tử</td>
-                <td class="mat-type">Bo mạch, main lỗi — định giá theo lô</td>
-                <td class="text-end"><span class="price-value">Liên hệ</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Theo lô</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#C9A87C"></span>Giấy carton</td>
-                <td class="mat-type">Thùng carton khô, ép kiện gọn</td>
-                <td class="text-end"><span class="price-value">2.000 – 4.000</span></td>
-                <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Ổn định</span></td>
-              </tr>
-              <tr>
-                <td class="mat-name"><span class="mat-swatch" aria-hidden="true" style="background:#D9463E"></span>Nhựa ABS</td>
-                <td class="mat-type">Nhựa công nghiệp, vỏ thiết bị tách riêng</td>
-                <td class="text-end"><span class="price-value">8.000 – 12.000</span></td>
-                <td class="text-end"><span class="price-trend up"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>+1%</span></td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </section>
-      <!-- PRICE GROUP: VẬT LIỆU KHÁC END -->
+      @if (Model.Groups.Count == 0)
+      {
+        <div class="alert alert-info">Bảng giá đang được cập nhật — vui lòng quay lại sau hoặc gọi hotline để được báo giá trực tiếp.</div>
+      }
 
       <div class="d-flex flex-wrap align-items-center gap-3 reveal">
         <button class="btn btn-primary" type="button" data-quote-open>
@@ -455,97 +197,6 @@
     </div>
   </section>
   <!-- ============================ QUOTE CTA BAND END ============================ -->
-
-  <!-- ============================ FAQ START ============================ -->
-  <section class="section section--paper" aria-labelledby="faq-title">
-    <div class="container">
-      <div class="row row-editorial">
-        <div class="col-lg-4 reveal">
-          <div class="sec-head">
-            <span class="sec-label">Câu hỏi về bảng giá</span>
-            <h2 class="sec-title" id="faq-title">Khách hỏi về giá thu mua</h2>
-            <p class="sec-desc">Không tìm thấy câu trả lời? Gọi <a href="tel:[HOTLINE]">[HOTLINE]</a> hoặc chat Zalo để được tư vấn nhanh.</p>
-          </div>
-        </div>
-        <div class="col-lg-8">
-          <!-- FAQ LIST START -->
-          <div class="accordion faq-accordion reveal" id="faqPrices">
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrice1" aria-expanded="true" aria-controls="faqPrice1">
-                  Bảng giá này được cập nhật khi nào?
-                </button>
-              </h3>
-              <div id="faqPrice1" class="accordion-collapse collapse show" data-bs-parent="#faqPrices">
-                <div class="accordion-body">
-                  Chúng tôi đối chiếu giá kim loại thế giới và giá các kho đầu mối mỗi sáng, bảng giá trên trang này
-                  cập nhật [hàng ngày]. Trong ngày nếu thị trường biến động mạnh, mức báo giá qua điện thoại có thể
-                  khác chút so với bảng — nhân viên luôn báo rõ trước khi hẹn khảo sát.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrice2" aria-expanded="false" aria-controls="faqPrice2">
-                  Vì sao giá thực nhận khác giá trong bảng?
-                </button>
-              </h3>
-              <div id="faqPrice2" class="accordion-collapse collapse" data-bs-parent="#faqPrices">
-                <div class="accordion-body">
-                  Bảng giá là khung tham khảo cho hàng sạch, số lượng lớn. Lô của bạn có thể lẫn tạp chất, ướt nước
-                  hoặc nằm ở khu vực xa — sau khi xem hình hoặc đến khảo sát, nhân viên sẽ báo giá cụ thể kèm lý do
-                  chênh lệch, bạn hoàn toàn quyết định bán hay không.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrice3" aria-expanded="false" aria-controls="faqPrice3">
-                  Lô hàng lớn có được giá tốt hơn không?
-                </button>
-              </h3>
-              <div id="faqPrice3" class="accordion-collapse collapse" data-bs-parent="#faqPrices">
-                <div class="accordion-body">
-                  Có. Với lô đồng từ 1 tấn, sắt thép từ 5 tấn hoặc thanh lý toàn bộ nhà xưởng, chúng tôi tính giá theo bậc
-                  khối lượng và cử xe chuyên dụng — mức cộng thêm có thể từ vài phần trăm tới hàng trăm nghìn đồng mỗi tấn
-                  so với giá lẻ trong bảng.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrice4" aria-expanded="false" aria-controls="faqPrice4">
-                  Có xuất hóa đơn VAT khi thu mua không?
-                </button>
-              </h3>
-              <div id="faqPrice4" class="accordion-collapse collapse" data-bs-parent="#faqPrices">
-                <div class="accordion-body">
-                  Có. Doanh nghiệp cần hồ sơ đầy đủ sẽ được xuất hóa đơn mua phế liệu theo quy định, kèm phiếu cân
-                  và biên bản giao nhận. Bạn chỉ cần cung cấp mã số thuế và thông tin xuất hóa đơn trước khi thu gom.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrice5" aria-expanded="false" aria-controls="faqPrice5">
-                  Khu vực nào được nhận thu gom tận nơi?
-                </button>
-              </h3>
-              <div id="faqPrice5" class="accordion-collapse collapse" data-bs-parent="#faqPrices">
-                <div class="accordion-body">
-                  Đội xe phủ Đồng Nai, TP. Hồ Chí Minh, Bình Dương, Bà Rịa – Vũng Tàu và Long An. Với lô lớn,
-                  chúng tôi vẫn nhận tại các tỉnh lân cận — xem chi tiết từng khu vực và bảng giá áp dụng
-                  tại trang <a href="/khu-vuc">khu vực thu mua</a>.
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- FAQ LIST END -->
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ FAQ END ============================ -->
 
   <!-- ============================ SEO CONTENT START ============================ -->
   <section class="section section--surface" aria-labelledby="seo-title">

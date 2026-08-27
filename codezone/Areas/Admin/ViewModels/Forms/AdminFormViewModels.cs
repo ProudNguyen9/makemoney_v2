@@ -64,6 +64,26 @@ public sealed class ScrapItemFormViewModel
     public IReadOnlyList<AdminCategoryOptionDto> Categories { get; set; } = Array.Empty<AdminCategoryOptionDto>();
 }
 
+public sealed class ScrapCategoryFormViewModel
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Vui lòng nhập tên nhóm phế liệu.")]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(255)]
+    public string? Slug { get; set; }
+
+    public string? Description { get; set; }
+
+    [Range(0, 9999)]
+    public int SortOrder { get; set; }
+
+    [MaxLength(30)]
+    public string Status { get; set; } = "published";
+}
+
 public sealed class PriceBulkRowInput
 {
     public int PriceId { get; set; }

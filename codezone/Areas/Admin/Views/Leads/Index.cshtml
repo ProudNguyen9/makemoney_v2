@@ -108,7 +108,7 @@
         @foreach (var lead in Model.Items)
         {
           <tr data-lead-row="@lead.Id">
-            <td><strong>@lead.Code</strong></td>
+            <td><strong><a class="text-decoration-none" href="/admin/leads/detail/@lead.Id" title="Xem chi tiết @lead.Code">@lead.Code</a></strong></td>
             <td>
               <strong>@lead.CustomerName</strong>
               <small class="d-block text-muted"><a href="tel:@lead.Phone">@lead.Phone</a>@(string.IsNullOrWhiteSpace(lead.Zalo) ? "" : $" · Zalo: {lead.Zalo}")</small>

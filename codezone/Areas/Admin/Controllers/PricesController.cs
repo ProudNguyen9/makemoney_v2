@@ -39,10 +39,25 @@ public class PricesController : Controller
             return RedirectToAction(nameof(Index), new { group, status, q, page });
         }
 
-        var changed = await _priceCommandService.SavePriceBulkAsync(rows ?? [], cancellationToken);
-        TempData["Success"] = changed > 0
-            ? $"Đã cập nhật {changed} dòng giá (đã ghi lịch sử thay đổi)."
-            : "Không có dòng giá nào thay đổi.";
+        var input = rows ?? [];
+        // PRI-002: dòng tick chọn nhưng giá trống/không hợp lệ sẽ không được lưu và được báo rõ cho người dùng.
+        var skipped = input.Count(row => row.Selected && !row.PriceValue.HasValue);
+        var changed = await _priceCommandService.SavePriceBulkAsync(input, cancellationToken);
+
+        if (changed > 0)
+        {
+            TempData["Success"] = $"Đã cập nhật {changed} dòng giá (đã ghi lịch sử thay đổi).";
+        }
+        else if (skipped == 0)
+        {
+            TempData["Success"] = "Không có dòng giá nào thay đổi.";
+        }
+
+        if (skipped > 0)
+        {
+            TempData["Error"] = $"Bỏ qua {skipped} dòng vì giá đang trống hoặc không hợp lệ — hãy nhập số giá rồi lưu lại.";
+        }
+
         return RedirectToAction(nameof(Index), new { group, status, q, page });
     }
 

@@ -103,6 +103,7 @@ CREATE TABLE dbo.ScrapItems (
     PublishedAt DATETIME2(0) NULL,
     CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_ScrapItems_CreatedAt DEFAULT SYSUTCDATETIME(),
     UpdatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_ScrapItems_UpdatedAt DEFAULT SYSUTCDATETIME(),
+    DeletedAt DATETIME2(0) NULL,
     CONSTRAINT FK_ScrapItems_ScrapCategories FOREIGN KEY (ScrapCategoryId) REFERENCES dbo.ScrapCategories(Id)
 );
 

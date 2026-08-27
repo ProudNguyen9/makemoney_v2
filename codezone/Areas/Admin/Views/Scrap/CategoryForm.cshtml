@@ -1,0 +1,59 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Forms.ScrapCategoryFormViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = Model.Id == 0 ? "Thêm nhóm phế liệu" : $"Sửa nhóm: {Model.Name}";
+    ViewData["AdminSection"] = "scrap";
+    ViewData["AdminSubSection"] = "categories";
+}
+
+<div class="admin-page-head">
+  <h1>@(Model.Id == 0 ? "Thêm nhóm phế liệu" : $"Sửa nhóm: {Model.Name}")<small>Nhóm hiển thị trong dropdown chuyên mục và trang public /phe-lieu</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-outline-dark" href="/admin/scrap/Categories"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách nhóm</a>
+    <button class="btn btn-primary" type="submit" form="scrapCategoryForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu</button>
+  </div>
+</div>
+
+<form id="scrapCategoryForm" action="/admin/scrap/SaveCategory" method="post">
+  @Html.AntiForgeryToken()
+  <input type="hidden" name="Id" value="@Model.Id">
+  <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+  <div class="row">
+    <div class="col-xxl-7 col-xl-8 col-lg-9">
+      <div class="admin-panel mb-0">
+        <div class="panel-head">
+          <h2>Thông tin nhóm</h2>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label-tech" for="catName">Tên nhóm<span class="required-mark">*</span></label>
+              <input class="form-control" id="catName" name="Name" type="text" value="@Model.Name" required maxlength="100" placeholder="VD: Đồng, Sắt thép, Nhôm...">
+              <span class="text-danger small" asp-validation-for="Name"></span>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label-tech" for="catSlug">Slug</label>
+              <input class="form-control" id="catSlug" name="Slug" type="text" value="@Model.Slug" maxlength="255" placeholder="Để trống để tự sinh từ tên">
+            </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="catDesc">Mô tả ngắn</label>
+              <textarea class="form-control" id="catDesc" name="Description" rows="3">@Model.Description</textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="catOrder">Thứ tự</label>
+              <input class="form-control" id="catOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các nhóm khác.">
+              <p class="small text-muted mt-1 mb-0">Lưu sẽ đánh lại số liên tục.</p>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-tech" for="catStatus">Trạng thái</label>
+              <select class="form-select" id="catStatus" name="Status">
+                <option value="published" selected="@(Model.Status == "published")">Đã xuất bản</option>
+                <option value="draft" selected="@(Model.Status != "published")">Bản nháp (ẩn)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

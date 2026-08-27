@@ -63,7 +63,12 @@ public sealed class AdminCommandService :
 
     public async Task<int> SavePriceBulkAsync(IReadOnlyList<PriceBulkRowInput> rows, CancellationToken cancellationToken)
     {
-        var selectedIds = rows.Where(row => row.Selected).Select(row => row.PriceId).ToList();
+        // PRI-002: dòng được tick nhưng giá trống/không hợp lệ thì bỏ qua,
+        // không bao giờ ghi PriceValue = NULL xuống DB.
+        var selectedIds = rows
+            .Where(row => row.Selected && row.PriceValue.HasValue)
+            .Select(row => row.PriceId)
+            .ToList();
         if (selectedIds.Count == 0)
         {
             return 0;
@@ -75,7 +80,7 @@ public sealed class AdminCommandService :
 
         var changed = 0;
         var affectedItemIds = new HashSet<int>();
-        foreach (var row in rows.Where(row => row.Selected && prices.ContainsKey(row.PriceId)))
+        foreach (var row in rows.Where(row => row.Selected && row.PriceValue.HasValue && prices.ContainsKey(row.PriceId)))
         {
             var price = prices[row.PriceId];
             var valueChanged = price.PriceValue != row.PriceValue;
@@ -194,7 +199,7 @@ public sealed class AdminCommandService :
             _dbContext.ScrapItems.AsNoTracking(),
             SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? form.Name : form.Slug),
             form.Id,
-            filterDeleted: false,
+            filterDeleted: true,
             cancellationToken);
 
         ScrapItem item;
@@ -302,20 +307,83 @@ public sealed class AdminCommandService :
     public async Task<bool> DeleteScrapItemAsync(int id, CancellationToken cancellationToken)
     {
         var item = await _dbContext.ScrapItems
-            .Include(scrap => scrap.Images)
             .FirstOrDefaultAsync(scrap => scrap.Id == id, cancellationToken);
-        if (item is null)
+        if (item is null || item.DeletedAt != null)
         {
             return false;
         }
 
-        await _imageUpload.DeleteUploadedImageAsync(item.PrimaryImage, cancellationToken);
-        foreach (var image in item.Images)
+        // SCR-007: xóa mềm — chỉ ẩn khỏi danh sách và website, dữ liệu giá/ảnh giữ nguyên để khôi phục được.
+        item.DeletedAt = DateTime.UtcNow;
+        item.Status = Draft;
+        item.IsFeatured = false;
+        item.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Nhóm phế liệu
+    // ------------------------------------------------------------------
+
+    public async Task<int> SaveScrapCategoryAsync(ScrapCategoryFormViewModel form, CancellationToken cancellationToken)
+    {
+        var name = form.Name.Trim();
+        var baseSlug = SlugHelper.ToSlug(string.IsNullOrWhiteSpace(form.Slug) ? name : form.Slug);
+
+        // Slug duy nhất trong phạm vi nhóm chưa xóa.
+        var candidate = baseSlug;
+        var suffix = 2;
+        while (await _dbContext.ScrapCategories.AsNoTracking()
+                   .AnyAsync(category => category.Slug == candidate && category.Id != form.Id, cancellationToken))
         {
-            await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+            candidate = $"{baseSlug}-{suffix++}";
         }
 
-        _dbContext.ScrapItems.Remove(item); // prices + history cascade in DB
+        ScrapCategory entity;
+        if (form.Id == 0)
+        {
+            // ScrapCategories.Id is not an IDENTITY column in the local database (seeded with explicit ids),
+            // so the next id is allocated here.
+            var nextId = await _dbContext.ScrapCategories.AsNoTracking().MaxAsync(category => (int?)category.Id, cancellationToken) + 1 ?? 1;
+            entity = new ScrapCategory { Id = nextId };
+            _dbContext.ScrapCategories.Add(entity);
+        }
+        else
+        {
+            entity = await _dbContext.ScrapCategories.FirstOrDefaultAsync(category => category.Id == form.Id, cancellationToken)
+                ?? throw new InvalidOperationException($"Không tìm thấy nhóm phế liệu #{form.Id}.");
+        }
+
+        entity.Name = name;
+        entity.Slug = candidate;
+        entity.Description = CleanOptional(form.Description);
+        entity.Status = form.Status == Draft ? Draft : Published;
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        await RenumberSortAsync(_dbContext.ScrapCategories, entity.Id, form.SortOrder, cancellationToken);
+        return entity.Id;
+    }
+
+    Task<bool> IAdminScrapCommandService.ToggleCategoryStatusAsync(int id, CancellationToken cancellationToken)
+        => ToggleAsync(_dbContext.ScrapCategories, id, cancellationToken);
+
+    public async Task<bool> DeleteScrapCategoryAsync(int id, CancellationToken cancellationToken)
+    {
+        var category = await _dbContext.ScrapCategories
+            .Include(item => item.ScrapItems)
+            .FirstOrDefaultAsync(item => item.Id == id, cancellationToken);
+        if (category is null)
+        {
+            return false;
+        }
+
+        if (category.ScrapItems.Any())
+        {
+            throw new InvalidOperationException(
+                $"Nhóm \"{category.Name}\" còn {category.ScrapItems.Count} loại phế liệu, không thể xóa. Hãy chuyển hoặc xóa hết phế liệu trong nhóm trước.");
+        }
+
+        _dbContext.ScrapCategories.Remove(category);
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
@@ -1034,6 +1102,14 @@ public sealed class AdminCommandService :
             throw new InvalidOperationException("Khóa tự lưu không hợp lệ.");
         }
 
+        // ART-008: chặn race condition — sendBeacon lúc unload có thể đến SAU khi lưu chính thức
+        // và ghi đè bản autosave vừa bị dọn. Nếu khóa này vừa được dọn sạch (trong cửa sổ ngắn)
+        // thì bỏ qua lần ghi trễ đó để không còn sót nội dung stale trong PostAutosaves.
+        if (_cache.TryGetValue(AutosaveClearedCacheKey(postKey), out _))
+        {
+            return;
+        }
+
         var json = PostAutosavePayloadMapper.Serialize(PostAutosavePayloadMapper.FromForm(form));
         var autosave = await _dbContext.PostAutosaves.FirstOrDefaultAsync(item => item.PostKey == postKey, cancellationToken);
         if (autosave is null)
@@ -1065,7 +1141,15 @@ public sealed class AdminCommandService :
             _dbContext.PostAutosaves.RemoveRange(stale);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
+
+        // Đánh dấu các khóa vừa dọn trong ~15 giây: beacon autosave gửi trễ trong cửa sổ này sẽ bị bỏ qua.
+        foreach (var key in keys)
+        {
+            _cache.Set(AutosaveClearedCacheKey(key), DateTime.UtcNow, TimeSpan.FromSeconds(15));
+        }
     }
+
+    private static string AutosaveClearedCacheKey(string postKey) => $"admin:autosave-cleared:{postKey}";
 
     Task<bool> IAdminArticleCommandService.ToggleStatusAsync(int id, CancellationToken cancellationToken)
         => ToggleAsync(_dbContext.Posts, id, cancellationToken);
@@ -1081,8 +1165,9 @@ public sealed class AdminCommandService :
             return false;
         }
 
+        // ART-010/011: giữ nguyên Status khi xóa mềm để Restore trả về đúng trạng thái trước xóa.
+        // Public đã lọc DeletedAt == null nên bài published đã xóa không lộ ra ngoài.
         entity.DeletedAt = DateTime.UtcNow;
-        entity.Status = Draft;
         entity.UpdatedAt = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;

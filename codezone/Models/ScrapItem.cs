@@ -34,6 +34,8 @@ public class ScrapItem
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    public DateTime? DeletedAt { get; set; }
+
     public ScrapCategory? Category { get; set; }
 
     public ICollection<ScrapImage> Images { get; set; } = new List<ScrapImage>();

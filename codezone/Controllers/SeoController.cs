@@ -73,7 +73,7 @@ public class SeoController : Controller
         Add("/lien-he", DateTime.UtcNow, "monthly", 0.6m);
 
         var scrapItems = await _dbContext.ScrapItems.AsNoTracking()
-            .Where(item => item.Status == Published)
+            .Where(item => item.Status == Published && item.DeletedAt == null)
             .Select(item => new { item.Id, item.Slug, item.UpdatedAt, item.PublishedAt })
             .ToListAsync(cancellationToken);
         foreach (var item in scrapItems)

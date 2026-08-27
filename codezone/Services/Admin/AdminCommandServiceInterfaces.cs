@@ -29,6 +29,13 @@ public interface IAdminScrapCommandService
     Task<bool> UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken);
 
     Task<bool> DeleteScrapItemAsync(int id, CancellationToken cancellationToken);
+
+    Task<int> SaveScrapCategoryAsync(ScrapCategoryFormViewModel form, CancellationToken cancellationToken);
+
+    Task<bool> ToggleCategoryStatusAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>Chỉ xóa được nhóm rỗng; ném InvalidOperationException nếu nhóm còn phế liệu.</summary>
+    Task<bool> DeleteScrapCategoryAsync(int id, CancellationToken cancellationToken);
 }
 
 public interface IAdminServiceCommandService

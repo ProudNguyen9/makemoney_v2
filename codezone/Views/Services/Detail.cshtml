@@ -1,5 +1,8 @@
 @{
     ViewData["Title"] = "Chi tiết dịch vụ";
+    var service = (ScrapWebsite.Controllers.ServiceDetailDto)(ViewData["Service"]
+        ?? new ScrapWebsite.Controllers.ServiceDetailDto(0, "Dịch vụ", "", null, null, null));
+    var serviceFaq = (codezone.ViewModels.Shared.FaqAccordionViewModel)(ViewData["Faq"] ?? new codezone.ViewModels.Shared.FaqAccordionViewModel("faqServiceDetail", []));
 }
 
 <main>
@@ -7,318 +10,51 @@
   <!-- ============================ PAGE HERO START ============================ -->
   <section class="page-hero" aria-labelledby="service-hero-title">
     <div class="page-hero-bg" aria-hidden="true">
-      <img src="~/assets/images/projects/project-01-cover.svg" alt="" width="1600" height="900" fetchpriority="high">
+      <img src="@(string.IsNullOrWhiteSpace(service.CoverImage) ? "/assets/images/projects/project-01-cover.svg" : service.CoverImage)" alt="" width="1600" height="900" fetchpriority="high">
     </div>
     <div class="container">
       <div class="page-hero-inner">
         <span class="tech-label">Dịch vụ</span>
-        <h1 id="service-hero-title">Thu mua và thanh lý nhà xưởng trọn gói</h1>
-        <p class="page-hero-desc">
-          Một đầu mối cho toàn bộ: định giá phế liệu — tháo dỡ — vận chuyển — thanh toán —
-          bàn giao mặt bằng sạch. Bạn chỉ việc chốt thời gian, phần còn lại để chúng tôi lo.
-        </p>
+        <h1 id="service-hero-title">@service.Title</h1>
+        @if (!string.IsNullOrWhiteSpace(service.Excerpt))
+        {
+          <p class="page-hero-desc">@service.Excerpt</p>
+        }
         <ol class="breadcrumb-line">
           <li><a href="/">Trang chủ</a></li>
           <li><a href="/dich-vu">Dịch vụ</a></li>
-          <li aria-current="page">Thu mua và thanh lý nhà xưởng</li>
+          <li aria-current="page">@service.Title</li>
         </ol>
       </div>
     </div>
   </section>
   <!-- ============================ PAGE HERO END ============================ -->
 
-  <!-- ============================ PROBLEM START ============================ -->
-  <section class="section section--surface" aria-labelledby="problem-title">
-    <div class="container">
-      <div class="row row-editorial align-items-start">
-        <div class="col-lg-5 reveal">
-          <span class="sec-label">Vấn đề thường gặp</span>
-          <h2 id="problem-title">Vì sao thanh lý nhà xưởng luôn là bài toán khó?</h2>
-          <p class="lead-2">
-            Một nhà xưởng cần giải phóng mặt bằng chứa đan xen nhiều thứ: kết cấu thép, mái tôn,
-            hệ điện, máy móc còn dùng được và cả rác không bán được ai. Tách từng việc ra thuê từng bên
-            thì ai cũng làm được — khó ở chỗ dồn về một đầu mối, giữ đúng tiến độ và minh bạch từng đồng tiền.
-          </p>
-          <a class="btn btn-outline-dark" href="tel:[HOTLINE]"><i class="bi bi-telephone-fill" aria-hidden="true"></i>Gọi tư vấn trực tiếp</a>
-        </div>
-        <div class="col-lg-7">
-          <ul class="problem-list reveal">
-            <li>
-              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
-              <div>
-                <strong>Đơn giá "trên trời dưới biển"</strong>
-                <span>Mỗi bên đến báo một giá, chênh nhau cả chục phần trăm — chủ xưởng không có mốc nào để so sánh.</span>
-              </div>
-            </li>
-            <li>
-              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
-              <div>
-                <strong>Phải thuê nhiều nhà thầu cho một mặt bằng</strong>
-                <span>Công việc bị chia nhỏ: một bên tháo mái, một bên mua sắt, một bên vận chuyển — phát sinh vấn đề không biết tìm ai.</span>
-              </div>
-            </li>
-            <li>
-              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
-              <div>
-                <strong>Tiến độ tháo dỡ ảnh hưởng giao mặt bằng</strong>
-                <span>Chậm một ngày là tốn thêm một ngày thuê mặt bằng, chưa kể rủi ro bị phạt theo hợp đồng thuê đất.</span>
-              </div>
-            </li>
-            <li>
-              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
-              <div>
-                <strong>Thanh toán không minh bạch khi cân</strong>
-                <span>Cân một nơi, tính một nơi; trọng lượng và đơn giá không khớp bảng kê — rất dễ bị bớt phần của người bán.</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ PROBLEM END ============================ -->
-
-  <!-- ============================ SERVICE SCOPE START ============================ -->
-  <section class="section section--paper" aria-labelledby="scope-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Phạm vi công việc</span>
-        <h2 class="sec-title" id="scope-title">Thanh lý nhà xưởng trọn gói gồm những gì?</h2>
-        <p class="sec-desc">Sáu hạng mục trong cùng một hợp đồng — không phát sinh nhà thầu thứ ba, không đùn đẩy trách nhiệm.</p>
-      </div>
-      <div class="scope-grid reveal">
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Định giá tổng thể mặt bằng</h3>
-          <p>Khảo sát toàn bộ nhà xưởng, lập bảng giá trị từng nhóm vật tư và phế liệu.</p>
-        </div>
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Tháo mái tôn, khung thép</h3>
-          <p>Tháo theo từng cụm, hạ an toàn bằng xe cẩu, giữ nguyên vẹn phần cần tái sử dụng.</p>
-        </div>
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Tháo hệ điện, đèn, dây cáp</h3>
-          <p>Ngắt nguồn an toàn, thu hồi tủ điện và dây cáp đồng còn nguyên để bán đúng giá.</p>
-        </div>
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Thu mua máy móc, dây chuyền</h3>
-          <p>Định giá theo tình trạng vận hành, nhận nguyên chiếc hoặc tháo lẻ từng công đoạn.</p>
-        </div>
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Vận chuyển rời bãi</h3>
-          <p>Đội xe tải nhiều tải trọng chở toàn bộ vật liệu khỏi mặt bằng theo lịch đã chốt.</p>
-        </div>
-        <div class="scope-item">
-          <h3><i class="bi bi-check2-circle" aria-hidden="true"></i>Dọn sạch mặt bằng bàn giao</h3>
-          <p>Gom rác phát sinh, quét sạch sàn và chụp hình hiện trạng làm bằng chứng bàn giao.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ SERVICE SCOPE END ============================ -->
-
-  <!-- ============================ CAPABILITY START ============================ -->
-  <section class="section section--surface" aria-labelledby="capability-title">
+  <!-- ============================ SERVICE CONTENT START ============================ -->
+  <section class="section section--paper" aria-label="Chi tiết dịch vụ">
     <div class="container">
       <div class="row row-editorial">
-        <div class="col-lg-7">
-          <div class="sec-head reveal">
-            <span class="sec-label">Năng lực thực thi</span>
-            <h2 class="sec-title" id="capability-title">Bốn thứ khiến chúng tôi dám nhận trọn gói</h2>
-          </div>
-          <div class="why-list reveal">
-            <div class="why-item">
-              <span class="why-no" aria-hidden="true">01</span>
-              <div class="why-body">
-                <h3>Đội tháo dỡ chuyên nghiệp</h3>
-                <p>Nhân sự có chứng chỉ nghề, từng tháo nhà xưởng kèo thép, nhà kho nhiều tầng mái.</p>
-              </div>
-            </div>
-            <div class="why-item">
-              <span class="why-no" aria-hidden="true">02</span>
-              <div class="why-body">
-                <h3>Xe cẩu + xe tải cùng lúc</h3>
-                <p>Cẩu hạ kết cấu, tải chờ sẵn — vật liệu xuống là lên xe, không chất đọng giữa sân.</p>
-              </div>
-            </div>
-            <div class="why-item">
-              <span class="why-no" aria-hidden="true">03</span>
-              <div class="why-body">
-                <h3>Cân điện tử di động đến mặt bằng</h3>
-                <p>Cân từng lô ngay tại xưởng, khách đứng xem và ký xác nhận vào phiếu cân.</p>
-              </div>
-            </div>
-            <div class="why-item">
-              <span class="why-no" aria-hidden="true">04</span>
-              <div class="why-body">
-                <h3>Thanh toán ngay từng đợt</h3>
-                <p>Tháo đến đâu, cân đến đó, trả đến đó — mọi đợt đều có bảng kê và sao kê đối chiếu.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-5">
-          <div class="fleet-list reveal">
-            <div class="fleet-row">
-              <div class="fleet-media">
-                <img src="~/assets/images/company/company-truck.svg" alt="Xe cẩu và xe tải phục vụ tháo dỡ nhà xưởng" width="480" height="360" loading="lazy">
-              </div>
-              <div class="fleet-body">
-                <div>
-                  <h3>Xe cẩu 15 tấn</h3>
-                  <p>Hạ kèo thép, dầm và máy móc nặng khỏi vị trí lắp đặt.</p>
-                </div>
-                <span class="fleet-qty">[XX]<small>chiếc</small></span>
-              </div>
-            </div>
-            <div class="fleet-row">
-              <div class="fleet-media">
-                <img src="~/assets/images/company/company-team.svg" alt="Đội tháo dỡ nhà xưởng tại công trường" width="480" height="360" loading="lazy">
-              </div>
-              <div class="fleet-body">
-                <div>
-                  <h3>Đội tháo dỡ nhà xưởng</h3>
-                  <p>Đầy đủ mũ, dây an toàn và bảo hiểm lao động theo quy định.</p>
-                </div>
-                <span class="fleet-qty">[XX]<small>nhân sự</small></span>
-              </div>
-            </div>
-          </div>
+        <div class="col-lg-8 article-body reveal">
+          @if (!string.IsNullOrWhiteSpace(service.ContentHtml))
+          {
+            @Html.Raw(service.ContentHtml)
+          }
+          else if (!string.IsNullOrWhiteSpace(service.Excerpt))
+          {
+            <p>@service.Excerpt</p>
+          }
+          else
+          {
+            <p>Nội dung dịch vụ đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn trực tiếp.</p>
+          }
+          <p class="mt-4">
+            <a class="btn btn-outline-dark" href="/lien-he"><i class="bi bi-envelope-fill" aria-hidden="true"></i>Nhận báo giá dịch vụ này</a>
+          </p>
         </div>
       </div>
     </div>
   </section>
-  <!-- ============================ CAPABILITY END ============================ -->
-
-  <!-- ============================ PROCESS START ============================ -->
-  <section class="section section--paper" aria-labelledby="process-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Quy trình thanh lý</span>
-        <h2 class="sec-title" id="process-title">Từ khảo sát đến bàn giao mặt bằng — 6 bước</h2>
-      </div>
-      <ol class="process-steps list-unstyled reveal">
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">01</span>
-          <h3>Khảo sát &amp; định giá tổng thể</h3>
-          <p>Đội kỹ thuật đến đo đạc, chụp hiện trạng, lập bảng dự kiến giá trị.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">02</span>
-          <h3>Ký biên bản giá trị phế liệu</h3>
-          <p>Thống nhất biểu giá từng loại và các khoản trừ chi phí tháo dỡ.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">03</span>
-          <h3>Lập lịch tháo dỡ</h3>
-          <p>Chốt số ngày, nhân sự, phương tiện và phương án an toàn — điện, PCCC.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">04</span>
-          <h3>Tháo dỡ + phân loại tại chỗ</h3>
-          <p>Tháo theo cụm, phân loại ngay trên mặt bằng: bán nguyên chiếc, phế liệu, rác.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">05</span>
-          <h3>Cân — vận chuyển</h3>
-          <p>Cân điện tử từng lô trước mặt khách, xe tải chở hết khỏi bãi trong ngày.</p>
-        </li>
-        <li class="step-item">
-          <span class="step-no" aria-hidden="true">06</span>
-          <h3>Thanh toán &amp; bàn giao mặt bằng</h3>
-          <p>Thanh toán đủ từng đợt, dọn sạch sân và chụp hình bàn giao.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-  <!-- ============================ PROCESS END ============================ -->
-
-  <!-- ============================ EQUIPMENT START ============================ -->
-  <section class="section section--surface" aria-labelledby="equipment-title">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Máy móc &amp; thiết bị</span>
-        <h2 class="sec-title" id="equipment-title">Chúng tôi mang gì đến mặt bằng của bạn?</h2>
-      </div>
-      <div class="fleet-list reveal">
-        <div class="fleet-row">
-          <div class="fleet-media">
-            <img src="~/assets/images/company/company-truck.svg" alt="Xe cẩu 15 tấn hạ kết cấu thép nhà xưởng" width="480" height="360" loading="lazy">
-          </div>
-          <div class="fleet-body">
-            <div>
-              <h3>Xe cẩu 15 tấn</h3>
-              <p>Tự hành vào sân xưởng, hạ kèo và máy nặng không cần thuê thêm bên ngoài.</p>
-            </div>
-            <span class="fleet-qty">[XX]<small>chiếc</small></span>
-          </div>
-        </div>
-        <div class="fleet-row">
-          <div class="fleet-media">
-            <img src="~/assets/images/scrap/scrap-iron.svg" alt="Kết cấu thép được cắt chia bằng máy plasma" width="480" height="360" loading="lazy">
-          </div>
-          <div class="fleet-body">
-            <div>
-              <h3>Máy cắt plasma</h3>
-              <p>Cắt chia kết cấu thép theo kích thước yêu cầu, mặt cắt sạch sẽ không phải xử lý lại.</p>
-            </div>
-            <span class="fleet-qty">[XX]<small>bộ</small></span>
-          </div>
-        </div>
-        <div class="fleet-row">
-          <div class="fleet-media">
-            <img src="~/assets/images/scrap/scrap-misc.svg" alt="Đồ nghề tháo lắp công nghiệp của đội thi công" width="480" height="360" loading="lazy">
-          </div>
-          <div class="fleet-body">
-            <div>
-              <h3>Đồ nghề tháo lắp công nghiệp</h3>
-              <p>Bộ kìm thủy lực, máy vặn bu lông nặng — tháo nhanh mà không phá hư vật tư thu hồi.</p>
-            </div>
-            <span class="fleet-qty">[XX]<small>bộ</small></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ EQUIPMENT END ============================ -->
-
-  <!-- ============================ RELATED PROJECTS START ============================ -->
-  <section class="section section--paper section--bordered" aria-labelledby="relprj-title">
-    <div class="container">
-      <div class="sec-head sec-head--row reveal">
-        <div>
-          <span class="sec-label">Đã làm thật</span>
-          <h2 class="sec-title" id="relprj-title">Hai hợp đồng nhà xưởng gần đây</h2>
-        </div>
-        <a class="link-arrow" href="/du-an">Xem tất cả dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-      </div>
-
-      <div class="showcase-grid reveal">
-        <a class="show-item show-main" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
-          <img src="~/assets/images/projects/project-01-cover.svg" alt="Tháo dỡ và thu mua nhà xưởng 2.000m² tại Biên Hòa" width="1280" height="800" loading="lazy">
-          <span class="show-overlay"></span>
-          <span class="show-info">
-            <span class="show-cat">Nhà xưởng</span>
-            <h3>Tháo dỡ — thanh lý nhà xưởng 2.000m²</h3>
-            <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Biên Hòa, Đồng Nai</span>
-            <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-          </span>
-        </a>
-        <div class="show-col">
-          <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
-            <img src="~/assets/images/projects/project-04-cover.svg" alt="Thu gom sắt thép định kỳ cho khu công nghiệp tại Nhơn Trạch" width="1280" height="800" loading="lazy">
-            <span class="show-overlay"></span>
-            <span class="show-info">
-              <span class="show-cat">Sắt</span>
-              <h3>Thu gom định kỳ cho khu công nghiệp</h3>
-              <span class="show-loc"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Nhơn Trạch, Đồng Nai</span>
-              <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- ============================ RELATED PROJECTS END ============================ -->
+  <!-- ============================ SERVICE CONTENT END ============================ -->
 
   <!-- ============================ FAQ START ============================ -->
   <section class="section section--surface" aria-labelledby="faq-title">
@@ -327,70 +63,12 @@
         <div class="col-lg-4 reveal">
           <div class="sec-head">
             <span class="sec-label">Câu hỏi thường gặp</span>
-            <h2 class="sec-title" id="faq-title">Chủ xưởng thường hỏi gì?</h2>
-            <p class="sec-desc">Bốn thắc mắc phổ biến nhất khi cân nhắc thanh lý. Câu của bạn không có trong danh sách — gọi <a href="tel:[HOTLINE]">[HOTLINE]</a>.</p>
+            <h2 class="sec-title" id="faq-title">Khách thường hỏi gì?</h2>
+            <p class="sec-desc">Câu của bạn không có trong danh sách — gọi hotline hoặc gửi form liên hệ để được trả lời nhanh.</p>
           </div>
         </div>
         <div class="col-lg-8">
-          <!-- FAQ LIST START -->
-          <div class="accordion faq-accordion reveal" id="faqServiceDetail">
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sdFaq1" aria-expanded="true" aria-controls="sdFaq1">
-                  Tháo dỡ nhà xưởng 2.000m² mất bao lâu?
-                </button>
-              </h3>
-              <div id="sdFaq1" class="accordion-collapse collapse show" data-bs-parent="#faqServiceDetail">
-                <div class="accordion-body">
-                  Với nhà xưởng kèo thép mái tôn khoảng 2.000m², toàn bộ từ tháo mái đến dọn sạch
-                  thường hoàn tất trong [5–7] ngày làm việc — tùy mật độ máy móc và vật tư còn lại trong xưởng.
-                  Lịch cụ thể được chốt ngay sau buổi khảo sát và ghi vào hợp đồng.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdFaq2" aria-expanded="false" aria-controls="sdFaq2">
-                  Ai chịu chi phí tháo dỡ?
-                </button>
-              </h3>
-              <div id="sdFaq2" class="accordion-collapse collapse" data-bs-parent="#faqServiceDetail">
-                <div class="accordion-body">
-                  Chi phí tháo dỡ được trừ trực tiếp vào giá trị phế liệu thu mua.
-                  Nếu phế liệu có giá trị cao, khách hàng còn nhận phần chênh lệch; nếu thấp hơn chi phí,
-                  hai bên thống nhất mức bù thêm. Mọi con số được ghi rõ trong biên bản trước khi khởi công.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdFaq3" aria-expanded="false" aria-controls="sdFaq3">
-                  Có video, hình ảnh quá trình tháo dỡ không?
-                </button>
-              </h3>
-              <div id="sdFaq3" class="accordion-collapse collapse" data-bs-parent="#faqServiceDetail">
-                <div class="accordion-body">
-                  Có. Chúng tôi chụp hiện trạng trước — trong — sau khi tháo dỡ và lưu hồ sơ từng ngày.
-                  Chủ đầu tư ở xa vẫn theo dõi được tiến độ qua Zalo mà không cần có mặt tại xưởng.
-                </div>
-              </div>
-            </div>
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sdFaq4" aria-expanded="false" aria-controls="sdFaq4">
-                  Khu vực nào nhận thanh lý nhà xưởng?
-                </button>
-              </h3>
-              <div id="sdFaq4" class="accordion-collapse collapse" data-bs-parent="#faqServiceDetail">
-                <div class="accordion-body">
-                  Nhận trọng tâm tại Đồng Nai, TP.HCM, Bình Dương và các tỉnh lân cận như
-                  Bà Rịa – Vũng Tàu, Long An, Tây Ninh. Khu vực xa hơn vẫn xem xét được
-                  nếu khối lượng phế liệu đủ lớn để cân đối chi phí điều xe.
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- FAQ LIST END -->
+          @await Html.PartialAsync("~/Views/Shared/Partials/Public/_FaqAccordion.cshtml", serviceFaq)
         </div>
       </div>
     </div>
@@ -404,18 +82,15 @@
     </div>
     <div class="container">
       <div class="cta-final-inner">
-        <span class="tech-label">Thanh lý nhà xưởng</span>
-        <h2 id="cta-title">Cần báo giá thanh lý nhà xưởng?</h2>
-        <p>Gửi hình hiện trạng nhà xưởng hoặc gọi trực tiếp — chúng tôi đến khảo sát và báo giá tổng thể miễn phí.</p>
+        <span class="tech-label">@service.Title</span>
+        <h2 id="cta-title">Cần báo giá cho dịch vụ này?</h2>
+        <p>Gửi hình hiện trạng hoặc gọi trực tiếp — chúng tôi phản hồi với mức giá cụ thể trong [30 phút].</p>
         <div class="cta-actions">
           <button class="btn btn-primary btn-lg" type="button" data-quote-open>
             <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
           </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-          </a>
-          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
-            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          <a class="btn btn-outline-light btn-lg" href="/lien-he">
+            <i class="bi bi-envelope-fill" aria-hidden="true"></i>Liên hệ ngay
           </a>
         </div>
       </div>

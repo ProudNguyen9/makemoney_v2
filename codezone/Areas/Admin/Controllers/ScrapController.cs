@@ -101,8 +101,86 @@ public class ScrapController : Controller
     {
         var deleted = await _scrapCommandService.DeleteScrapItemAsync(id, cancellationToken);
         TempData[deleted ? "Success" : "Error"] = deleted
-            ? "Đã xóa loại phế liệu (kèm dòng giá và ảnh)."
+            ? "Đã xóa loại phế liệu (xóa mềm — có thể khôi phục trong DB)."
             : "Không tìm thấy loại phế liệu cần xóa.";
         return RedirectToAction(nameof(Index), new { group, status, q, page });
+    }
+
+    // ------------------------------------------------------------------
+    // Nhóm phế liệu (CAT-001..003)
+    // ------------------------------------------------------------------
+
+    public async Task<IActionResult> Categories(CancellationToken cancellationToken = default)
+    {
+        var model = await _scrapQueryService.GetScrapCategoryListAsync(cancellationToken);
+        return View(model);
+    }
+
+    public async Task<IActionResult> CategoryForm(int? id, CancellationToken cancellationToken = default)
+    {
+        var model = await _scrapQueryService.GetScrapCategoryFormAsync(id, cancellationToken);
+        if (model is null)
+        {
+            TempData["Error"] = $"Không tìm thấy nhóm phế liệu #{id}.";
+            return RedirectToAction(nameof(Categories));
+        }
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveCategory(ScrapCategoryFormViewModel form, CancellationToken cancellationToken = default)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["Error"] = "Chưa lưu được nhóm phế liệu: vui lòng kiểm tra các trường bị lỗi.";
+            return View(nameof(CategoryForm), form);
+        }
+
+        try
+        {
+            await _scrapCommandService.SaveScrapCategoryAsync(form, cancellationToken);
+        }
+        catch (InvalidOperationException exception)
+        {
+            TempData["Error"] = exception.Message;
+            return View(nameof(CategoryForm), form);
+        }
+
+        TempData["Success"] = form.Id == 0
+            ? $"Đã thêm nhóm phế liệu \"{form.Name}\"."
+            : $"Đã cập nhật nhóm phế liệu \"{form.Name}\".";
+        return RedirectToAction(nameof(Categories));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ToggleCategoryStatus(int id, CancellationToken cancellationToken = default)
+    {
+        var toggled = await _scrapCommandService.ToggleCategoryStatusAsync(id, cancellationToken);
+        TempData[toggled ? "Success" : "Error"] = toggled
+            ? "Đã chuyển trạng thái ẩn / hiển thị của nhóm phế liệu."
+            : "Không tìm thấy nhóm phế liệu.";
+        return RedirectToAction(nameof(Categories));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var deleted = await _scrapCommandService.DeleteScrapCategoryAsync(id, cancellationToken);
+            TempData[deleted ? "Success" : "Error"] = deleted
+                ? "Đã xóa nhóm phế liệu rỗng."
+                : "Không tìm thấy nhóm phế liệu cần xóa.";
+        }
+        catch (InvalidOperationException exception)
+        {
+            TempData["Error"] = exception.Message;
+        }
+
+        return RedirectToAction(nameof(Categories));
     }
 }

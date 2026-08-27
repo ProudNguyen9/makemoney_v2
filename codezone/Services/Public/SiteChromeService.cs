@@ -29,7 +29,8 @@ public sealed class SiteChromeService : ISiteChromeService
         "contact.purchase_areas",
         "brand.default_hero_image",
         "brand.default_cta_image",
-        "home.response_time_text"
+        "home.response_time_text",
+        "seo.site_title"
     ];
 
     private readonly AppDbContext _dbContext;
@@ -78,7 +79,10 @@ public sealed class SiteChromeService : ISiteChromeService
                 PurchaseAreas: Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
                 DefaultHeroImage: Get(settings, "brand.default_hero_image", "/assets/images/imported/brand/banner-1.jpg"),
                 DefaultCtaImage: Get(settings, "brand.default_cta_image", "/assets/images/imported/brand/banner-3.jpg"),
-                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"));
+                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"))
+            {
+                SiteTitle = Get(settings, "seo.site_title", string.Empty)
+            };
         })!;
     }
 

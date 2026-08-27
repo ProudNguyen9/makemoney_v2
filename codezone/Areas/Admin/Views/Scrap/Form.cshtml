@@ -167,7 +167,8 @@
             <option value="draft" selected="@(Model.Status != "published")">Ẩn</option>
           </select>
           <label class="form-label-tech mt-3" for="scrapOrder">Vị trí hiển thị</label>
-          <input class="form-control" id="scrapOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các loại khác.">
+          <input class="form-control" id="scrapOrder" name="SortOrder" type="number" min="0" max="9999" value="@Math.Max(Model.SortOrder, 1)" title="1 = đầu danh sách. Nhập nhỏ hơn 1 sẽ tự về vị trí đầu. Lưu sẽ tự dồn vị trí các loại khác.">
+          <span class="text-danger small" asp-validation-for="SortOrder"></span>
           <p class="small text-muted mt-1 mb-0">Số nhỏ hiện trước. Lưu sẽ tự động chèn vào đúng vị trí và đánh lại số liên tục (không trùng).</p>
         </div>
       </div>

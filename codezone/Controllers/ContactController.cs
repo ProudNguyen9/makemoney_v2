@@ -29,6 +29,11 @@ public class ContactController : Controller
             return View(new ContactViewModel { Request = request });
         }
 
+        // LEAD-001: form riêng của trang /lien-he luôn gắn nguồn "contact" phía server.
+        request.SourceForm = "contact";
+        request.SourceUrl ??= "/lien-he";
+        request.Status = "new";
+
         await _contactService.SaveRequestAsync(request);
 
         return View(new ContactViewModel

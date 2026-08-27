@@ -1,168 +1,142 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminLeadDetailDto
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Chi tiết yêu cầu báo giá";
+    ViewData["Title"] = $"Chi tiết yêu cầu {Model.Code}";
     ViewData["AdminSection"] = "leads";
     ViewData["AdminSubSection"] = "detail";
+
+    string SourceLabel(string source) => source switch
+    {
+        "quick_quote" => "Form báo giá nhanh",
+        "contact" => "Form liên hệ",
+        _ => source
+    };
+
+    var zaloDigits = new string((Model.Zalo ?? Model.Phone).Where(char.IsDigit).ToArray());
+    var statusClass = Model.Status == "contacted" ? "st-done" : "st-processing";
+    var statusLabel = Model.Status == "contacted" ? "Đã liên hệ" : "Mới";
 }
 
-<!-- backend: GET /admin/leads/LE-0248 — chi tiết một lead -->
-      <div class="admin-page-head">
-        <h1>Yêu cầu báo giá #LE-0248<small>Tiếp nhận 12/08/2026 09:24 · Nguồn: Website — form báo giá</small></h1>
-        <div class="aph-actions">
-          <a class="btn btn-primary" href="tel:0908625341"><i class="bi bi-telephone-fill" aria-hidden="true"></i> Gọi khách</a>
-          <a class="btn btn-outline-dark" href="https://zalo.me/0908625341" target="_blank" rel="noopener"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mở Zalo</a>
-          <!-- backend: POST /admin/leads/LE-0248/status — mở modal đổi trạng thái lead -->
-          <button class="btn btn-outline-dark" type="button"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Đổi trạng thái</button>
+<!-- LEAD-004: GET /admin/leads/detail/{id} — chi tiết một lead đọc từ DB -->
+<div class="admin-page-head">
+  <h1>Yêu cầu báo giá #@Model.Code<small>Tiếp nhận @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm") · Nguồn: @SourceLabel(Model.SourceForm)</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-primary" href="tel:@Model.Phone"><i class="bi bi-telephone-fill" aria-hidden="true"></i> Gọi khách</a>
+    <a class="btn btn-outline-dark" href="https://zalo.me/@zaloDigits" target="_blank" rel="noopener"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Mở Zalo</a>
+    <a class="btn btn-outline-dark" href="/admin/leads"><i class="bi bi-arrow-left" aria-hidden="true"></i> Danh sách</a>
+  </div>
+</div>
+
+<div class="admin-form-grid">
+  <div>
+    <!-- Thông tin khách hàng -->
+    <div class="admin-panel">
+      <div class="panel-head">
+        <h2>Thông tin khách hàng</h2>
+      </div>
+      <div class="panel-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadName">Họ tên</label>
+            <input class="form-control" id="leadName" type="text" value="@Model.CustomerName" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadPhone">Số điện thoại</label>
+            <input class="form-control" id="leadPhone" type="tel" value="@Model.Phone" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadZalo">Zalo</label>
+            <input class="form-control" id="leadZalo" type="tel" value="@Model.Zalo" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadEmail">Email</label>
+            <input class="form-control" id="leadEmail" type="email" value="@Model.Email" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadArea">Khu vực</label>
+            <input class="form-control" id="leadArea" type="text" value="@Model.Area" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="leadStatus">Trạng thái</label>
+            <input class="form-control" id="leadStatus" type="text" value="@statusLabel" readonly>
+          </div>
+          <div class="col-12">
+            <label class="form-label-tech" for="leadNoteCustomer">Nội dung khách gửi</label>
+            <textarea class="form-control" id="leadNoteCustomer" rows="3" readonly>@Model.Message</textarea>
+          </div>
+          @if (Model.Status != "contacted")
+          {
+            <div class="col-12">
+              <form action="/admin/leads/MarkContacted" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle" aria-hidden="true"></i> Đánh dấu đã liên hệ</button>
+              </form>
+            </div>
+          }
         </div>
       </div>
+    </div>
 
-      <div class="admin-form-grid">
-        <div>
-          <!-- Thông tin khách hàng -->
-          <div class="admin-panel">
-            <div class="panel-head">
-              <h2>Thông tin khách hàng</h2>
-            </div>
-            <div class="panel-body">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label-tech" for="leadName">Họ tên</label>
-                  <input class="form-control" id="leadName" type="text" value="Nguyễn Văn A" readonly>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label-tech" for="leadPhone">Số điện thoại</label>
-                  <input class="form-control" id="leadPhone" type="tel" value="0908.625.341" readonly>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label-tech" for="leadZalo">Zalo</label>
-                  <input class="form-control" id="leadZalo" type="tel" value="0908.625.341" readonly>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label-tech" for="leadArea">Khu vực</label>
-                  <input class="form-control" id="leadArea" type="text" value="Biên Hòa, Đồng Nai" readonly>
-                </div>
-                <div class="col-12">
-                  <label class="form-label-tech" for="leadAddress">Địa chỉ cụ thể</label>
-                  <textarea class="form-control" id="leadAddress" rows="2" readonly>KCN Biên Hòa 2, phường Long Bình, TP. Biên Hòa, Đồng Nai</textarea>
-                </div>
-                <div class="col-12">
-                  <label class="form-label-tech" for="leadNoteCustomer">Ghi chú khách</label>
-                  <textarea class="form-control" id="leadNoteCustomer" rows="2" readonly>Có khoảng 300kg dây điện + 50kg đồng đỏ, gọi trước 17h để tiện hướng dẫn xe vào xưởng.</textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hình ảnh khách gửi -->
-          <div class="admin-panel">
-            <div class="panel-head">
-              <h2>Hình ảnh khách gửi</h2>
-              <div class="panel-head-actions">
-                <span class="admin-pagination">4 ảnh</span>
-              </div>
-            </div>
-            <div class="panel-body">
-              <!-- backend: gắn lightbox xem ảnh gốc khi click -->
-              <div class="lead-gallery">
-                <a href="~/assets/images/scrap/scrap-copper.svg" target="_blank" rel="noopener">
-                  <img src="~/assets/images/scrap/scrap-copper.svg" alt="Ảnh 1 — đồng đỏ khách chụp gửi" width="96" height="72" loading="lazy">
-                </a>
-                <a href="~/assets/images/scrap/scrap-cable.svg" target="_blank" rel="noopener">
-                  <img src="~/assets/images/scrap/scrap-cable.svg" alt="Ảnh 2 — bó dây điện khách chụp gửi" width="96" height="72" loading="lazy">
-                </a>
-                <a href="~/assets/images/hero/hero-01.svg" target="_blank" rel="noopener">
-                  <img src="~/assets/images/hero/hero-01.svg" alt="Ảnh 3 — góc kho chứa phế liệu tại nhà khách" width="96" height="72" loading="lazy">
-                </a>
-                <a href="~/assets/images/company/company-yard.svg" target="_blank" rel="noopener">
-                  <img src="~/assets/images/company/company-yard.svg" alt="Ảnh 4 — hiện trường cân hàng" width="96" height="72" loading="lazy">
-                </a>
-              </div>
-              <p class="small text-muted mb-0 mt-2"><i class="bi bi-zoom-in" aria-hidden="true"></i> Click để xem ảnh gốc — backend wire lightbox</p>
-            </div>
-          </div>
-
-          <!-- Nội bộ & ghi chú xử lý -->
-          <div class="admin-panel mb-0">
-            <div class="panel-head">
-              <h2>Nội bộ &amp; ghi chú xử lý</h2>
-            </div>
-            <div class="panel-body">
-              <label class="form-label-tech" for="leadNoteInternal">Ghi chú xử lý</label>
-              <textarea class="form-control" id="leadNoteInternal" rows="3" placeholder="Ghi chú xử lý nội bộ — chỉ quản trị viên xem được…"></textarea>
-              <!-- backend: GET /admin/leads/LE-0248/history — lịch sử trạng thái -->
-              <ul class="status-history mt-3 mb-0">
-                <li>
-                  <span class="sh-dot" aria-hidden="true"></span>
-                  <div>
-                    <strong>Mới</strong>
-                    <span>Yêu cầu tự tạo từ form báo giá trên website — 12/08/2026 09:24</span>
-                  </div>
-                </li>
-                <li>
-                  <span class="sh-dot" aria-hidden="true"></span>
-                  <div>
-                    <strong>Đang xử lý</strong>
-                    <span>[QUẢN TRỊ VIÊN] đã gọi xác nhận, khách hẹn 14:00 hôm sau xem hàng tại xưởng — 12/08/2026 10:05</span>
-                  </div>
-                </li>
-                <li>
-                  <span class="sh-dot sh-dot--done" aria-hidden="true"></span>
-                  <div>
-                    <strong>Hoàn tất</strong>
-                    <span>Đã cân thực tế 352kg, thanh toán chuyển khoản ngay tại xưởng — 13/08/2026 15:40</span>
-                  </div>
-                </li>
-                <li>
-                  <span class="sh-dot" aria-hidden="true"></span>
-                  <div>
-                    <strong>Chăm sóc sau bán</strong>
-                    <span>Gửi tin nhắn qua [ZALO] cảm ơn khách, khách hẹn tái thu mua cuối tháng — 14/08/2026 08:30</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
+    <!-- Hình ảnh khách gửi -->
+    @if (Model.ImageUrls.Count > 0)
+    {
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Hình ảnh khách gửi</h2>
+          <div class="panel-head-actions">
+            <span class="admin-pagination">@Model.ImageUrls.Count ảnh</span>
           </div>
         </div>
-
-        <div>
-          <!-- Thông tin lô hàng -->
-          <div class="admin-panel">
-            <div class="panel-head">
-              <h2>Thông tin lô hàng</h2>
-            </div>
-            <div class="panel-body">
-              <span class="form-label-tech">Loại phế liệu chính</span>
-              <p class="mb-3">Đồng đỏ, Dây điện</p>
-              <span class="form-label-tech">Số lượng ước tính</span>
-              <p class="mb-3">~350 kg</p>
-              <span class="form-label-tech">Khu vực</span>
-              <p class="mb-3">Biên Hòa — Đồng Nai</p>
-              <span class="form-label-tech">Trạng thái hiện tại</span>
-              <p class="mb-0"><span class="badge-status st-done">Hoàn tất</span></p>
-            </div>
+        <div class="panel-body">
+          <div class="lead-gallery">
+            @for (var i = 0; i < Model.ImageUrls.Count; i++)
+            {
+              var index = i + 1;
+              <a href="@Model.ImageUrls[i]" target="_blank" rel="noopener">
+                <img src="@Model.ImageUrls[i]" alt="Ảnh @index — phế liệu khách chụp gửi" width="96" height="72" loading="lazy">
+              </a>
+            }
           </div>
-
-          <!-- Nguồn & theo dõi -->
-          <div class="admin-panel mb-0">
-            <div class="panel-head">
-              <h2>Nguồn &amp; theo dõi</h2>
-            </div>
-            <div class="panel-body">
-              <dl class="row small mb-0">
-                <dt class="col-5 fw-normal text-muted">Trang nguồn</dt>
-                <dd class="col-7">/bang-gia</dd>
-                <dt class="col-5 fw-normal text-muted">UTM source</dt>
-                <dd class="col-7">google</dd>
-                <dt class="col-5 fw-normal text-muted">UTM medium</dt>
-                <dd class="col-7">cpc</dd>
-                <dt class="col-5 fw-normal text-muted">UTM campaign</dt>
-                <dd class="col-7">dong-nai</dd>
-                <dt class="col-5 fw-normal text-muted">IP</dt>
-                <dd class="col-7">[XXX.XXX.XXX.XXX]</dd>
-                <dt class="col-5 fw-normal text-muted">Thiết bị</dt>
-                <dd class="col-7">Mobile</dd>
-              </dl>
-            </div>
-          </div>
+          <p class="small text-muted mb-0 mt-2"><i class="bi bi-zoom-in" aria-hidden="true"></i> Click để xem ảnh gốc.</p>
         </div>
       </div>
+    }
+  </div>
+
+  <div>
+    <!-- Thông tin lô hàng -->
+    <div class="admin-panel">
+      <div class="panel-head">
+        <h2>Thông tin lô hàng</h2>
+      </div>
+      <div class="panel-body">
+        <span class="form-label-tech">Loại phế liệu chính</span>
+        <p class="mb-3">@(string.IsNullOrWhiteSpace(Model.ScrapType) ? "Chưa chọn" : Model.ScrapType)</p>
+        <span class="form-label-tech">Số lượng ước tính</span>
+        <p class="mb-3">@(string.IsNullOrWhiteSpace(Model.QuantityText) ? "—" : Model.QuantityText)</p>
+        <span class="form-label-tech">Khu vực</span>
+        <p class="mb-3">@(string.IsNullOrWhiteSpace(Model.Area) ? "—" : Model.Area)</p>
+        <span class="form-label-tech">Trạng thái hiện tại</span>
+        <p class="mb-0"><span class="badge-status @statusClass">@statusLabel</span></p>
+      </div>
+    </div>
+
+    <!-- Nguồn & theo dõi -->
+    <div class="admin-panel mb-0">
+      <div class="panel-head">
+        <h2>Nguồn &amp; theo dõi</h2>
+      </div>
+      <div class="panel-body">
+        <dl class="row small mb-0">
+          <dt class="col-5 fw-normal text-muted">Nguồn form</dt>
+          <dd class="col-7">@SourceLabel(Model.SourceForm)</dd>
+          <dt class="col-5 fw-normal text-muted">Trang nguồn</dt>
+          <dd class="col-7">@(string.IsNullOrWhiteSpace(Model.SourceUrl) ? "—" : Model.SourceUrl)</dd>
+          <dt class="col-5 fw-normal text-muted">Tiếp nhận lúc</dt>
+          <dd class="col-7">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

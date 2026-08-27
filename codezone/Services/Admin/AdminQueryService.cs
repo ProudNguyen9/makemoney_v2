@@ -34,7 +34,8 @@ public sealed class AdminQueryService :
 
     public async Task<AdminDashboardViewModel> GetDashboardAsync(CancellationToken cancellationToken)
     {
-        var scrapCount = await _dbContext.ScrapItems.AsNoTracking().CountAsync(cancellationToken);
+        var scrapCount = await _dbContext.ScrapItems.AsNoTracking()
+            .CountAsync(item => item.DeletedAt == null, cancellationToken);
         var postCount = await _dbContext.Posts.AsNoTracking().CountAsync(cancellationToken);
         var mediaCount = await _dbContext.MediaFiles.AsNoTracking().CountAsync(cancellationToken);
         var seoCount = await _dbContext.SeoMetadata.AsNoTracking().CountAsync(cancellationToken);
@@ -54,6 +55,7 @@ public sealed class AdminQueryService :
             .ToListAsync(cancellationToken);
 
         var featuredScrap = await QueryScrapRows(_dbContext.ScrapItems.AsNoTracking()
+                .Where(item => item.DeletedAt == null)
                 .OrderByDescending(item => item.IsFeatured)
                 .ThenBy(item => item.SortOrder)
                 .ThenByDescending(item => item.PublishedAt))
@@ -80,7 +82,7 @@ public sealed class AdminQueryService :
             .Select(category => new AdminCategoryOptionDto(category.Id, category.Name, category.Slug))
             .ToListAsync(cancellationToken);
 
-        var baseQuery = _dbContext.ScrapItems.AsNoTracking();
+        var baseQuery = _dbContext.ScrapItems.AsNoTracking().Where(item => item.DeletedAt == null);
         if (!string.IsNullOrWhiteSpace(group))
         {
             baseQuery = baseQuery.Where(item => item.Category != null && item.Category.Slug == group);
@@ -123,13 +125,18 @@ public sealed class AdminQueryService :
         if (id is null or 0)
         {
             form = new ScrapItemFormViewModel();
+            // SCR-001: mặc định vị trí = cuối danh sách (max + 1) thay vì 0 để nút Lưu không bị chặn.
+            var maxSortOrder = await _dbContext.ScrapItems.AsNoTracking()
+                .Where(item => item.DeletedAt == null)
+                .MaxAsync(item => (int?)item.SortOrder, cancellationToken);
+            form.SortOrder = Math.Max(maxSortOrder ?? 0, 0) + 1;
         }
         else
         {
             var item = await _dbContext.ScrapItems.AsNoTracking()
                 .Include(scrap => scrap.Prices)
                 .Include(scrap => scrap.Images)
-                .FirstOrDefaultAsync(scrap => scrap.Id == id.Value, cancellationToken);
+                .FirstOrDefaultAsync(scrap => scrap.Id == id.Value && scrap.DeletedAt == null, cancellationToken);
             if (item is null)
             {
                 return null;
@@ -160,6 +167,48 @@ public sealed class AdminQueryService :
 
         form.Categories = await GetCategoryOptionsAsync(cancellationToken);
         return form;
+    }
+
+    public async Task<AdminScrapCategoryListViewModel> GetScrapCategoryListAsync(CancellationToken cancellationToken)
+    {
+        var items = await _dbContext.ScrapCategories.AsNoTracking()
+            .OrderBy(category => category.SortOrder)
+            .ThenBy(category => category.Id)
+            .Select(category => new AdminScrapCategoryRowDto(
+                category.Id,
+                category.Name,
+                category.Slug,
+                category.Description,
+                category.Status,
+                category.SortOrder,
+                category.ScrapItems.Count))
+            .ToListAsync(cancellationToken);
+
+        return new AdminScrapCategoryListViewModel(items);
+    }
+
+    public async Task<ScrapCategoryFormViewModel?> GetScrapCategoryFormAsync(int? id, CancellationToken cancellationToken)
+    {
+        if (id is null or 0)
+        {
+            var maxSortOrder = await _dbContext.ScrapCategories.AsNoTracking()
+                .MaxAsync(category => (int?)category.SortOrder, cancellationToken);
+            return new ScrapCategoryFormViewModel { SortOrder = Math.Max(maxSortOrder ?? 0, 0) + 1 };
+        }
+
+        var entity = await _dbContext.ScrapCategories.AsNoTracking()
+            .FirstOrDefaultAsync(category => category.Id == id.Value, cancellationToken);
+        return entity is null
+            ? null
+            : new ScrapCategoryFormViewModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Slug = entity.Slug,
+                Description = entity.Description,
+                SortOrder = entity.SortOrder,
+                Status = entity.Status
+            };
     }
 
     public async Task<AdminArticleListViewModel> GetArticleListAsync(string? category, string? status, string? query, CancellationToken cancellationToken)
@@ -281,7 +330,7 @@ public sealed class AdminQueryService :
         form.Categories = categories;
         form.ProductOptions = await _dbContext.ScrapItems.AsNoTracking()
             .Include(item => item.Category)
-            .Where(item => item.Status == "published")
+            .Where(item => item.Status == "published" && item.DeletedAt == null)
             .OrderByDescending(item => item.IsFeatured)
             .ThenBy(item => item.SortOrder)
             .ThenBy(item => item.Name)
@@ -319,6 +368,9 @@ public sealed class AdminQueryService :
         {
             baseQuery = baseQuery.Where(price => price.ScrapItem != null && price.ScrapItem.Category != null && price.ScrapItem.Category.Slug == group);
         }
+
+        // Ẩn dòng giá thuộc phế liệu đã xóa mềm.
+        baseQuery = baseQuery.Where(price => price.ScrapItem == null || price.ScrapItem.DeletedAt == null);
 
         if (!string.IsNullOrWhiteSpace(status))
         {
@@ -436,6 +488,31 @@ public sealed class AdminQueryService :
         return new AdminLeadListViewModel(items, scrapTypes, areas, status, scrap, area, query, page, totalCount);
     }
 
+    public async Task<AdminLeadDetailDto?> GetLeadDetailAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ContactRequests
+            .AsNoTracking()
+            .Include(request => request.Files)
+            .Where(request => request.DeletedAt == null && request.Id == id)
+            .Select(request => new AdminLeadDetailDto(
+                request.Id,
+                $"LE-{request.Id:0000}",
+                string.IsNullOrWhiteSpace(request.Name) ? "Khách chưa nhập tên" : request.Name!,
+                request.Phone,
+                request.Zalo,
+                request.Email,
+                request.ScrapType,
+                request.QuantityText,
+                request.Area,
+                request.Message,
+                request.SourceForm,
+                request.SourceUrl,
+                request.Status,
+                request.CreatedAt,
+                request.Files.OrderBy(file => file.Id).Select(file => file.FileUrl).ToList()))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     // ------------------------------------------------------------------
     // Dịch vụ
     // ------------------------------------------------------------------
@@ -478,7 +555,10 @@ public sealed class AdminQueryService :
     {
         if (id is null or 0)
         {
-            return new ServiceFormViewModel();
+            var maxSortOrder = await _dbContext.Services.AsNoTracking()
+                .Where(service => service.DeletedAt == null)
+                .MaxAsync(service => (int?)service.SortOrder, cancellationToken);
+            return new ServiceFormViewModel { SortOrder = Math.Max(maxSortOrder ?? 0, 0) + 1 };
         }
 
         var entity = await _dbContext.Services.AsNoTracking()
@@ -634,7 +714,10 @@ public sealed class AdminQueryService :
     {
         if (id is null or 0)
         {
-            return new ProjectFormViewModel();
+            var maxSortOrder = await _dbContext.Projects.AsNoTracking()
+                .Where(project => project.DeletedAt == null)
+                .MaxAsync(project => (int?)project.SortOrder, cancellationToken);
+            return new ProjectFormViewModel { SortOrder = Math.Max(maxSortOrder ?? 0, 0) + 1 };
         }
 
         var entity = await _dbContext.Projects.AsNoTracking()

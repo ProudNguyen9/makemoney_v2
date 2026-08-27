@@ -23,6 +23,19 @@ public class LeadsController : Controller
         return View(model);
     }
 
+    /// <summary>LEAD-004: trang chi tiết một lead (/admin/leads/detail/{id}).</summary>
+    public async Task<IActionResult> Detail(int id, CancellationToken cancellationToken = default)
+    {
+        var lead = await _leadQueryService.GetLeadDetailAsync(id, cancellationToken);
+        if (lead is null)
+        {
+            TempData["Error"] = $"Không tìm thấy yêu cầu báo giá #{id}.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(lead);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MarkContacted(int id, string? status, string? scrap, [FromForm] string? leadArea, string? query, int page = 1, CancellationToken cancellationToken = default)

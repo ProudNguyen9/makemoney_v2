@@ -226,7 +226,7 @@ public class PublicPostQueryService : IPublicPostQueryService
             return null;
         }
 
-        var rows = await ApplyCursor(_dbContext.Posts.AsNoTracking().Where(post => post.Status == PublicConstants.Published), cursor)
+        var rows = await ApplyCursor(_dbContext.Posts.AsNoTracking().Where(post => post.Status == PublicConstants.Published && post.DeletedAt == null), cursor)
             .OrderByDescending(post => post.IsFeatured)
             .ThenBy(post => post.SortOrder)
             .ThenByDescending(post => post.PublishedAt)

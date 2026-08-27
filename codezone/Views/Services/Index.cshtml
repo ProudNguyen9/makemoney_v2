@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Dịch vụ";
+    var services = (IReadOnlyList<ScrapWebsite.Controllers.ServiceCardDto>)(ViewData["Services"] ?? Array.Empty<ScrapWebsite.Controllers.ServiceCardDto>());
     var serviceFaq = (codezone.ViewModels.Shared.FaqAccordionViewModel)(ViewData["Faq"] ?? new codezone.ViewModels.Shared.FaqAccordionViewModel("faqServices", []));
 }
 
@@ -15,7 +16,7 @@
         <span class="tech-label">Dịch vụ</span>
         <h1 id="services-hero-title">Dịch vụ thu mua phế liệu chuyên nghiệp</h1>
         <p class="page-hero-desc">
-          Sáu nhóm dịch vụ phục vụ cá nhân, doanh nghiệp và công trình — từ lô nhỏ tại nhà
+          Các nhóm dịch vụ phục vụ cá nhân, doanh nghiệp và công trình — từ lô nhỏ tại nhà
           đến giải phóng mặt bằng nhà xưởng trọn gói.
         </p>
         <ol class="breadcrumb-line">
@@ -39,138 +40,33 @@
         </p>
       </div>
 
+      @if (services.Count == 0)
+      {
+        <div class="alert alert-info">Danh sách dịch vụ đang được cập nhật.</div>
+      }
+
       <div class="service-rows">
-        <!-- SERVICE ROW 01 START -->
-        <article class="service-row reveal">
-          <div class="service-row-copy">
-            <span class="service-no">01</span>
-            <h2>Thu mua phế liệu tận nơi</h2>
-            <p>
-              Dành cho cá nhân và hộ kinh doanh có phế liệu tồn tại nhà, tại cửa hàng —
-              bạn chụp hình gửi qua Zalo, chúng tôi điều xe và nhân công đến cân tại chỗ.
-            </p>
-            <ul class="list-dash">
-              <li>Nhận lô từ vài chục ký — không ép mua lô lớn</li>
-              <li>Có xe tải và nhân công xếp hàng đến tận nơi</li>
-              <li>Cân điện tử trước mặt, giao dịch xong trong một buổi</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/hero/hero-02.svg" alt="Nhân công thu gom và cân phế liệu tận nơi tại nhà khách" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 01 END -->
-
-        <!-- SERVICE ROW 02 START -->
-        <article class="service-row service-row--flip reveal">
-          <div class="service-row-copy">
-            <span class="service-no">02</span>
-            <h2>Thu mua phế liệu doanh nghiệp</h2>
-            <p>
-              Hợp đồng định kỳ cho nhà máy, xưởng cơ khí, doanh nghiệp sản xuất —
-              đầy đủ hóa đơn, đối chiếu số liệu theo từng đợt thu gom.
-            </p>
-            <ul class="list-dash">
-              <li>Ký hợp đồng thu mua định kỳ theo tháng hoặc theo quý</li>
-              <li>Xuất hóa đơn, chứng từ mua phế liệu đầy đủ</li>
-              <li>Đối tác tại các khu công nghiệp Đồng Nai, Bình Dương, TP.HCM</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/company/company-warehouse.svg" alt="Kho phế liệu của doanh nghiệp chờ thu gom theo hợp đồng" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 02 END -->
-
-        <!-- SERVICE ROW 03 START -->
-        <article class="service-row reveal">
-          <div class="service-row-copy">
-            <span class="service-no">03</span>
-            <h2>Thu mua &amp; thanh lý nhà xưởng</h2>
-            <p>
-              Giải phóng mặt bằng trọn gói: định giá tổng thể, tháo dỡ kết cấu, thu mua phế liệu
-              phát sinh và bàn giao mặt bằng sạch trong một hợp đồng duy nhất.
-            </p>
-            <ul class="list-dash">
-              <li>Tháo dỡ và thu mua diễn ra cùng một đội — không qua trung gian</li>
-              <li>Giải phóng mặt bằng đúng tiến độ bàn giao cho chủ đất</li>
-              <li>Có xe cẩu phục vụ dỡ khung thép, máy móc nặng</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/projects/project-01-cover.svg" alt="Tháo dỡ và thanh lý nhà xưởng lấy mặt bằng" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 03 END -->
-
-        <!-- SERVICE ROW 04 START -->
-        <article class="service-row service-row--flip reveal">
-          <div class="service-row-copy">
-            <span class="service-no">04</span>
-            <h2>Thu mua phế liệu công trình</h2>
-            <p>
-              Nhận kết cấu thép, tôn lợp, giàn giáo, cây số và phế liệu phát sinh
-              từ công trình xây dựng — sửa chữa — cải tạo.
-            </p>
-            <ul class="list-dash">
-              <li>Nhận kết cấu thép, tôn lợp, giàn giáo đủ loại kích thước</li>
-              <li>Cắt chia theo yêu cầu của chủ đầu tư trước khi vận chuyển</li>
-              <li>Tiến độ thu gom bám theo nhịp công trường, làm ngoài giờ nếu cần</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/projects/project-02-cover.svg" alt="Thu gom sắt thép phế liệu tại công trình xây dựng" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 04 END -->
-
-        <!-- SERVICE ROW 05 START -->
-        <article class="service-row reveal">
-          <div class="service-row-copy">
-            <span class="service-no">05</span>
-            <h2>Thu mua máy móc cũ</h2>
-            <p>
-              Mua lại motor, máy sản xuất, dây chuyền đã qua sử dụng —
-              định giá theo tình trạng máy, có kỹ thuật viên đến kiểm tra và tháo lắp.
-            </p>
-            <ul class="list-dash">
-              <li>Nhận motor, máy sản xuất, dây chuyền, tủ điện nguyên chiếc</li>
-              <li>Kỹ thuật định giá theo tình trạng vận hành thực tế</li>
-              <li>Tháo lắp an toàn, có bảo hiểm lao động đầy đủ</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/scrap/scrap-motor.svg" alt="Máy móc cũ và motor chờ định giá thu mua" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 05 END -->
-
-        <!-- SERVICE ROW 06 START -->
-        <article class="service-row service-row--flip reveal">
-          <div class="service-row-copy">
-            <span class="service-no">06</span>
-            <h2>Thu gom phế liệu định kỳ</h2>
-            <p>
-              Lịch thu gom cố định cho nhà máy, văn phòng, chung cư —
-              đặt thùng chứa tại chỗ, nhân viên đến đúng hẹn theo tuần hoặc theo tháng.
-            </p>
-            <ul class="list-dash">
-              <li>Lịch thu gom cố định — tuần hoặc tháng, không cần gọi từng lần</li>
-              <li>Đặt thùng chứa tại chỗ cho giấy, nhôm, dây điện…</li>
-              <li>Bảng báo giá cập nhật gửi khách hàng mỗi tuần</li>
-            </ul>
-            <a class="link-arrow" href="/dich-vu/thu-mua-tan-noi">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-          </div>
-          <div class="service-row-media">
-            <img src="~/assets/images/company/company-yard.svg" alt="Sân kho tập kết phế liệu thu gom định kỳ" width="1200" height="750" loading="lazy">
-          </div>
-        </article>
-        <!-- SERVICE ROW 06 END -->
+        @foreach (var service in services.Select((item, index) => new { item, index }))
+        {
+          var flip = service.index % 2 == 1;
+          var no = (service.index + 1).ToString("00");
+          <!-- SERVICE ROW @no START -->
+          <article class="service-row reveal @(flip ? "service-row--flip" : null)">
+            <div class="service-row-copy">
+              <span class="service-no">@no</span>
+              <h2>@service.item.Title</h2>
+              @if (!string.IsNullOrWhiteSpace(service.item.Excerpt))
+              {
+                <p>@service.item.Excerpt</p>
+              }
+              <a class="link-arrow" href="/dich-vu/@service.item.Slug">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+            <div class="service-row-media">
+              <img src="@(string.IsNullOrWhiteSpace(service.item.CoverImage) ? "/assets/images/company/company-warehouse.svg" : service.item.CoverImage)" alt="@service.item.Title" width="1200" height="750" loading="lazy">
+            </div>
+          </article>
+          <!-- SERVICE ROW @no END -->
+        }
       </div>
     </div>
   </section>
@@ -184,7 +80,7 @@
           <div class="sec-head">
             <span class="sec-label">Câu hỏi thường gặp</span>
             <h2 class="sec-title" id="faq-title">Trước khi dùng dịch vụ</h2>
-            <p class="sec-desc">Bốn câu hỏi khách thường hỏi trước khi chốt dịch vụ. Cần trả lời nhanh hơn — gọi <a href="tel:[HOTLINE]">[HOTLINE]</a>.</p>
+            <p class="sec-desc">Cần trả lời nhanh hơn — gọi hotline hoặc chat Zalo để được tư vấn ngay.</p>
           </div>
         </div>
         <div class="col-lg-8">
@@ -209,11 +105,8 @@
           <button class="btn btn-primary btn-lg" type="button" data-quote-open>
             <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
           </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:[HOTLINE]">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>[HOTLINE]
-          </a>
-          <a class="btn btn-outline-light btn-lg" href="https://zalo.me/[ZALO]" target="_blank" rel="noopener">
-            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat Zalo
+          <a class="btn btn-outline-light btn-lg" href="/lien-he">
+            <i class="bi bi-envelope-fill" aria-hidden="true"></i>Liên hệ ngay
           </a>
         </div>
       </div>

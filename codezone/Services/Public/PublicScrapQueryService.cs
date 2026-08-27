@@ -26,7 +26,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
 
         var baseQuery = _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published);
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null);
 
         var totalItems = await baseQuery.CountAsync(cancellationToken);
         var totalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)pageSize));
@@ -93,15 +93,15 @@ public class PublicScrapQueryService : IPublicScrapQueryService
                 category.Id,
                 category.Name,
                 category.Slug,
-                ItemCount = category.ScrapItems.Count(item => item.Status == PublicConstants.Published),
+                ItemCount = category.ScrapItems.Count(item => item.Status == PublicConstants.Published && item.DeletedAt == null),
                 ImageUrl = category.ScrapItems
-                    .Where(item => item.Status == PublicConstants.Published)
+                    .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null)
                     .OrderByDescending(item => item.IsFeatured)
                     .ThenBy(item => item.SortOrder)
                     .Select(item => item.PrimaryImage)
                     .FirstOrDefault(),
                 MinPriceFrom = category.ScrapItems
-                    .Where(item => item.Status == PublicConstants.Published && item.PriceFrom > 0)
+                    .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.PriceFrom > 0)
                     .Select(item => item.PriceFrom)
                     .Min()
             })
@@ -109,7 +109,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
 
         var categoryItemNames = await _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published && item.ScrapCategoryId != null)
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.ScrapCategoryId != null)
             .OrderBy(item => item.SortOrder)
             .ThenBy(item => item.Id)
             .Select(item => new { item.ScrapCategoryId, item.Name })
@@ -168,7 +168,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
 
         var itemRows = await _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published && item.ScrapCategoryId == current.Id)
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.ScrapCategoryId == current.Id)
             .OrderByDescending(item => item.IsFeatured)
             .ThenBy(item => item.SortOrder)
             .ThenByDescending(item => item.PublishedAt)
@@ -223,7 +223,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
     {
         var item = await _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(scrap => scrap.Status == PublicConstants.Published && scrap.Slug == slug)
+            .Where(scrap => scrap.Status == PublicConstants.Published && scrap.DeletedAt == null && scrap.Slug == slug)
             .Select(scrap => new
             {
                 scrap.Id,
@@ -255,7 +255,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
 
         var relatedRows = await _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(scrap => scrap.Status == PublicConstants.Published && scrap.Id != item.Id)
+            .Where(scrap => scrap.Status == PublicConstants.Published && scrap.DeletedAt == null && scrap.Id != item.Id)
             .OrderByDescending(scrap => scrap.IsFeatured)
             .ThenBy(scrap => scrap.SortOrder)
             .ThenByDescending(scrap => scrap.PublishedAt)
