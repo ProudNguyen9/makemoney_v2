@@ -27,6 +27,23 @@ public class PriceBoardGroup
 
     public IReadOnlyList<PriceBoardRow> Rows { get; set; } = [];
 
+    public int ItemCount => Rows.Select(row => row.ItemId).Distinct().Count();
+
+    public int PriceCount => Rows.Count;
+
+    public string HighlightPriceText
+    {
+        get
+        {
+            var bestRow = Rows
+                .Where(row => row.Value.HasValue)
+                .OrderByDescending(row => row.Value!.Value)
+                .FirstOrDefault();
+
+            return bestRow?.PriceText ?? "Liên hệ";
+        }
+    }
+
     public DateOnly? UpdatedAt =>
         Rows.Select(row => row.EffectiveDate)
             .DefaultIfEmpty()
@@ -39,9 +56,13 @@ public class PriceBoardRow
 
     public string ItemName { get; set; } = string.Empty;
 
+    public string? ImageUrl { get; set; }
+
     public string? ShortDescription { get; set; }
 
     public string? Label { get; set; }
+
+    public string? Note { get; set; }
 
     public decimal? Value { get; set; }
 
@@ -54,9 +75,9 @@ public class PriceBoardRow
     public int RowSpan { get; set; } = 1;
 
     public string PriceText =>
-        !string.IsNullOrWhiteSpace(Label)
-            ? Label
-            : Value.HasValue
-                ? Value.Value.ToString("N0")
-                : "Liên hệ";
+        Value.HasValue
+            ? $"{Value.Value:N0}đ/{(string.IsNullOrWhiteSpace(Unit) ? "kg" : Unit)}"
+            : !string.IsNullOrWhiteSpace(Label)
+                ? Label
+                : "Liên hệ báo giá";
 }

@@ -35,6 +35,7 @@ public class PricesController : Controller
             {
                 item.Id,
                 item.Name,
+                item.PrimaryImage,
                 item.ShortDescription,
                 item.PriceLabel,
                 item.PriceFrom,
@@ -62,8 +63,10 @@ public class PricesController : Controller
                             {
                                 ItemId = item.Id,
                                 ItemName = item.Name,
+                                ImageUrl = item.PrimaryImage,
                                 ShortDescription = item.ShortDescription,
-                                Label = price.PriceLabel ?? (item.Prices.Count == 1 ? item.PriceLabel : null),
+                                Label = item.Prices.Count == 1 ? item.PriceLabel : null,
+                                Note = IsPublicPriceNote(price.PriceLabel) ? price.PriceLabel : null,
                                 Value = price.PriceValue ?? (item.Prices.Count == 1 ? item.PriceFrom : null),
                                 Unit = string.IsNullOrWhiteSpace(price.Unit) ? "kg" : price.Unit,
                                 EffectiveDate = price.EffectiveDate,
@@ -78,22 +81,13 @@ public class PricesController : Controller
                         {
                             ItemId = item.Id,
                             ItemName = item.Name,
+                            ImageUrl = item.PrimaryImage,
                             ShortDescription = item.ShortDescription,
                             Label = item.PriceLabel,
+                            Note = null,
                             Value = item.PriceFrom,
                             Unit = string.IsNullOrWhiteSpace(item.Unit) ? "kg" : item.Unit
                         });
-                    }
-                }
-
-                // Gộp ô theo loại phế liệu: đánh RowSpan cho dòng đầu của mỗi item.
-                foreach (var groupItem in rows.GroupBy(row => row.ItemId))
-                {
-                    var list = groupItem.ToList();
-                    list[0].RowSpan = list.Count;
-                    for (var index = 1; index < list.Count; index++)
-                    {
-                        list[index].IsFirstOfItem = false;
                     }
                 }
 
@@ -110,5 +104,19 @@ public class PricesController : Controller
             .ToList();
 
         return View(new PriceBoardViewModel { Groups = groups });
+    }
+
+    private static bool IsPublicPriceNote(string? note)
+    {
+        if (string.IsNullOrWhiteSpace(note))
+        {
+            return false;
+        }
+
+        var normalized = note.Trim().ToLowerInvariant();
+        return normalized != "giá khởi tạo sản phẩm"
+            && normalized != "gia khoi tao san pham"
+            && normalized != "giá trước khi cập nhật"
+            && normalized != "gia truoc khi cap nhat";
     }
 }

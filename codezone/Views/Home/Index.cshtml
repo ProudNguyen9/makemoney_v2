@@ -23,7 +23,11 @@
     {
         return latestPosts.ElementAtOrDefault(index)?.Title ?? fallback;
     }
-    var priceRows = featuredScrap.Take(5).ToList();
+    var priceRows = featuredScrap.Take(6).ToList();
+    var priceGroups = priceRows
+        .GroupBy(item => item.CategoryName)
+        .Select(group => new { Name = group.Key, Rows = group.ToList() })
+        .ToList();
 }
 
 <main>
@@ -172,7 +176,7 @@
   <!-- ============================ PRICE BOARD START ============================ -->
   <section class="section section--paper" aria-labelledby="price-title">
     <div class="container">
-      <div class="price-board">
+      <div class="price-board price-board--home">
         <div class="price-board-head reveal">
           <div class="sec-head mb-0">
             <span class="sec-label">Bảng giá tham khảo</span>
@@ -189,21 +193,37 @@
             <caption class="visually-hidden">Bảng giá thu mua một số loại phế liệu phổ biến, đơn vị tính theo kg</caption>
             <thead>
               <tr>
-                <th scope="col">Loại</th>
+                <th scope="col">Loại phế liệu</th>
                 <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
+                <th scope="col" class="text-end">Giá thu mua</th>
               </tr>
             </thead>
             <tbody>
-              @foreach (var item in priceRows)
+              @foreach (var group in priceGroups)
               {
-                <tr>
-                  <td class="mat-name"><span class="mat-swatch" style="background:#B87333"></span>@item.CategoryName</td>
-                  <td class="mat-type"><a href="/phe-lieu/@item.Slug">@item.Name</a></td>
-                  <td class="text-end"><span class="price-value">@item.PriceText</span></td>
-                  <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Liên hệ</span></td>
+                <tr class="price-section-row">
+                  <th scope="rowgroup" colspan="3">
+                    <span>@group.Name</span>
+                    <small>@group.Rows.Count dòng giá</small>
+                  </th>
                 </tr>
+                @foreach (var item in group.Rows)
+                {
+                  <tr>
+                    <td class="mat-name">
+                      <span class="mat-thumb">
+                        <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="72" height="54" loading="lazy">
+                      </span>
+                      <span class="mat-name-text">
+                        <strong>@item.Name</strong>
+                      </span>
+                    </td>
+                    <td class="mat-type">
+                      <a href="/phe-lieu/@item.Slug">@item.CategoryName</a>
+                    </td>
+                    <td class="text-end"><span class="price-value">@item.PriceText</span></td>
+                  </tr>
+                }
               }
             </tbody>
           </table>

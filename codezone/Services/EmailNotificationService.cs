@@ -190,7 +190,7 @@ public sealed class EmailNotificationService : IEmailNotificationService
 
         // ---- Header ----
         builder.Append("<tr><td style=\"background:#133d2a;padding:26px 32px 22px;\">");
-        builder.Append("<div style=\"font-size:11px;letter-spacing:3px;color:#f5b301;font-weight:bold;text-transform:uppercase;margin-bottom:6px;\">Phế Liệu Thành Trung</div>");
+        builder.Append("<div style=\"font-size:11px;letter-spacing:3px;color:#f5b301;font-weight:bold;text-transform:uppercase;margin-bottom:6px;\">Phế Liệu Minh Đức</div>");
         builder.Append("<div style=\"font-size:22px;line-height:28px;color:#ffffff;font-weight:bold;\">Yêu cầu báo giá mới 🚛</div>");
         builder.Append("<div style=\"font-size:13px;color:#bcd4c6;margin-top:4px;\">Vừa có khách gửi form trên website</div>");
         builder.Append("</td></tr>");
@@ -321,7 +321,7 @@ public sealed class EmailNotificationService : IEmailNotificationService
     // ------------------------------------------------------------------
     private string BuildTestBody(string? fromName)
     {
-        var brandName = WebUtility.HtmlEncode(FirstNonEmpty(fromName, "Website Phế Liệu Thành Trung")!);
+        var brandName = WebUtility.HtmlEncode(FirstNonEmpty(fromName, "Website Phế Liệu Minh Đức")!);
 
         var builder = new StringBuilder();
         builder.Append("<!DOCTYPE html><html><body style=\"margin:0;padding:0;background:#f0f2ef;\">");
@@ -329,7 +329,7 @@ public sealed class EmailNotificationService : IEmailNotificationService
         builder.Append("<table role=\"presentation\" width=\"560\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"max-width:560px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;\">");
 
         builder.Append("<tr><td style=\"background:#133d2a;padding:24px 32px;\">");
-        builder.Append("<div style=\"font-size:11px;letter-spacing:3px;color:#f5b301;font-weight:bold;text-transform:uppercase;margin-bottom:6px;\">Phế Liệu Thành Trung</div>");
+        builder.Append("<div style=\"font-size:11px;letter-spacing:3px;color:#f5b301;font-weight:bold;text-transform:uppercase;margin-bottom:6px;\">Phế Liệu Minh Đức</div>");
         builder.Append("<div style=\"font-size:20px;color:#ffffff;font-weight:bold;\">✅ Email thử nghiệm thành công</div>");
         builder.Append("</td></tr>");
 

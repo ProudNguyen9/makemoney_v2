@@ -2,6 +2,9 @@
 @{
     ViewData["Title"] = "Bảng giá";
     var updatedText = Model.LastUpdatedAt?.ToString("dd/MM/yyyy") ?? DateTime.Today.ToString("dd/MM/yyyy");
+    var allRows = Model.Groups
+        .SelectMany(group => group.Rows.Select(row => new { Group = group, Row = row }))
+        .ToList();
 }
 
 <main class="price-page">
@@ -42,85 +45,85 @@
   </section>
   <!-- ============================ PRICE NOTICE END ============================ -->
 
-  @if (Model.Groups.Count > 0)
-  {
-    <!-- ============================ ANCHOR NAV START ============================ -->
-    <nav class="anchor-nav" aria-label="Điều hướng nhóm bảng giá">
-      <div class="container">
-        <div class="nav-scroll">
-          @foreach (var group in Model.Groups.Select((g, i) => new { g, i }))
-          {
-            <a href="#@group.g.AnchorId" class="@(group.i == 0 ? "active" : null)">@group.g.Name</a>
-          }
-        </div>
-      </div>
-    </nav>
-    <!-- ============================ ANCHOR NAV END ============================ -->
-  }
-
-  <!-- ============================ PRICE GROUPS START ============================ -->
-  <section class="section section--md" aria-label="Bảng giá theo nhóm chất liệu">
+  <!-- ============================ PRICE TABLE START ============================ -->
+  <section class="section section--md" aria-label="Bảng giá phế liệu tổng hợp">
     <div class="container">
 
-      @foreach (var group in Model.Groups)
+      @if (allRows.Count > 0)
       {
-        <!-- PRICE GROUP: @(group.Name.ToUpperInvariant()) START -->
-        <section class="price-group" id="@group.AnchorId" aria-labelledby="pg-@group.Slug-title">
-          <div class="price-group-head">
-            <span class="pg-swatch" aria-hidden="true"></span>
-            <h2 id="pg-@group.Slug-title">Giá phế liệu @group.Name</h2>
-            <span class="pg-updated">Cập nhật @(group.UpdatedAt?.ToString("dd/MM/yyyy") ?? updatedText)</span>
+        <div class="price-board price-board--all">
+          <div class="price-board-head reveal">
+            <div>
+              <span class="sec-label">Bảng giá tổng hợp</span>
+              <h2 class="sec-title mb-0">Tất cả giá thu mua phế liệu</h2>
+            </div>
+            <span class="price-updated">
+              <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+              Cập nhật <strong>@updatedText</strong> — @allRows.Count dòng giá
+            </span>
           </div>
-          @if (!string.IsNullOrWhiteSpace(group.Description))
-          {
-            <p class="price-group-desc">@group.Description</p>
-          }
-          <div class="price-board">
-            <div class="table-scroll reveal">
-              <table class="table table-price align-middle">
-                <caption class="visually-hidden">Bảng giá thu mua phế liệu @group.Name, đơn vị tính theo kg</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Loại</th>
-                    <th scope="col">Phân loại</th>
-                    <th scope="col" class="text-end">Giá thu mua (đ/@group.Rows[0].Unit)</th>
+
+          <div class="table-scroll reveal">
+            <table class="table table-price align-middle">
+              <caption class="visually-hidden">Bảng giá thu mua tất cả loại phế liệu</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Loại phế liệu</th>
+                  <th scope="col">Phân loại</th>
+                  <th scope="col" class="text-end">Giá thu mua</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var group in Model.Groups)
+                {
+                  <tr class="price-section-row">
+                    <th scope="rowgroup" colspan="3">
+                      <span>@group.Name</span>
+                      <small>@group.Rows.Count dòng giá</small>
+                    </th>
                   </tr>
-                </thead>
-                <tbody>
                   @foreach (var row in group.Rows)
                   {
                     <tr>
-                      @if (row.IsFirstOfItem)
-                      {
-                        <td class="mat-name" rowspan="@row.RowSpan"><span class="mat-swatch" aria-hidden="true"></span>@row.ItemName</td>
-                      }
-                      <td class="mat-type">@row.ShortDescription</td>
-                      <td class="text-end"><span class="price-value">@row.PriceText</span></td>
+                      <td class="mat-name">
+                        <span class="mat-thumb">
+                          <img src="@AssetHelper.NormalizePath(row.ImageUrl)" alt="@row.ItemName" width="72" height="54" loading="lazy">
+                        </span>
+                        <span class="mat-name-text">
+                          <strong>@row.ItemName</strong>
+                        </span>
+                      </td>
+                      <td class="mat-type">@(string.IsNullOrWhiteSpace(row.ShortDescription) ? "Liên hệ mô tả hàng để báo giá chính xác." : row.ShortDescription)</td>
+                      <td class="text-end">
+                        <span class="price-value">@row.PriceText</span>
+                        @if (!string.IsNullOrWhiteSpace(row.Note))
+                        {
+                          <span class="price-note">@row.Note</span>
+                        }
+                      </td>
                     </tr>
                   }
-                </tbody>
-              </table>
-            </div>
+                }
+              </tbody>
+            </table>
           </div>
-        </section>
-        <!-- PRICE GROUP: @(group.Name.ToUpperInvariant()) END -->
-      }
 
-      @if (Model.Groups.Count == 0)
+          <div class="d-flex flex-wrap align-items-center gap-3 mt-4 reveal">
+            <button class="btn btn-primary" type="button" data-quote-open>
+              <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình để nhận giá chính xác
+            </button>
+            <a class="link-arrow" href="/phe-lieu">Xem danh mục loại phế liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      }
+      else
       {
         <div class="alert alert-info">Bảng giá đang được cập nhật — vui lòng quay lại sau hoặc gọi hotline để được báo giá trực tiếp.</div>
       }
 
-      <div class="d-flex flex-wrap align-items-center gap-3 reveal">
-        <button class="btn btn-primary" type="button" data-quote-open>
-          <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình để nhận giá chính xác
-        </button>
-        <a class="link-arrow" href="/phe-lieu">Xem danh mục loại phế liệu <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-      </div>
-
     </div>
   </section>
-  <!-- ============================ PRICE GROUPS END ============================ -->
+  <!-- ============================ PRICE TABLE END ============================ -->
 
   <!-- ============================ PRICE FACTORS START ============================ -->
   <section class="section section--surface section--bordered" aria-labelledby="pf-title">

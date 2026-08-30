@@ -12,9 +12,9 @@ public class HomeViewModel
     public IReadOnlyList<string> HeroImageUrls { get; set; } = [];
 
     public HomeChromeDto Chrome { get; set; } = new(
-        "0974640626",
-        "tel:0974640626",
-        "https://zalo.me/0974640626",
+        "0985565323",
+        "tel:0985565323",
+        "https://zalo.me/0985565323",
         DateTime.Today.ToString("dd/MM/yyyy"),
         "30 phút",
         ["TP.HCM", "Bình Dương", "Đồng Nai"],

@@ -817,9 +817,9 @@ public sealed class AdminQueryService :
             entityTypes,
             sitemapCount,
             redirectCount,
-            Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Thành Trung")),
+            Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Minh Đức")),
             Get(settings, "seo.default_description", "Thu mua phế liệu tận nơi giá cao, cân minh bạch, thanh toán nhanh."),
-            Get(settings, "seo.default_og_title", Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Thành Trung"))),
+            Get(settings, "seo.default_og_title", Get(settings, "seo.site_title", Get(settings, "site.name", "Phế Liệu Minh Đức"))),
             Get(settings, "seo.default_og_image", Get(settings, "site.default_og_image", "/assets/images/imported/brand/banner-1.jpg")),
             entityType,
             status,
@@ -838,12 +838,12 @@ public sealed class AdminQueryService :
         var smtpEnableSsl = bool.TryParse(smtpSslRaw, out var sslFlag) ? sslFlag : _smtpFallback.EnableSsl;
 
         return new AdminSettingsViewModel(
-            Get(settings, "site.name", "Phế Liệu Thành Trung"),
+            Get(settings, "site.name", "Phế Liệu Minh Đức"),
             Get(settings, "company.tax_code", "Đang cập nhật"),
             Get(settings, "contact.address", Get(settings, "contact.warehouse_address", "TP.HCM")),
-            Get(settings, "contact.phone", "0974640626"),
-            Get(settings, "contact.zalo", "0974640626"),
-            Get(settings, "contact.email", "phelieuthanhtrung@gmail.com"),
+            Get(settings, "contact.phone", "0985565323"),
+            Get(settings, "contact.zalo", "0985565323"),
+            Get(settings, "contact.email", "phelieuminhduc@gmail.com"),
             Get(settings, "contact.working_hours", "T2-CN: 7:00 - 20:00"),
             Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
             Get(settings, "social.facebook", ""),

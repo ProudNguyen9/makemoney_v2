@@ -55,8 +55,8 @@ public sealed class SiteChromeService : ISiteChromeService
                 .Select(setting => new { setting.Key, setting.Value })
                 .ToDictionaryAsync(setting => setting.Key, setting => setting.Value ?? string.Empty, cancellationToken);
 
-            var companyName = Get(settings, "site.name", "Thành Trung");
-            var hotline = Get(settings, "contact.phone", "0974640626");
+            var companyName = Get(settings, "site.name", "Phế Liệu Minh Đức");
+            var hotline = Get(settings, "contact.phone", "0985565323");
             var zalo = Get(settings, "contact.zalo", hotline);
             var zaloHref = ToZaloHref(zalo);
             var address = Get(settings, "contact.address", "Hóc Môn, TP. Hồ Chí Minh");
@@ -65,7 +65,7 @@ public sealed class SiteChromeService : ISiteChromeService
                 CompanyName: companyName,
                 Hotline: hotline,
                 HotlineHref: ToPhoneHref(hotline),
-                Email: Get(settings, "contact.email", "phelieuthanhtrung@gmail.com"),
+                Email: Get(settings, "contact.email", "phelieuminhduc@gmail.com"),
                 Zalo: zalo,
                 ZaloHref: zaloHref,
                 MessengerHref: ToMessengerHref(Get(settings, "social.facebook", string.Empty)),

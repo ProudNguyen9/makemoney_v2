@@ -145,7 +145,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             .Select(setting => new { setting.Key, setting.Value })
             .ToDictionaryAsync(setting => setting.Key, setting => setting.Value ?? string.Empty, cancellationToken);
 
-        var hotline = GetSetting(homeSettings, "contact.phone", "0974640626");
+        var hotline = GetSetting(homeSettings, "contact.phone", "0985565323");
         var zalo = GetSetting(homeSettings, "contact.zalo", hotline);
         var chrome = new HomeChromeDto(
             Hotline: hotline,

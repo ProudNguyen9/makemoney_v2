@@ -198,7 +198,7 @@
     min-width: 0;
   }
 
-  /* ---- Bảng giá 4 cột: Loại | Phân loại | Giá | Xu hướng/Chi tiết ---- */
+  /* ---- Bảng giá: mỗi dòng thành một thẻ dễ đọc trên mobile ---- */
   .price-board .table-price {
     border: 0;
     background: transparent;
@@ -208,35 +208,80 @@
   }
   .price-board .table-price tbody tr {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "name meta"
-      "type type"
-      "price price";
-    gap: 0.35rem 0.75rem;
-    padding: 0.875rem 1rem;
+      "name"
+      "type"
+      "price";
+    gap: 0.5rem 0.75rem;
+    padding: 1rem;
     margin-bottom: 0.75rem;
     border: 1px solid #E3E1DC;
     border-radius: 10px;
     background: #FFFFFF;
+    box-shadow: 0 10px 22px rgba(22, 24, 28, 0.06);
   }
   .price-board .table-price tbody td {
     padding: 0;
+    border: 0;
     text-align: left !important;
   }
   .price-board .table-price tbody td:nth-child(1) { grid-area: name; }
   .price-board .table-price tbody td:nth-child(2) { grid-area: type; }
   .price-board .table-price tbody td:nth-child(3) { grid-area: price; }
-  .price-board .table-price tbody td:nth-child(4) {
-    grid-area: meta;
-    justify-self: end;
-    align-self: start;
+  .price-board .table-price tbody tr.price-section-row {
+    display: block;
+    padding: 0;
+    margin: 1rem 0 0.55rem;
+    border: 0;
+    border-radius: 8px;
+    background: #E4570F;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  .price-board .table-price tbody tr.price-section-row:first-child {
+    margin-top: 0;
+  }
+  .price-board .table-price tbody .price-section-row th {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border: 0;
+    color: #FFFFFF;
+  }
+  .price-board .table-price tbody .price-section-row small {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+    white-space: nowrap;
   }
   .price-board .table-price tbody .mat-name {
+    display: flex;
     white-space: normal;
+    min-width: 0;
+    align-items: flex-start;
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+  .price-board .table-price tbody .mat-name-text strong {
+    font-size: 1rem;
   }
   .price-board .table-price tbody .mat-type {
     font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+  .price-board .table-price tbody .mat-type::before {
+    content: "Phân loại";
+    display: block;
+    margin-bottom: 0.1rem;
+    font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #66707A;
   }
   .price-board .table-price tbody td:nth-child(3)::before {
     content: "Giá thu mua";
@@ -248,6 +293,32 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #66707A;
+  }
+  .price-board .table-price tbody .price-value {
+    font-size: 1.25rem;
+    line-height: 1.15;
+  }
+  .price-board .table-price tbody .price-note {
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+  .price-board--home .table-price tbody tr {
+    padding: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+  .price-board--home .table-price tbody .price-section-row th {
+    padding: 0.55rem 0.75rem;
+  }
+  .price-board--home .table-price tbody .mat-thumb {
+    width: 48px;
+    height: 40px;
+  }
+  .price-board--home .table-price tbody .price-value {
+    max-width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    white-space: normal;
+    font-size: 1rem;
   }
 
   /* ---- Bảng hoa hồng 3 cột (trang giới thiệu) ---- */
