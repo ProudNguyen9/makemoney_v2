@@ -67,9 +67,9 @@ DECLARE @Admins TABLE (
 
 INSERT INTO @Admins (UserName, Email, DisplayName, [Role], PasswordHash)
 VALUES
-(N'admin', N'admin@phelieuthanhtrung.vn', N'Quản trị hệ thống', N'Admin', N'v1:100000:cNdSZb5WpBYHl1lxUtWvYg==:aStQOQvyuiArFpusnVWlq0jTInJgFUA6oLPYEQqjIPs='),
-(N'editor', N'editor@phelieuthanhtrung.vn', N'Biên tập nội dung', N'Editor', N'v1:100000:UNx7LpOYZVqd+3G9B8eosA==:TP7494bnZ8EORvr2r+8z7y2cIuGgPJdSLCUNbYE5IwE='),
-(N'sale', N'sale@phelieuthanhtrung.vn', N'Nhân viên báo giá', N'Sales', N'v1:100000:UxD+Eu3bKOF8qPsZDZDxsA==:K3P88S3lGna502B8fr4afBzzSVaCRnrpRLDzqnFl5oM=');
+(N'admin', N'admin@phelieuminhduc.vn', N'Quản trị hệ thống', N'Admin', N'v1:100000:cNdSZb5WpBYHl1lxUtWvYg==:aStQOQvyuiArFpusnVWlq0jTInJgFUA6oLPYEQqjIPs='),
+(N'editor', N'editor@phelieuminhduc.vn', N'Biên tập nội dung', N'Editor', N'v1:100000:UNx7LpOYZVqd+3G9B8eosA==:TP7494bnZ8EORvr2r+8z7y2cIuGgPJdSLCUNbYE5IwE='),
+(N'sale', N'sale@phelieuminhduc.vn', N'Nhân viên báo giá', N'Sales', N'v1:100000:UxD+Eu3bKOF8qPsZDZDxsA==:K3P88S3lGna502B8fr4afBzzSVaCRnrpRLDzqnFl5oM=');
 
 MERGE dbo.AdminUsers AS target
 USING @Admins AS source

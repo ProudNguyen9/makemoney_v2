@@ -11,7 +11,7 @@ GO
 
 MERGE dbo.SiteSettings AS target
 USING (VALUES
-    (N'site.name', N'Thành Trung', N'general', N'Tên công ty hiển thị ở header/footer'),
+    (N'site.name', N'Phế Liệu Minh Đức', N'general', N'Tên công ty hiển thị ở header/footer'),
     (N'contact.working_hours', N'7:00 - 20:00', N'contact', N'Giờ làm việc hiển thị public'),
     (N'contact.warehouse_address', N'Hóc Môn, TP. Hồ Chí Minh', N'contact', N'Địa chỉ kho hiển thị ở footer'),
     (N'company.tax_code', N'Đang cập nhật', N'company', N'Mã số thuế hiển thị ở footer')

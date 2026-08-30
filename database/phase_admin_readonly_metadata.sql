@@ -34,11 +34,11 @@ DECLARE @Settings TABLE (
 
 INSERT INTO @Settings (SettingKey, SettingValue, SettingGroup, [Description])
 VALUES
-(N'site.name', N'Phế Liệu Thành Trung', N'site', N'Tên thương hiệu hiển thị trong admin và public'),
+(N'site.name', N'Phế Liệu Minh Đức', N'site', N'Tên thương hiệu hiển thị trong admin và public'),
 (N'company.tax_code', N'Đang cập nhật', N'company', N'Mã số thuế'),
-(N'contact.phone', N'0974640626', N'contact', N'Hotline chính'),
-(N'contact.zalo', N'0974640626', N'contact', N'Số Zalo'),
-(N'contact.email', N'phelieuthanhtrung@gmail.com', N'contact', N'Email liên hệ'),
+(N'contact.phone', N'0985565323', N'contact', N'Hotline chính'),
+(N'contact.zalo', N'0985565323', N'contact', N'Số Zalo'),
+(N'contact.email', N'phelieuminhduc@gmail.com', N'contact', N'Email liên hệ'),
 (N'contact.address', N'TP.HCM, Bình Dương, Đồng Nai', N'contact', N'Địa chỉ/khu vực hiển thị'),
 (N'contact.working_hours', N'T2-CN: 7:00 - 20:00', N'contact', N'Giờ làm việc'),
 (N'site.logo', N'/assets/images/imported/brand/logo.png', N'site', N'Logo header'),
@@ -77,7 +77,7 @@ VALUES
 (N'/tin-tuc', N'Tin tức và bảng giá phế liệu mới nhất', N'Cập nhật giá phế liệu, kinh nghiệm bán phế liệu và kiến thức thu mua.', N'/assets/images/imported/brand/banner-1.jpg'),
 (N'/bang-gia', N'Bảng giá phế liệu hôm nay', N'Bảng giá thu mua phế liệu tham khảo, cập nhật theo dữ liệu website.', N'/assets/images/imported/brand/banner-2.jpg'),
 (N'/lien-he', N'Liên hệ thu mua phế liệu', N'Liên hệ hotline, Zalo để gửi hình và nhận báo giá phế liệu nhanh.', N'/assets/images/imported/brand/banner-3.jpg'),
-(N'/gioi-thieu', N'Giới thiệu Phế Liệu Thành Trung', N'Tìm hiểu năng lực thu mua, vận chuyển và thanh toán phế liệu tận nơi.', N'/assets/images/imported/brand/banner-1.jpg'),
+(N'/gioi-thieu', N'Giới thiệu Phế Liệu Minh Đức', N'Tìm hiểu năng lực thu mua, vận chuyển và thanh toán phế liệu tận nơi.', N'/assets/images/imported/brand/banner-1.jpg'),
 (N'/nang-luc', N'Năng lực thu mua phế liệu', N'Năng lực xe tải, nhân sự, quy trình khảo sát và thu gom phế liệu.', N'/assets/images/imported/brand/banner-2.jpg'),
 (N'/dich-vu', N'Dịch vụ thu mua phế liệu', N'Dịch vụ thu mua, tháo dỡ, vận chuyển và thanh lý phế liệu.', N'/assets/images/imported/brand/banner-3.jpg'),
 (N'/khu-vuc', N'Khu vực thu mua phế liệu', N'Các khu vực phục vụ thu mua phế liệu tại TP.HCM và tỉnh lân cận.', N'/assets/images/imported/brand/banner-1.jpg'),
