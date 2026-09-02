@@ -184,6 +184,9 @@ img {
   color: #66707A;
   max-width: 62ch;
   margin-bottom: 0;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 .sec-head.sec-head--row {
   display: flex;
@@ -3808,9 +3811,8 @@ textarea.form-control {
 .price-page .price-board--all .table-price tbody .mat-name .mat-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 4px;
-  mix-blend-mode: multiply;
+  object-fit: cover;
+  padding: 0;
 }
 .price-page .price-board--all .table-price tbody td {
   padding: 1rem 1.25rem;
@@ -5600,9 +5602,8 @@ textarea.form-control {
 .price-board .table-price tbody .mat-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 4px;
-  mix-blend-mode: multiply;
+  object-fit: cover;
+  padding: 0;
 }
 .price-board .table-price tbody .mat-name {
   display: flex;
@@ -5637,7 +5638,9 @@ textarea.form-control {
 .detail-gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 0.75rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 .detail-gallery .dg-item {
   margin: 0;

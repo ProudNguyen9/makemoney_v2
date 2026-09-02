@@ -207,28 +207,25 @@
     display: none;
   }
   .price-board .table-price tbody tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "name"
-      "type"
-      "price";
-    gap: 0.5rem 0.75rem;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
     border: 1px solid #E3E1DC;
     border-radius: 10px;
     background: #FFFFFF;
-    box-shadow: 0 10px 22px rgba(22, 24, 28, 0.06);
+    box-shadow: 0 4px 10px rgba(22, 24, 28, 0.06);
   }
   .price-board .table-price tbody td {
     padding: 0;
     border: 0;
     text-align: left !important;
   }
-  .price-board .table-price tbody td:nth-child(1) { grid-area: name; }
-  .price-board .table-price tbody td:nth-child(2) { grid-area: type; }
-  .price-board .table-price tbody td:nth-child(3) { grid-area: price; }
+  .price-board .table-price tbody td:nth-child(1) { flex: 1 1 auto; min-width: 0; }
+  .price-board .table-price tbody td:nth-child(2) { display: none; }
+  .price-board .table-price tbody td:nth-child(3) { flex: 0 0 auto; text-align: right; }
   .price-board .table-price tbody tr.price-section-row {
     display: block;
     padding: 0;
@@ -261,16 +258,16 @@
     display: flex;
     white-space: normal;
     min-width: 0;
-    align-items: flex-start;
-    font-size: 0.98rem;
-    line-height: 1.35;
+    align-items: center;
+    font-size: 0.92rem;
+    line-height: 1.3;
   }
   .price-board .table-price tbody .mat-name-text strong {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   .price-board .table-price tbody .mat-type {
-    font-size: 0.8125rem;
-    line-height: 1.55;
+    font-size: 0.78rem;
+    line-height: 1.45;
   }
   .price-board .table-price tbody .mat-type::before {
     content: "Phân loại";
@@ -284,23 +281,15 @@
     color: #66707A;
   }
   .price-board .table-price tbody td:nth-child(3)::before {
-    content: "Giá thu mua";
-    display: block;
-    margin-bottom: 0.15rem;
-    font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #66707A;
+    display: none;
   }
   .price-board .table-price tbody .price-value {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     line-height: 1.15;
+    padding: 0.3rem 0.5rem;
   }
   .price-board .table-price tbody .price-note {
-    font-size: 0.75rem;
-    line-height: 1.45;
+    display: none;
   }
   .price-board--home .table-price tbody tr {
     padding: 0.75rem;
