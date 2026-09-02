@@ -14,9 +14,9 @@
 |---|---|
 | URL web | `http://localhost:5051` |
 | Kết nối DB | `Server=.;Database=ScrapWebsiteLocal;Trusted_Connection=True` |
-| Tài khoản admin | `admin@phelieuthanhtrung.vn` / `Admin@2026!` |
-| Tài khoản editor | `editor@phelieuthanhtrung.vn` / `Editor@2026!` |
-| Tài khoản sale | `sale@phelieuthanhtrung.vn` / `Sale@2026!` |
+| Tài khoản admin | `admin@phelieuminhduc.vn` / `Admin@2026!` |
+| Tài khoản editor | `editor@phelieuminhduc.vn` / `Editor@2026!` |
+| Tài khoản sale | `sale@phelieuminhduc.vn` / `Sale@2026!` |
 | Tiền tố dữ liệu test | Tất cả bản ghi tạo mới đặt tên đầu bằng `QA-` để dễ dọn dẹp |
 | Dọn dữ liệu sau test | Xóa các bản ghi có tên LIKE `'QA-%'` trong các bảng tương ứng |
 

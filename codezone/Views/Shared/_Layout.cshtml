@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="~/assets/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/responsive.css" asp-append-version="true" />
 </head>
-<body class="has-mobilebar">
+<body class="has-mobilebar @(ViewData["BodyClass"] ?? "")">
     @await Component.InvokeAsync("Header")
 
     @RenderBody()

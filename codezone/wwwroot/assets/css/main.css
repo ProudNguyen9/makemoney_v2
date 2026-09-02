@@ -102,7 +102,7 @@ img {
 }
 
 .section {
-  padding-block: 80px;
+  padding-block: 56px;
 }
 
 .section--xl {
@@ -148,21 +148,22 @@ img {
 }
 
 .sec-head {
-  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 .sec-head .sec-label, .sec-head .story-block .story-copy .sec-label, .story-block .story-copy .sec-head .sec-label {
   display: inline-flex;
   align-items: center;
   gap: 0.625rem;
   font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
-  font-size: 0.8125rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #E4570F;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
 }
-.sec-head .sec-label::before, .sec-head .story-block .story-copy .sec-label::before, .story-block .story-copy .sec-head .sec-label::before {
+.sec-head .sec-label::before, .sec-head .story-block .story-copy .sec-label::before, .story-block .story-copy .sec-head .sec-label::before,
+.sec-head .sec-label::after, .sec-head .story-block .story-copy .sec-label::after, .story-block .story-copy .sec-head .sec-label::after {
   content: "";
   width: 26px;
   height: 3px;
@@ -193,6 +194,28 @@ img {
 }
 .sec-head.sec-head--row .sec-title {
   margin-bottom: 0;
+}
+.sec-head {
+  text-align: center;
+}
+.sec-head > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  margin: 0 auto;
+  text-align: center;
+}
+.sec-head .sec-label {
+  justify-content: center;
+  margin-bottom: 0;
+}
+.sec-head .sec-title {
+  max-width: none;
+  text-align: center;
+  margin: 0;
+  color: #1C1F24;
 }
 
 .section--dark .sec-head .sec-title {
@@ -312,7 +335,7 @@ img {
 
 @media (max-width: 991.98px) {
   .has-mobilebar {
-    padding-bottom: 62px;
+    padding-bottom: 0;
   }
 }
 
@@ -1134,6 +1157,15 @@ textarea.form-control {
   width: auto;
   display: block;
 }
+.brand-mobile-title {
+  display: none;
+}
+.mobile-menu .brand-mobile-title {
+  display: block;
+}
+.header-hotline-mobile {
+  display: none;
+}
 .site-header .brand .brand-text {
   font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
   font-weight: 600;
@@ -1351,7 +1383,31 @@ textarea.form-control {
   max-width: 100vw;
 }
 .mobile-menu .mobile-menu-head .brand-logo {
-  height: 48px;
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 auto;
+}
+.mobile-menu .mobile-menu-head .brand-mobile-title {
+  font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
+  font-size: clamp(0.98rem, 4.6vw, 1.38rem);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: #1C1F24;
+  white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.mobile-menu .mobile-menu-head #mobileMenuLabel {
+  gap: 0.6rem;
+  flex: 1 1 auto;
+}
+.mobile-menu .mobile-menu-head .brand-mobile-title strong {
+  color: #E4570F;
+  font-weight: 700;
 }
 .mobile-menu .mobile-menu-head .btn-close {
   box-shadow: none;
@@ -1453,15 +1509,7 @@ textarea.form-control {
 }
 
 .mobile-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1060;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.4fr;
-  background: #16181C;
-  border-top: 2px solid #E4570F;
+  display: none !important;
 }
 .mobile-bar a {
   display: flex;
@@ -1504,14 +1552,24 @@ textarea.form-control {
   right: 18px;
   bottom: 84px;
   z-index: 1080;
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
 }
-@media (min-width: 992px) {
+@media (max-width: 991.98px) {
   .floating-contact {
-    display: flex;
+    right: 10px;
+    bottom: 18px;
+    gap: 0.6rem;
+  }
+  .floating-contact a {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  .floating-contact .fc-zalo {
+    font-size: 0.9rem;
   }
 }
 .floating-contact a {
@@ -1971,13 +2029,166 @@ textarea.form-control {
   }
 }
 @media (max-width: 991.98px) {
+  .site-header .header-inner {
+    min-height: 58px;
+    gap: 0.5rem;
+  }
+  .site-header .brand {
+    gap: 0.6rem;
+  }
+  .site-header .brand .brand-logo {
+    height: 38px;
+  }
+  .site-header .header-toggle {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+    flex: 0 0 auto;
+  }
+  body.is-home .hero-home {
+    background: #FFFFFF;
+    padding: 0.75rem 0;
+  }
   .hero-home .hero-grid {
     min-height: 0;
   }
   .hero-home .hero-media {
-    min-height: 300px;
-    border-left: 0;
-    border-top: 1px solid #2A2F36;
+    min-height: 280px;
+    border: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 0.75rem;
+    background: #FFFFFF;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .hero-home .hero-media:active {
+    cursor: grabbing;
+  }
+  .hero-home .hero-copy {
+    display: none;
+  }
+  .hero-home .hero-img-badge {
+    display: none;
+  }
+  .hero-home .hero-control {
+    width: 36px;
+    height: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.72);
+    border-radius: 999px;
+    opacity: 0.55;
+    backdrop-filter: blur(4px);
+  }
+  .hero-home .hero-control:hover {
+    opacity: 0.9;
+    background: rgba(255,255,255,0.92);
+  }
+  .hero-home .hero-control .carousel-control-prev-icon,
+  .hero-home .hero-control .carousel-control-next-icon {
+    width: 18px;
+    height: 18px;
+    filter: invert(1) grayscale(1);
+  }
+  .hero-home .carousel-control-prev.hero-control { left: 10px; }
+  .hero-home .carousel-control-next.hero-control { right: 10px; }
+  .hero-home .hero-title--mobile {
+    display: none;
+  }
+  .site-header .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .site-header .brand-mobile-title {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: baseline;
+    gap: 0.4em;
+    font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
+    font-size: clamp(0.78rem, 3vw, 1.05rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: #1C1F24;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: left;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+  }
+  .header-hotline-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-decoration: none;
+    color: #E4570F;
+  }
+  .header-hotline-mobile i {
+    font-size: 1.35rem;
+    color: #E9A23B;
+    flex: 0 0 auto;
+    transform: rotate(12deg);
+  }
+  .header-hotline-mobile span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .header-hotline-mobile small {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: #E9A23B;
+    font-style: italic;
+    white-space: nowrap;
+  }
+  .header-hotline-mobile strong {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #E4570F;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  }
+  .brand-mobile-title strong {
+    color: #E4570F;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  body.is-home .trust-strip .trust-strip-inner {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  body.is-home .trust-strip .trust-item {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem 0.25rem;
+    gap: 0.25rem;
+    border-bottom: 0;
+    border-right: 1px solid #E3E1DC;
+  }
+  body.is-home .trust-strip .trust-item:last-child {
+    border-right: 0;
+  }
+  body.is-home .trust-strip .trust-item i {
+    font-size: 1rem;
+  }
+  body.is-home .trust-strip .trust-item .trust-text strong {
+    font-size: 0.62rem;
+    letter-spacing: 0.03em;
+    line-height: 1.25;
+  }
+  body.is-home .trust-strip .trust-item .trust-text small {
+    font-size: 0.58rem;
+    line-height: 1.25;
+    white-space: normal;
   }
 }
 @media (max-width: 575.98px) {
@@ -2755,6 +2966,13 @@ textarea.form-control {
 .showcase-grid .show-col {
   display: grid;
   gap: 10px;
+}
+@media (max-width: 991.98px) {
+  .showcase-grid .show-item,
+  .showcase-grid .show-item.show-main {
+    min-height: 260px;
+    height: 260px;
+  }
 }
 @media (min-width: 992px) {
   .showcase-grid {
@@ -4864,6 +5082,16 @@ textarea.form-control {
   }
   .service-rows .service-row.service-row--flip .service-row-media {
     order: 2;
+  }
+}
+@media (max-width: 991.98px) {
+  .service-rows .service-row .service-row-media {
+    height: 220px;
+    aspect-ratio: auto;
+  }
+  .project-rows .project-row .project-row-media {
+    height: 220px;
+    aspect-ratio: auto;
   }
 }
 
