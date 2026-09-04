@@ -29,9 +29,23 @@
 
   <section class="section section--paper" aria-label="Danh sách bài viết">
     <div class="container">
+      <!-- Tìm kiếm tin tức - đồng bộ -->
+      <div class="cat-filter-bar reveal" style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; background:linear-gradient(180deg,#FFFFFF 0%,#FFFBF5 100%); border:1px solid #F0E6D8; border-radius:12px; padding:0.75rem 0.9rem; box-shadow:0 8px 20px rgba(228,87,15,0.06); margin-bottom:1.25rem;">
+        <div style="position:relative; flex:7 1 0; min-width:0;">
+          <i class="bi bi-search" style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:#9AA3AE;"></i>
+          <input id="newsSearch" type="search" class="form-control" placeholder="Tìm tin tức: giá phế liệu, kinh nghiệm..." style="padding-left:2.4rem; height:40px; border-radius:10px; border:1px solid #E8E0D6; width:100%;">
+        </div>
+        <select id="newsCategoryFilter" class="form-select" style="flex:3 1 0; min-width:0; height:40px; border-radius:10px; border:1px solid #E8E0D6;">
+          <option value="">Tất cả</option>
+          <option value="Bảng giá">Bảng giá</option>
+          <option value="Kiến thức">Kiến thức</option>
+          <option value="Kinh nghiệm">Kinh nghiệm</option>
+        </select>
+        <button id="newsFilterBtn" class="btn btn-primary" type="button" style="height:40px; padding:0 1.2rem; border-radius:10px;"><i class="bi bi-funnel-fill"></i> Lọc</button>
+      </div>
       @if (featured is not null)
       {
-        <a class="news-feature-hero reveal mb-5" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@featured.Slug">
+        <a class="news-feature-hero reveal mb-5" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@featured.Slug" data-name="@featured.Title.ToLower()" data-category="@featured.CategoryName.ToLower()">
           <span class="nfh-media">
             <img src="@AssetHelper.NormalizePath(featured.CoverImage)" alt="@featured.Title" width="1200" height="675" loading="lazy">
           </span>
@@ -41,8 +55,8 @@
               <span class="news-dot" aria-hidden="true"></span>
               <time datetime="@featured.PublishedAt.ToString("yyyy-MM-dd")">@featured.PublishedAt.ToString("dd/MM/yyyy")</time>
             </span>
-            <h2>@featured.Title</h2>
-            <p>@featured.Excerpt</p>
+            <h2 style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@(featured.Title.Length>70? featured.Title.Substring(0,70).Trim()+"…": featured.Title)</h2>
+            <p style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@(string.IsNullOrWhiteSpace(featured.Excerpt)?"": (featured.Excerpt.Length>120? featured.Excerpt.Substring(0,120).Trim()+"…": featured.Excerpt))</p>
             <span class="link-arrow">Đọc bài đầy đủ <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
           </span>
         </a>
@@ -53,9 +67,11 @@
           <div class="news-rows reveal">
             @foreach (var post in rest)
             {
-              <a class="news-row" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug">
-                <span class="news-row-media">
-                  <img src="@AssetHelper.NormalizePath(post.CoverImage)" alt="@post.Title" width="600" height="338" loading="lazy">
+              var shortTitle = post.Title.Length>55 ? post.Title.Substring(0,55).Trim()+"…": post.Title;
+              var shortExcerpt = string.IsNullOrWhiteSpace(post.Excerpt) ? "" : (post.Excerpt.Length>90 ? post.Excerpt.Substring(0,90).Trim()+"…": post.Excerpt);
+              <a class="news-row" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@post.Slug" data-name="@post.Title.ToLower()" data-category="@post.CategoryName.ToLower()">
+                <span class="news-row-media" style="width:100%; aspect-ratio:16/10; min-height:78px; overflow:hidden; border-radius:8px;">
+                  <img src="@AssetHelper.NormalizePath(post.CoverImage)" alt="@post.Title" width="600" height="338" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
                 </span>
                 <span class="news-row-body">
                   <span class="news-meta">
@@ -63,8 +79,8 @@
                     <span aria-hidden="true">·</span>
                     <time datetime="@post.PublishedAt.ToString("yyyy-MM-dd")">@post.PublishedAt.ToString("dd/MM/yyyy")</time>
                   </span>
-                  <h3>@post.Title</h3>
-                  <p>@post.Excerpt</p>
+                  <h3 style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:1rem; line-height:1.35;">@shortTitle</h3>
+                  <p style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:0.88rem; color:#66707A;">@shortExcerpt</p>
                 </span>
               </a>
             }
@@ -97,6 +113,28 @@
           </div>
         </aside>
       </div>
+  <script>
+  (function(){
+    var s=document.getElementById('newsSearch');
+    var sel=document.getElementById('newsCategoryFilter');
+    var btn=document.getElementById('newsFilterBtn');
+    function filter(){
+      var q=(s.value||'').toLowerCase().trim();
+      var cat=(sel.value||'').toLowerCase().trim();
+      document.querySelectorAll('.news-row, .news-feature-hero').forEach(function(el){
+        var name=el.getAttribute('data-name')||'';
+        var ccat=el.getAttribute('data-category')||'';
+        var okName=!q||name.indexOf(q)!==-1;
+        var okCat=!cat||ccat.indexOf(cat)!==-1;
+        el.style.display=(okName&&okCat)?'':'none';
+      });
+    }
+    if(btn) btn.addEventListener('click',filter);
+    if(s) s.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filter();}});
+    if(s) s.addEventListener('input',function(){if(!s.value) filter();});
+    if(sel) sel.addEventListener('change',filter);
+  })();
+  </script>
       @if (Model.Page.Links.Count > 0)
       {
         <nav class="pagination-wrap mt-4" aria-label="Phân trang tin tức">

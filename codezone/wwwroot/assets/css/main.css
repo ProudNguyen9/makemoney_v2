@@ -469,6 +469,19 @@ h6, .h6 {
 }
 
 .page-hero {
+  display: none;
+}
+body.is-about .page-hero,
+body.is-home .hero-home {
+  display: block;
+}
+.page-hero--force {
+  display: block !important;
+}
+.page-hero.hero-visible {
+  display: block;
+}
+body.is-about .page-hero {
   background: #16181C;
   color: #fff;
   padding: clamp(2.5rem, 6vw, 4.5rem) 0;
@@ -1780,6 +1793,7 @@ textarea.form-control {
   font-size: 0.8125rem;
 }
 .footer-site .footer-cta-band {
+  display: none !important;
   background: #E4570F;
 }
 .footer-site .footer-cta-band .footer-cta-inner {
@@ -4086,7 +4100,27 @@ textarea.form-control {
   }
 
   .news-rows .news-row {
-    grid-template-columns: 104px 1fr;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    overflow: hidden;
+  }
+  .news-rows .news-row .news-row-media {
+    width: 100% !important;
+    max-width: 112px;
+    aspect-ratio: 4 / 3;
+    height: auto !important;
+    flex: none !important;
+    border-radius: 8px !important;
+  }
+  .news-rows .news-row .news-row-body {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .news-rows .news-row .news-row-body h3,
+  .news-rows .news-row .news-row-body p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
 
@@ -5757,4 +5791,142 @@ textarea.form-control {
   height: 100%;
   min-height: 320px;
   border-bottom: 0;
+}
+/* ==================== CUSTOM SELECT — combobox design chung mọi trang ==================== */
+.cat-filter-bar select.form-select { display: none !important; }
+.custom-select { position: relative; flex: 3 1 0; min-width: 0; }
+.custom-select .cs-trigger {
+  width: 100%; height: 42px; border-radius: 10px; border: 1px solid #E8E0D6; background: #FFFFFF;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0 0.9rem;
+  font-size: 0.92rem; line-height: 1.4; cursor: pointer; transition: border-color .15s, box-shadow .15s, background-color .15s;
+  white-space: nowrap;
+}
+.custom-select .cs-trigger:hover { border-color: #E8A46A; background-color: #FFFBF5; }
+.custom-select.open .cs-trigger { border-color: #E4570F; box-shadow: 0 0 0 3px rgba(228,87,15,0.15); }
+.custom-select .cs-trigger i { color: #E4570F; transition: transform .15s; flex: 0 0 auto; }
+.custom-select.open .cs-trigger i { transform: rotate(180deg); }
+.custom-select .cs-text {
+  display: block; flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: 1.5; padding: 2px 0;
+}
+.custom-select .cs-options {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #FFFFFF; border: 1px solid #F0E6D8; border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(22,24,28,0.12); list-style: none; margin: 0; padding: 6px;
+  display: none; z-index: 1050; max-height: 260px; overflow: auto;
+}
+.custom-select.open .cs-options { display: block; }
+.custom-select .cs-options li:hover { background: #FFF4EC; }
+.custom-select .cs-options li.active { background: #E4570F; color: #FFFFFF; font-weight: 600; }
+@media (max-width: 575.98px) {
+  /* Mobile: khung lọc chung */
+  .cat-filter-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0.45rem !important;
+    padding: 0.5rem 0.6rem !important;
+    align-items: center !important;
+  }
+  .cat-filter-bar > span {
+    display: none !important;
+  }
+  .cat-filter-bar .btn,
+  .cat-filter-bar #catFilterBtn,
+  .cat-filter-bar #priceFilterBtn,
+  .cat-filter-bar #productFilterBtn,
+  .cat-filter-bar #serviceFilterBtn,
+  .cat-filter-bar #projectFilterBtn,
+  .cat-filter-bar #newsFilterBtn {
+    display: none !important;
+  }
+
+  /* Mặc định trên trang KHÔNG có dropdown lọc: ô tìm kiếm chiếm trọn 100% hàng */
+  .cat-filter-bar > div[style*="flex"],
+  .cat-filter-bar > div[style*="position:relative"] {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Khi trang CÓ dropdown lọc (.custom-select hoặc select): chia tỉ lệ ~56% (search) : 44% (lọc) */
+  .cat-filter-bar:has(.custom-select) > div[style*="position:relative"],
+  .cat-filter-bar:has(.custom-select) > div[style*="flex"],
+  .cat-filter-bar:has(select) > div[style*="position:relative"],
+  .cat-filter-bar:has(select) > div[style*="flex"] {
+    flex: 56 1 0 !important;
+    min-width: 0 !important;
+    max-width: 60% !important;
+    width: auto !important;
+  }
+
+  .cat-filter-bar input {
+    font-size: 0.84rem !important;
+    height: 40px !important;
+    padding-left: 2rem !important;
+    padding-right: 0.4rem !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+  .cat-filter-bar div[style*="position:relative"] i.bi-search {
+    left: 0.65rem !important;
+    font-size: 0.85rem !important;
+  }
+  .cat-filter-bar input::placeholder {
+    font-size: 0.84rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .cat-filter-bar .custom-select {
+    flex: 44 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+  .cat-filter-bar .custom-select .cs-trigger {
+    font-size: 0.84rem !important;
+    padding: 0 0.45rem 0 0.55rem !important;
+    gap: 0.25rem !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+  }
+  .cat-filter-bar .custom-select .cs-trigger i {
+    font-size: 0.75rem !important;
+    flex: 0 0 auto !important;
+  }
+  .cat-filter-bar .custom-select .cs-text {
+    font-size: 0.84rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    line-height: 1.4 !important;
+    padding: 0 !important;
+  }
+  .custom-select .cs-options {
+    left: auto !important;
+    right: 0 !important;
+    width: auto !important;
+    min-width: 160px !important;
+    max-width: 260px !important;
+    max-height: 300px !important;
+    padding: 4px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 25px rgba(22,24,28,0.18) !important;
+  }
+  .custom-select .cs-options li {
+    font-size: 0.86rem !important;
+    padding: 0.6rem 0.75rem !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+  .cat-filter-bar > select.form-select {
+    flex: 44 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    font-size: 0.84rem !important;
+    height: 40px !important;
+    padding: 0 0.45rem 0 0.55rem !important;
+    border-radius: 8px !important;
+  }
 }

@@ -35,6 +35,7 @@ public class PricesController : Controller
             {
                 item.Id,
                 item.Name,
+                item.Slug,
                 item.PrimaryImage,
                 item.ShortDescription,
                 item.PriceLabel,
@@ -62,6 +63,7 @@ public class PricesController : Controller
                             rows.Add(new PriceBoardRow
                             {
                                 ItemId = item.Id,
+                                Slug = item.Slug,
                                 ItemName = item.Name,
                                 ImageUrl = item.PrimaryImage,
                                 ShortDescription = item.ShortDescription,
@@ -80,6 +82,7 @@ public class PricesController : Controller
                         rows.Add(new PriceBoardRow
                         {
                             ItemId = item.Id,
+                            Slug = item.Slug,
                             ItemName = item.Name,
                             ImageUrl = item.PrimaryImage,
                             ShortDescription = item.ShortDescription,

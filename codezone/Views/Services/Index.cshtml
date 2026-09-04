@@ -32,12 +32,20 @@
   <section class="section section--paper" aria-labelledby="service-list-title">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-label">Chọn dịch vụ phù hợp</span>
+        @* <span class="sec-label">Chọn dịch vụ phù hợp</span> *@
         <h2 class="sec-title" id="service-list-title">Chúng tôi làm được những gì?</h2>
         <p class="sec-desc">
           Cùng một chữ "thu mua" nhưng mỗi khách hàng cần một cách làm khác nhau.
           Chọn đúng nhóm bên dưới để đọc chi tiết cách thức, quy trình và điều kiện của từng dịch vụ.
         </p>
+      </div>
+      <!-- Tìm kiếm dịch vụ -->
+      <div class="cat-filter-bar reveal" style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; background:linear-gradient(180deg,#FFFFFF 0%,#FFFBF5 100%); border:1px solid #F0E6D8; border-radius:12px; padding:0.75rem 0.9rem; box-shadow:0 8px 20px rgba(228,87,15,0.06); margin-bottom:1.25rem;">
+        <div style="position:relative; flex:1 1 260px; min-width:180px;">
+          <i class="bi bi-search" style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:#9AA3AE;"></i>
+          <input id="serviceSearch" type="search" class="form-control" placeholder="Tìm dịch vụ: tận nơi, nhà xưởng, công trình..." style="padding-left:2.4rem; height:40px; border-radius:10px; border:1px solid #E8E0D6;">
+        </div>
+        <button id="serviceFilterBtn" class="btn btn-primary" type="button" style="height:40px; padding:0 1.2rem; border-radius:10px;"><i class="bi bi-funnel-fill"></i> Lọc</button>
       </div>
 
       @if (services.Count == 0)
@@ -45,19 +53,20 @@
         <div class="alert alert-info">Danh sách dịch vụ đang được cập nhật.</div>
       }
 
-      <div class="service-rows">
+      <div class="service-rows" id="serviceRows">
         @foreach (var service in services.Select((item, index) => new { item, index }))
         {
           var flip = service.index % 2 == 1;
           var no = (service.index + 1).ToString("00");
+          var shortExcerpt = string.IsNullOrWhiteSpace(service.item.Excerpt) ? "" : (service.item.Excerpt.Length>110 ? service.item.Excerpt.Substring(0,110).Trim()+"…": service.item.Excerpt);
           <!-- SERVICE ROW @no START -->
-          <article class="service-row reveal @(flip ? "service-row--flip" : null)">
+          <article class="service-row reveal @(flip ? "service-row--flip" : null)" data-name="@service.item.Title.ToLower()">
             <div class="service-row-copy">
               <span class="service-no">@no</span>
-              <h2>@service.item.Title</h2>
-              @if (!string.IsNullOrWhiteSpace(service.item.Excerpt))
+              <h2 style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@service.item.Title</h2>
+              @if (!string.IsNullOrWhiteSpace(shortExcerpt))
               {
-                <p>@service.item.Excerpt</p>
+                <p style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@shortExcerpt</p>
               }
               <a class="link-arrow" href="/dich-vu/@service.item.Slug">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
             </div>
@@ -68,6 +77,23 @@
           <!-- SERVICE ROW @no END -->
         }
       </div>
+      <script>
+      (function(){
+        var s=document.getElementById('serviceSearch');
+        var btn=document.getElementById('serviceFilterBtn');
+        function filter(){
+          var q=(s.value||'').toLowerCase().trim();
+          document.querySelectorAll('#serviceRows .service-row').forEach(function(r){
+            var name=r.getAttribute('data-name')||'';
+            var ok=!q||name.indexOf(q)!==-1;
+            r.style.display=ok?'':'none';
+          });
+        }
+        if(btn) btn.addEventListener('click',filter);
+        if(s) s.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filter();}});
+        if(s) s.addEventListener('input',function(){if(!s.value) filter();});
+      })();
+      </script>
     </div>
   </section>
   <!-- ============================ SERVICE LIST END ============================ -->

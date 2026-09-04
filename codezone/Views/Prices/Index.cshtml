@@ -84,21 +84,37 @@
                   </tr>
                   @foreach (var row in group.Rows)
                   {
-                    <tr>
+                    <tr class="position-relative">
                       <td class="mat-name">
-                        <span class="mat-thumb">
-                          <img src="@AssetHelper.NormalizePath(row.ImageUrl)" alt="@row.ItemName" width="72" height="54" loading="lazy">
-                        </span>
-                        <span class="mat-name-text">
-                          <strong>@row.ItemName</strong>
-                        </span>
+                        @if (!string.IsNullOrWhiteSpace(row.Slug))
+                        {
+                          <a class="mat-name-link d-flex align-items-center gap-3 text-decoration-none text-reset stretched-link" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@row.Slug">
+                            <span class="mat-thumb">
+                              <img src="@AssetHelper.NormalizePath(row.ImageUrl)" alt="@row.ItemName" width="72" height="54" loading="lazy">
+                            </span>
+                            <span class="mat-name-text">
+                              <strong>@row.ItemName</strong>
+                              <small>@group.Name</small>
+                            </span>
+                          </a>
+                        }
+                        else
+                        {
+                          <span class="mat-thumb">
+                            <img src="@AssetHelper.NormalizePath(row.ImageUrl)" alt="@row.ItemName" width="72" height="54" loading="lazy">
+                          </span>
+                          <span class="mat-name-text">
+                            <strong>@row.ItemName</strong>
+                            <small>@group.Name</small>
+                          </span>
+                        }
                       </td>
                       <td class="mat-type">@(string.IsNullOrWhiteSpace(row.ShortDescription) ? "Liên hệ mô tả hàng để báo giá chính xác." : row.ShortDescription)</td>
                       <td class="text-end">
-                        <span class="price-value">@row.PriceText</span>
+                        <span class="price-value position-relative" style="z-index: 2;">@row.PriceText</span>
                         @if (!string.IsNullOrWhiteSpace(row.Note))
                         {
-                          <span class="price-note">@row.Note</span>
+                          <span class="price-note position-relative" style="z-index: 2;">@row.Note</span>
                         }
                       </td>
                     </tr>

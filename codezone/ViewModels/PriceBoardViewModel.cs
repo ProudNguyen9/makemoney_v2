@@ -54,6 +54,8 @@ public class PriceBoardRow
 {
     public int ItemId { get; set; }
 
+    public string? Slug { get; set; }
+
     public string ItemName { get; set; } = string.Empty;
 
     public string? ImageUrl { get; set; }
