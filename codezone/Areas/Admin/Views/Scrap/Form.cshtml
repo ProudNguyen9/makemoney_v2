@@ -140,6 +140,7 @@
           }
           <span class="form-label-tech">Ảnh đại diện (4:3)</span>
           @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 800×600, tự chuyển WebP", "ThumbFile", false))
+          @* Tạm ẩn slot Banner 16:10 (giao diện public chi tiết chỉ dùng ảnh đại diện 4:3). Bỏ comment để mở lại:
           @if (!string.IsNullOrWhiteSpace(Model.CurrentBannerUrl))
           {
             <div class="mb-2 mt-3">
@@ -152,6 +153,7 @@
           }
           <span class="form-label-tech mt-3">Ảnh banner (16:10)</span>
           @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000, tự chuyển WebP", "BannerFile", false))
+          *@
         </div>
       </div>
 

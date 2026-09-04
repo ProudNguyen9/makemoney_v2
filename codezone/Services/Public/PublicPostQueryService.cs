@@ -102,12 +102,7 @@ public class PublicPostQueryService : IPublicPostQueryService
     {
         var postQuery = _dbContext.Posts
             .AsNoTracking()
-            .Where(item => item.DeletedAt == null && item.Slug == slug);
-
-        if (!IsAdminRequest)
-        {
-            postQuery = postQuery.Where(item => item.Status == PublicConstants.Published);
-        }
+            .Where(item => item.DeletedAt == null && item.Status == PublicConstants.Published && item.Slug == slug);
 
         var post = await postQuery
             .Select(item => new PostDetailDto(

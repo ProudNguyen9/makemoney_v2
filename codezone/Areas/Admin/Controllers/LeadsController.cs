@@ -43,7 +43,7 @@ public class LeadsController : Controller
         var updated = await _leadCommandService.MarkContactedAsync(id, cancellationToken);
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
-            return Json(new { ok = updated });
+            return Json(new { ok = updated, message = updated ? "Đã đánh dấu yêu cầu là đã liên hệ." : "Không tìm thấy yêu cầu." });
         }
 
         TempData[updated ? "Success" : "Error"] = updated ? "Đã đánh dấu yêu cầu là đã liên hệ." : "Không tìm thấy yêu cầu.";

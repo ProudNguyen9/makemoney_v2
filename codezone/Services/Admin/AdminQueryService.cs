@@ -449,10 +449,13 @@ public sealed class AdminQueryService :
         }
 
         var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var totalPages = Math.Max(1, (int)Math.Ceiling((double)totalCount / AdminPageSize));
+        page = Math.Clamp(page, 1, totalPages);
+
         var items = await baseQuery
             .OrderBy(request => request.Status == "contacted")
             .ThenByDescending(request => request.CreatedAt)
-            .Skip(Math.Max(0, page - 1) * AdminPageSize)
+            .Skip((page - 1) * AdminPageSize)
             .Take(AdminPageSize)
             .Select(request => new AdminLeadRowDto(
                 request.Id,
@@ -952,7 +955,12 @@ public sealed class AdminQueryService :
     {
         if (id is null or 0)
         {
-            return new FaqFormViewModel();
+            return new FaqFormViewModel
+            {
+                SortOrder = 1,
+                EntityType = "home",
+                Status = "published"
+            };
         }
 
         var entity = await _dbContext.FaqItems.AsNoTracking()

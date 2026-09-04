@@ -35,13 +35,19 @@ public class PricesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            TempData["Error"] = "Dữ liệu giá không hợp lệ, vui lòng kiểm tra lại.";
+            TempData["Error"] = "Dữ liệu giá không hợp lệ (giá phải là số dương lớn hơn hoặc bằng 0), vui lòng kiểm tra lại.";
             return RedirectToAction(nameof(Index), new { group, status, q, page });
         }
 
         var input = rows ?? [];
-        // PRI-002: dòng tick chọn nhưng giá trống/không hợp lệ sẽ không được lưu và được báo rõ cho người dùng.
-        var skipped = input.Count(row => row.Selected && !row.PriceValue.HasValue);
+        var selectedRows = input.Where(row => row.Selected).ToList();
+        if (selectedRows.Count == 0 && input.Count > 0)
+        {
+            TempData["Error"] = "Vui lòng tick chọn ít nhất một dòng giá (cột đầu tiên) để lưu thay đổi.";
+            return RedirectToAction(nameof(Index), new { group, status, q, page });
+        }
+
+        var skipped = input.Count(row => row.Selected && (!row.PriceValue.HasValue || row.PriceValue < 0));
         var changed = await _priceCommandService.SavePriceBulkAsync(input, cancellationToken);
 
         if (changed > 0)
@@ -55,7 +61,7 @@ public class PricesController : Controller
 
         if (skipped > 0)
         {
-            TempData["Error"] = $"Bỏ qua {skipped} dòng vì giá đang trống hoặc không hợp lệ — hãy nhập số giá rồi lưu lại.";
+            TempData["Error"] = $"Bỏ qua {skipped} dòng vì giá đang trống hoặc không hợp lệ — hãy nhập số giá hợp lệ rồi lưu lại.";
         }
 
         return RedirectToAction(nameof(Index), new { group, status, q, page });

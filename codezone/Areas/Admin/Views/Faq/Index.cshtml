@@ -29,10 +29,12 @@
   <select class="form-select" name="assign" aria-label="Lọc theo trang gán FAQ">
     <option value="" selected="@(string.IsNullOrEmpty(Model.EntityType))">Tất cả</option>
     <option value="home" selected="@(Model.EntityType == "home")">Trang chủ</option>
-    <option value="scrap" selected="@(Model.EntityType == "scrap")">Loại phế liệu</option>
     <option value="services" selected="@(Model.EntityType == "services" || Model.EntityType == "service")">Dịch vụ</option>
+    @*
+    <option value="scrap" selected="@(Model.EntityType == "scrap")">Loại phế liệu</option>
     <option value="location" selected="@(Model.EntityType == "location")">Khu vực</option>
     <option value="referral" selected="@(Model.EntityType == "referral")">Hoa hồng</option>
+    *@
   </select>
   <input class="form-control" name="q" type="search" value="@Model.Query" placeholder="Tìm theo câu hỏi..." aria-label="Tìm theo câu hỏi">
   <div class="spacer"></div>
@@ -64,7 +66,7 @@
               <input type="hidden" name="assign" value="@Model.EntityType">
               <input type="hidden" name="q" value="@Model.Query">
               <input type="hidden" name="page" value="@Model.Page">
-              <input class="form-control form-control-sm" type="number" min="1" max="9999" name="sortOrder" value="@item.SortOrder" title="Vị trí trong nhóm FAQ (1 = đầu danh sách). Lưu sẽ tự dồn các dòng khác." aria-label="Thứ tự @item.Question">
+              <input class="form-control form-control-sm" type="number" min="0" max="9999" name="sortOrder" value="@item.SortOrder" title="Vị trí trong nhóm FAQ (1 = đầu danh sách). Lưu sẽ tự dồn các dòng khác." aria-label="Thứ tự @item.Question">
               <button class="btn btn-outline-dark btn-sm" type="submit" aria-label="Lưu thứ tự @item.Question"><i class="bi bi-check" aria-hidden="true"></i></button>
             </form>
           </td>

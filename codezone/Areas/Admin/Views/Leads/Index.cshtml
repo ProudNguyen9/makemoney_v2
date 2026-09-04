@@ -305,6 +305,19 @@
             status.textContent = 'Đã liên hệ';
           }
           form.remove();
+
+          // Cập nhật số lượng lead mới trên sidebar
+          document.querySelectorAll('.admin-sidebar a[href*="/admin/leads"] .badge, .at-user-meta .badge').forEach(badge => {
+            let current = parseInt(badge.textContent, 10);
+            if (!isNaN(current) && current > 0) {
+              current -= 1;
+              if (current === 0) {
+                badge.style.display = 'none';
+              } else {
+                badge.textContent = current.toString();
+              }
+            }
+          });
         } catch (error) {
           alert(error.message || 'Không cập nhật được trạng thái.');
           if (button) {
