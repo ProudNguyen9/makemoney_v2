@@ -22,6 +22,8 @@ public class ScrapItem
 
     public string? PriceLabel { get; set; }
 
+    public string? SeoKeywords { get; set; }
+
     public string Status { get; set; } = "published";
 
     public int SortOrder { get; set; }

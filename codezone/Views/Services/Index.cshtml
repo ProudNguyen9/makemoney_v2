@@ -1,6 +1,8 @@
 @{
     ViewData["Title"] = "Dịch vụ";
     var services = (IReadOnlyList<ScrapWebsite.Controllers.ServiceCardDto>)(ViewData["Services"] ?? Array.Empty<ScrapWebsite.Controllers.ServiceCardDto>());
+    var pager = (ScrapWebsite.ViewModels.Public.NumberedPageDto<ScrapWebsite.Controllers.ServiceCardDto>)(ViewData["Pager"]
+        ?? new ScrapWebsite.ViewModels.Public.NumberedPageDto<ScrapWebsite.Controllers.ServiceCardDto>(services, 1, 9, services.Count, 1));
     var serviceFaq = (codezone.ViewModels.Shared.FaqAccordionViewModel)(ViewData["Faq"] ?? new codezone.ViewModels.Shared.FaqAccordionViewModel("faqServices", []));
 }
 
@@ -48,50 +50,205 @@
         <button id="serviceFilterBtn" class="btn btn-primary" type="button" style="height:40px; padding:0 1.2rem; border-radius:10px;"><i class="bi bi-funnel-fill"></i> Lọc</button>
       </div>
 
+@functions {
+    public static (string badge, string[] highlights) GetServiceMeta(string slug, int index)
+    {
+        return slug switch
+        {
+            "thu-mua-phe-lieu-doanh-nghiep" => (
+                "Doanh nghiệp",
+                new[] { "Hợp đồng & hóa đơn VAT đầy đủ", "Cân điện tử chuẩn xác, minh bạch", "Dọn dẹp kho bãi sạch sẽ sau thu gom" }
+            ),
+            "thu-mua-phe-lieu-tan-noi" => (
+                "Tận nơi 24/7",
+                new[] { "Báo giá nhanh qua Zalo trong 5 phút", "Xe cân và bốc xếp trực tiếp tại nhà", "Thanh toán tiền mặt hoặc chuyển khoản ngay" }
+            ),
+            "thu-mua-thanh-ly-nha-xuong" => (
+                "Trọn gói dự án",
+                new[] { "Tháo dỡ kết cấu, xà gồ an toàn", "Xe cẩu, xe chuyên dụng bốc xếp", "Bàn giao mặt bằng đúng tiến độ hợp đồng" }
+            ),
+            "thu-mua-phe-lieu-cong-trinh" => (
+                "Công trình & Dự án",
+                new[] { "Thu mua giàn giáo, thép cây, tôn lợp", "Đội ngũ bốc xếp tiến độ nhanh", "Thu gom dọn sạch theo từng giai đoạn" }
+            ),
+            "thu-mua-may-moc-cu" => (
+                "Máy móc & Thiết bị",
+                new[] { "Định giá motor, dây chuyền, máy cũ", "Kỹ thuật viên kiểm tra trực tiếp", "Tự vận chuyển, tháo dỡ không ngại nặng" }
+            ),
+            "thu-gom-dinh-ky" => (
+                "Định kỳ dài hạn",
+                new[] { "Lịch thu gom linh hoạt theo tuần / tháng", "Hỗ trợ trang bị thùng chứa tại chỗ", "Đối soát số liệu rõ ràng từng đợt" }
+            ),
+            _ => (
+                $"Dịch vụ {(index + 1):00}",
+                new[] { "Thu mua tận nơi giá cao nhất", "Cân đo chuẩn xác, thanh toán ngay", "Đội ngũ chuyên nghiệp, hỗ trợ 24/7" }
+            )
+        };
+    }
+}
+
       @if (services.Count == 0)
       {
         <div class="alert alert-info">Danh sách dịch vụ đang được cập nhật.</div>
       }
 
-      <div class="service-rows" id="serviceRows">
+      <div class="services-grid reveal" id="serviceRows">
         @foreach (var service in services.Select((item, index) => new { item, index }))
         {
-          var flip = service.index % 2 == 1;
-          var no = (service.index + 1).ToString("00");
-          var shortExcerpt = string.IsNullOrWhiteSpace(service.item.Excerpt) ? "" : (service.item.Excerpt.Length>110 ? service.item.Excerpt.Substring(0,110).Trim()+"…": service.item.Excerpt);
-          <!-- SERVICE ROW @no START -->
-          <article class="service-row reveal @(flip ? "service-row--flip" : null)" data-name="@service.item.Title.ToLower()">
-            <div class="service-row-copy">
-              <span class="service-no">@no</span>
-              <h2 style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@service.item.Title</h2>
-              @if (!string.IsNullOrWhiteSpace(shortExcerpt))
-              {
-                <p style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">@shortExcerpt</p>
-              }
-              <a class="link-arrow" href="/dich-vu/@service.item.Slug">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          var globalIndex = (pager.PageNumber - 1) * pager.PageSize + service.index;
+          var no = (globalIndex + 1).ToString("00");
+          var (badgeText, highlights) = GetServiceMeta(service.item.Slug, globalIndex);
+          var coverImg = string.IsNullOrWhiteSpace(service.item.CoverImage) 
+              ? "/assets/images/company/company-warehouse.svg" 
+              : service.item.CoverImage;
+          var searchKey = $"{service.item.Title} {service.item.Excerpt} {string.Join(" ", highlights)}".ToLower();
+
+          <article class="service-card" data-name="@service.item.Title.ToLower()" data-search="@searchKey">
+            <div class="service-card-media">
+              <a href="/dich-vu/@service.item.Slug" tabindex="-1" aria-hidden="true" style="display:block; width:100%; height:100%;">
+                <img src="@coverImg" alt="@service.item.Title" width="600" height="380" loading="lazy">
+              </a>
+              <div class="service-card-badge-wrap">
+                <span class="service-card-num">#@no</span>
+                <span class="service-card-tag"><i class="bi bi-patch-check-fill" aria-hidden="true"></i> @badgeText</span>
+              </div>
             </div>
-            <div class="service-row-media">
-              <img src="@(string.IsNullOrWhiteSpace(service.item.CoverImage) ? "/assets/images/company/company-warehouse.svg" : service.item.CoverImage)" alt="@service.item.Title" width="1200" height="750" loading="lazy">
+            
+            <div class="service-card-body">
+              <h3 class="service-card-title">
+                <a href="/dich-vu/@service.item.Slug">@service.item.Title</a>
+              </h3>
+
+              @if (!string.IsNullOrWhiteSpace(service.item.Excerpt))
+              {
+                <p class="service-card-desc">@service.item.Excerpt</p>
+              }
+
+              <ul class="service-card-highlights">
+                @foreach (var hl in highlights)
+                {
+                  <li>
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                    <span>@hl</span>
+                  </li>
+                }
+              </ul>
+
+              <div class="service-card-foot">
+                <a class="service-card-btn" href="/dich-vu/@service.item.Slug">
+                  <span>Xem chi tiết</span>
+                  <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+                <button type="button" class="service-card-quote-btn" data-quote-open title="Gửi hình báo giá nhanh">
+                  <i class="bi bi-camera-fill" aria-hidden="true"></i> Báo giá
+                </button>
+              </div>
             </div>
           </article>
-          <!-- SERVICE ROW @no END -->
         }
       </div>
+
+      <div id="serviceNoMatch" class="alert alert-warning text-center my-4" style="display:none;">
+        <i class="bi bi-search me-1"></i> Không tìm thấy dịch vụ phù hợp với từ khóa tìm kiếm. Vui lòng thử lại.
+      </div>
+
+      @if (pager.TotalPages > 1)
+      {
+        <nav class="scrap-pagination" id="servicePagination" aria-label="Phân trang danh mục dịch vụ">
+          <ul class="pagination pagination-industrial">
+            <li class="page-item @(pager.HasPrevious ? "" : "disabled")">
+              @if (pager.HasPrevious)
+              {
+                <a class="page-link" asp-area="" asp-controller="Services" asp-action="Index" asp-route-page="@(pager.PageNumber - 1)" aria-label="Trang trước">« Trước</a>
+              }
+              else
+              {
+                <span class="page-link" aria-hidden="true">« Trước</span>
+              }
+            </li>
+            @for (var p = 1; p <= pager.TotalPages; p++)
+            {
+              <li class="page-item @(p == pager.PageNumber ? "active" : "")">
+                @if (p == pager.PageNumber)
+                {
+                  <span class="page-link" aria-current="page">@p</span>
+                }
+                else
+                {
+                  <a class="page-link" asp-area="" asp-controller="Services" asp-action="Index" asp-route-page="@p">@p</a>
+                }
+              </li>
+            }
+            <li class="page-item @(pager.HasNext ? "" : "disabled")">
+              @if (pager.HasNext)
+              {
+                <a class="page-link" asp-area="" asp-controller="Services" asp-action="Index" asp-route-page="@(pager.PageNumber + 1)" aria-label="Trang sau">Sau »</a>
+              }
+              else
+              {
+                <span class="page-link" aria-hidden="true">Sau »</span>
+              }
+            </li>
+          </ul>
+        </nav>
+      }
+
+      <!-- Cam kết dịch vụ -->
+      <div class="service-trust-banner reveal">
+        <div class="service-trust-grid">
+          <div class="service-trust-item">
+            <div class="service-trust-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></div>
+            <div class="service-trust-content">
+              <h4>Cân đo chuẩn xác</h4>
+              <p>Cân điện tử kiểm định định kỳ, khách hàng theo dõi trực tiếp tại chỗ.</p>
+            </div>
+          </div>
+          <div class="service-trust-item">
+            <div class="service-trust-icon"><i class="bi bi-currency-exchange" aria-hidden="true"></i></div>
+            <div class="service-trust-content">
+              <h4>Giá cao cạnh tranh</h4>
+              <p>Cập nhật theo giá thị trường hàng ngày, cam kết không ép giá.</p>
+            </div>
+          </div>
+          <div class="service-trust-item">
+            <div class="service-trust-icon"><i class="bi bi-truck" aria-hidden="true"></i></div>
+            <div class="service-trust-content">
+              <h4>Đội xe tận nơi</h4>
+              <p>Đủ các dòng xe 1–15 tấn và xe cẩu tự hành, thu gom nhanh 24/7.</p>
+            </div>
+          </div>
+          <div class="service-trust-item">
+            <div class="service-trust-icon"><i class="bi bi-file-earmark-check-fill" aria-hidden="true"></i></div>
+            <div class="service-trust-content">
+              <h4>Hồ sơ minh bạch</h4>
+              <p>Cung cấp hợp đồng, hóa đơn VAT và chứng từ pháp lý đầy đủ cho doanh nghiệp.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <script>
       (function(){
-        var s=document.getElementById('serviceSearch');
-        var btn=document.getElementById('serviceFilterBtn');
+        var s = document.getElementById('serviceSearch');
+        var btn = document.getElementById('serviceFilterBtn');
+        var pag = document.getElementById('servicePagination');
         function filter(){
-          var q=(s.value||'').toLowerCase().trim();
-          document.querySelectorAll('#serviceRows .service-row').forEach(function(r){
-            var name=r.getAttribute('data-name')||'';
-            var ok=!q||name.indexOf(q)!==-1;
-            r.style.display=ok?'':'none';
+          var q = (s.value || '').toLowerCase().trim();
+          var cards = document.querySelectorAll('#serviceRows .service-card');
+          var matched = 0;
+          cards.forEach(function(r){
+            var searchKey = (r.getAttribute('data-search') || r.getAttribute('data-name') || '').toLowerCase();
+            var ok = !q || searchKey.indexOf(q) !== -1;
+            r.style.display = ok ? '' : 'none';
+            if (ok) matched++;
           });
+          var noMatch = document.getElementById('serviceNoMatch');
+          if (noMatch) noMatch.style.display = (matched === 0 && q) ? '' : 'none';
+          if (pag) pag.style.display = q ? 'none' : '';
         }
-        if(btn) btn.addEventListener('click',filter);
-        if(s) s.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();filter();}});
-        if(s) s.addEventListener('input',function(){if(!s.value) filter();});
+        if (btn) btn.addEventListener('click', filter);
+        if (s) s.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); filter(); } });
+        if (s) s.addEventListener('input', function(){ if(!s.value) filter(); });
       })();
       </script>
     </div>

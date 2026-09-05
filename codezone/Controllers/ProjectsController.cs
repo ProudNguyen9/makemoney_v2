@@ -2,17 +2,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScrapWebsite.Data;
 using ScrapWebsite.Models;
+using ScrapWebsite.Services.Interfaces;
 using ScrapWebsite.Services.Public;
+using ScrapWebsite.ViewModels.Public;
 
 namespace ScrapWebsite.Controllers;
 
 public class ProjectsController : Controller
 {
     private readonly AppDbContext _dbContext;
+    private readonly IPublicSeoQueryService _seoQueryService;
 
-    public ProjectsController(AppDbContext dbContext)
+    public ProjectsController(AppDbContext dbContext, IPublicSeoQueryService seoQueryService)
     {
         _dbContext = dbContext;
+        _seoQueryService = seoQueryService;
     }
 
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -75,7 +79,8 @@ public class ProjectsController : Controller
                     .OrderBy(image => image.SortOrder)
                     .ThenBy(image => image.Id)
                     .Select(image => new ProjectGalleryImageDto(image.ImageUrl, image.AltText))
-                    .ToList()))
+                    .ToList(),
+                item.SeoKeywords))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (project is null)
@@ -84,6 +89,18 @@ public class ProjectsController : Controller
         }
 
         ViewData["Project"] = project;
+        ViewData["Seo"] = await _seoQueryService.GetByEntityAsync(
+            "Project",
+            project.Id,
+            $"/du-an/{project.Slug}",
+            new SeoDto(
+                project.Title,
+                project.Excerpt ?? "Chi tiết dự án thu mua phế liệu thực tế.",
+                project.SeoKeywords,
+                CanonicalUrl: $"/du-an/{project.Slug}",
+                OgImage: project.CoverImage,
+                OgType: "article"),
+            cancellationToken);
         return View();
     }
 }
@@ -114,4 +131,5 @@ public sealed record ProjectDetailDto(
     DateOnly? CompletedAt,
     string? QuantityText,
     string? DurationText,
-    IReadOnlyList<ProjectGalleryImageDto> Images);
+    IReadOnlyList<ProjectGalleryImageDto> Images,
+    string? SeoKeywords = null);

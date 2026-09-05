@@ -1,0 +1,102 @@
+@using System.Text.Encodings.Web
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
+@{
+    var seo = ViewData["Seo"] as ScrapWebsite.ViewModels.Public.SeoDto;
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
+    var request = Context.Request;
+    var baseUrl = $"{request.Scheme}://{request.Host}";
+    var currentUrl = $"{baseUrl}{request.Path}{request.QueryString}";
+    
+    var logoUrl = string.IsNullOrWhiteSpace(chrome.LogoUrl) 
+        ? $"{baseUrl}/assets/images/imported/brand/logo.png"
+        : (chrome.LogoUrl.StartsWith("http") ? chrome.LogoUrl : $"{baseUrl}{chrome.LogoUrl}");
+        
+    var ogImage = !string.IsNullOrWhiteSpace(seo?.OgImage)
+        ? (seo.OgImage.StartsWith("http") ? seo.OgImage : $"{baseUrl}{seo.OgImage}")
+        : logoUrl;
+        
+    var companyName = string.IsNullOrWhiteSpace(chrome.CompanyName) ? "Thu Mua Phế Liệu Minh Đức" : chrome.CompanyName;
+    var siteName = string.IsNullOrWhiteSpace(chrome.SiteTitle) ? companyName : chrome.SiteTitle;
+    var description = seo?.Description ?? "Thu mua phế liệu giá cao tận nơi, thanh toán nhanh chóng.";
+
+    var jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true
+    };
+
+    var orgObj = new Dictionary<string, object?>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = new[] { "LocalBusiness", "RecyclingCenter" },
+        ["@id"] = $"{baseUrl}/#organization",
+        ["name"] = companyName,
+        ["url"] = baseUrl,
+        ["logo"] = logoUrl,
+        ["image"] = ogImage,
+        ["description"] = description,
+        ["telephone"] = string.IsNullOrWhiteSpace(chrome.Hotline) ? "0900000000" : chrome.Hotline,
+        ["priceRange"] = "₫₫",
+        ["address"] = new Dictionary<string, string>
+        {
+            ["@type"] = "PostalAddress",
+            ["streetAddress"] = string.IsNullOrWhiteSpace(chrome.Address) ? "Đồng Nai" : chrome.Address,
+            ["addressLocality"] = "Biên Hòa",
+            ["addressRegion"] = "Đồng Nai",
+            ["addressCountry"] = "VN"
+        },
+        ["areaServed"] = !string.IsNullOrWhiteSpace(chrome.PurchaseAreas)
+            ? chrome.PurchaseAreas.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : new[] { "Đồng Nai", "Bình Dương", "TP. Hồ Chí Minh", "Toàn quốc" }
+    };
+    if (!string.IsNullOrWhiteSpace(chrome.Email)) orgObj["email"] = chrome.Email;
+    if (!string.IsNullOrWhiteSpace(chrome.WorkingHours)) orgObj["openingHours"] = chrome.WorkingHours;
+
+    var websiteObj = new Dictionary<string, object?>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "WebSite",
+        ["@id"] = $"{baseUrl}/#website",
+        ["url"] = baseUrl,
+        ["name"] = siteName,
+        ["description"] = description,
+        ["publisher"] = new Dictionary<string, string> { ["@id"] = $"{baseUrl}/#organization" },
+        ["potentialAction"] = new Dictionary<string, object>
+        {
+            ["@type"] = "SearchAction",
+            ["target"] = new Dictionary<string, string>
+            {
+                ["@type"] = "EntryPoint",
+                ["urlTemplate"] = $"{baseUrl}/tim-kiem?q={{search_term_string}}"
+            },
+            ["query-input"] = "required name=search_term_string"
+        }
+    };
+
+    var webpageObj = new Dictionary<string, object?>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "WebPage",
+        ["@id"] = currentUrl,
+        ["url"] = currentUrl,
+        ["name"] = seo?.Title ?? siteName,
+        ["description"] = description,
+        ["isPartOf"] = new Dictionary<string, string> { ["@id"] = $"{baseUrl}/#website" },
+        ["about"] = new Dictionary<string, string> { ["@id"] = $"{baseUrl}/#organization" }
+    };
+}
+
+<!-- Schema.org Structured Data -->
+<!script type="application/ld+json">
+@Html.Raw(JsonSerializer.Serialize(orgObj, jsonOptions))
+</!script>
+<!script type="application/ld+json">
+@Html.Raw(JsonSerializer.Serialize(websiteObj, jsonOptions))
+</!script>
+<!script type="application/ld+json">
+@Html.Raw(JsonSerializer.Serialize(webpageObj, jsonOptions))
+</!script>

@@ -302,8 +302,8 @@ img {
 
 .back-top {
   position: fixed;
-  right: 18px;
-  bottom: 84px;
+  right: 9px;
+  bottom: 14px;
   z-index: 1070;
   width: 42px;
   height: 42px;
@@ -312,7 +312,8 @@ img {
   background: #16181C;
   color: #fff;
   border: 0;
-  border-radius: 2px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
@@ -332,7 +333,10 @@ img {
 }
 @media (min-width: 992px) {
   .back-top {
+    right: 18px;
     bottom: 24px;
+    border-radius: 2px;
+    box-shadow: none;
   }
 }
 
@@ -1575,17 +1579,17 @@ textarea.form-control {
 }
 @media (max-width: 991.98px) {
   .floating-contact {
-    right: 10px;
-    bottom: 18px;
-    gap: 0.6rem;
+    right: 8px;
+    bottom: 66px;
+    gap: 0.45rem;
   }
   .floating-contact a {
-    width: 50px;
-    height: 50px;
-    font-size: 1.25rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
   }
   .floating-contact .fc-zalo {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
   }
 }
 .floating-contact a {
@@ -2173,7 +2177,6 @@ textarea.form-control {
     letter-spacing: 0.03em;
     white-space: nowrap;
   }
-  }
   .brand-mobile-title strong {
     color: #E4570F;
     font-weight: 700;
@@ -2206,11 +2209,6 @@ textarea.form-control {
     font-size: 0.58rem;
     line-height: 1.25;
     white-space: normal;
-  }
-}
-@media (max-width: 575.98px) {
-  .hero-home .hero-media .hero-carousel .carousel-indicators {
-    display: none;
   }
   .hero-home .hero-media .hero-img-badge {
     right: 1rem;
@@ -2261,12 +2259,31 @@ textarea.form-control {
     grid-template-columns: repeat(4, 1fr);
   }
   .trust-strip .trust-item {
+    padding: 1.35rem 1.25rem;
+    gap: 1.125rem;
     border-bottom: 0;
     border-right: 1px solid #E3E1DC;
     justify-content: flex-start;
   }
   .trust-strip .trust-item:last-child {
     border-right: 0;
+  }
+  .trust-strip .trust-item i {
+    font-size: 1.85rem;
+  }
+  .trust-strip .trust-item .trust-text strong {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #1C1F24;
+    line-height: 1.25;
+  }
+  .trust-strip .trust-item .trust-text small {
+    display: block;
+    font-size: 0.875rem;
+    color: #555E68;
+    line-height: 1.35;
+    margin-top: 0.15rem;
   }
 }
 
@@ -3951,9 +3968,7 @@ textarea.form-control {
   width: 100%;
   max-width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 1rem;
-  mix-blend-mode: multiply;
+  object-fit: cover;
   display: block;
   transition: transform 0.25s ease;
 }
@@ -5098,15 +5113,12 @@ textarea.form-control {
   border-radius: 4px;
   overflow: hidden;
   background: #1F2329;
-  position: relative;
 }
 .service-rows .service-row .service-row-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-.service-rows .service-row .service-row-media img {
   transition: transform 0.5s ease;
 }
 .service-rows .service-row .service-row-media:hover img {
@@ -5128,6 +5140,292 @@ textarea.form-control {
   .project-rows .project-row .project-row-media {
     height: 220px;
     aspect-ratio: auto;
+  }
+}
+
+/* ==================== MODERN SERVICES GRID ==================== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+  margin-top: 1.25rem;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid #EDE8E1;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(22, 24, 28, 0.04);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(228, 87, 15, 0.12);
+  border-color: #E4570F;
+}
+
+.service-card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #1F2329;
+}
+
+.service-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover .service-card-media img {
+  transform: scale(1.06);
+}
+
+.service-card-badge-wrap {
+  position: absolute;
+  top: 0.875rem;
+  left: 0.875rem;
+  right: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.service-card-num {
+  background: rgba(22, 24, 28, 0.72);
+  backdrop-filter: blur(6px);
+  color: #FFFFFF;
+  font-family: var(--font-heading, "Oswald", sans-serif);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.service-card-tag {
+  background: linear-gradient(135deg, #E4570F 0%, #F37021 100%);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(228, 87, 15, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.service-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1.35rem 1.35rem 1.25rem;
+}
+
+.service-card-title {
+  font-family: var(--font-heading, "Oswald", sans-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 0.65rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.7em;
+}
+
+.service-card-title a {
+  color: #1A202C;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.service-card-title a:hover,
+.service-card:hover .service-card-title a {
+  color: #E4570F;
+}
+
+.service-card-desc {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #55606E;
+  margin: 0 0 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.35em;
+}
+
+.service-card-highlights {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.service-card-highlights li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+.service-card-highlights li i {
+  color: #10B981;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.service-card-foot {
+  margin-top: auto;
+  padding-top: 0.9rem;
+  border-top: 1px dashed #EAE5DE;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.service-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #E4570F;
+  background: rgba(228, 87, 15, 0.08);
+  padding: 0.5rem 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.service-card-btn:hover,
+.service-card:hover .service-card-btn {
+  background: #E4570F;
+  color: #FFFFFF;
+}
+
+.service-card-btn i {
+  transition: transform 0.2s ease;
+}
+
+.service-card:hover .service-card-btn i {
+  transform: translateX(3px);
+}
+
+.service-card-quote-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748B;
+  background: transparent;
+  border: 1px solid #E2E8F0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.service-card-quote-btn:hover {
+  color: #E4570F;
+  border-color: #E4570F;
+  background: #FFF8F4;
+}
+
+/* Service trust banner */
+.service-trust-banner {
+  margin-top: 3.5rem;
+  padding: 2rem 2rem;
+  background: linear-gradient(135deg, #FFFDFB 0%, #FFF8F2 100%);
+  border: 1px solid #F0DFD0;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(228, 87, 15, 0.05);
+}
+
+.service-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.service-trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.service-trust-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #E4570F 0%, #F37021 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(228, 87, 15, 0.25);
+}
+
+.service-trust-content h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1A202C;
+  margin: 0 0 0.25rem;
+}
+
+.service-trust-content p {
+  font-size: 0.835rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 1024px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  .service-trust-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .service-trust-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .service-trust-banner {
+    padding: 1.5rem 1.25rem;
+    margin-top: 2rem;
   }
 }
 
@@ -5551,6 +5849,17 @@ textarea.form-control {
     display: none;
   }
 }
+@media (min-width: 992px) {
+  .cat-swiper.swiper-grid {
+    height: 820px;
+  }
+  .cat-swiper.swiper-grid .swiper-wrapper {
+    height: 100%;
+  }
+  .cat-swiper.swiper-grid .swiper-slide {
+    height: calc((100% - 20px) / 2) !important;
+  }
+}
 @media (max-width: 1199.98px) {
   .scrap-card-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -5671,12 +5980,13 @@ textarea.form-control {
 /* ==================== DETAIL GALLERY (trang chi tiết phế liệu) ==================== */
 .detail-gallery {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  max-width: 900px;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.85rem;
+  max-width: 960px;
   margin: 0 auto;
 }
 .detail-gallery .dg-item {
+  grid-column: span 4;
   margin: 0;
   border: 1px solid var(--c-border);
   border-radius: 12px;
@@ -5684,52 +5994,84 @@ textarea.form-control {
   background: var(--c-bg);
   aspect-ratio: 4 / 3;
 }
-.detail-gallery .dg-item:first-child {
-  grid-column: span 2;
-  aspect-ratio: 8 / 5;
-}
 .detail-gallery .dg-item img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 0.75rem;
-  mix-blend-mode: multiply;
+  object-fit: cover;
+  padding: 0;
+  display: block;
   transition: transform 0.25s ease;
 }
 .detail-gallery .dg-item:hover img {
   transform: scale(1.04);
 }
-@media (max-width: 767.98px) {
-  .detail-gallery {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .detail-gallery .dg-item:first-child {
-    grid-column: span 2;
-  }
-}
-/* Can theo số ảnh để không tạo ô trống */
+
+/* Tự động căn full hàng theo số lượng ảnh */
+/* 1 ảnh */
 .detail-gallery:has(> :only-child) {
   grid-template-columns: minmax(0, 720px);
   justify-content: center;
 }
-.detail-gallery:has(> :only-child) .dg-item:first-child {
-  grid-column: auto;
+.detail-gallery:has(> :only-child) .dg-item {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 10;
 }
-.detail-gallery:has(> :nth-child(2):last-child) {
-  grid-template-columns: repeat(2, 1fr);
+
+/* 2 ảnh: chia đôi 50% - 50% */
+.detail-gallery:has(> :nth-child(2):last-child) .dg-item {
+  grid-column: span 6;
 }
-.detail-gallery:has(> :nth-child(2):last-child) .dg-item:first-child,
-.detail-gallery:has(> :nth-child(3):last-child) .dg-item:first-child,
-.detail-gallery:has(> :nth-child(6):last-child) .dg-item:first-child {
-  grid-column: auto;
-  aspect-ratio: 4 / 3;
+
+/* 3 ảnh: chia 3 đều (4/12 mỗi ảnh) */
+.detail-gallery:has(> :nth-child(3):last-child) .dg-item {
+  grid-column: span 4;
 }
-.detail-gallery:has(> :nth-child(4):last-child) {
-  grid-template-columns: repeat(2, 1fr);
+
+/* 4 ảnh: lưới 2x2 cân đối (6/12 mỗi ảnh) */
+.detail-gallery:has(> :nth-child(4):last-child) .dg-item {
+  grid-column: span 6;
 }
-.detail-gallery:has(> :nth-child(4):last-child) .dg-item:first-child {
-  grid-column: auto;
-  aspect-ratio: 4 / 3;
+
+/* 5 ảnh: Hàng 1 (2 ảnh: 6/12) + Hàng 2 (3 ảnh: 4/12) -> cả 2 hàng đều full 100% */
+.detail-gallery:has(> :nth-child(5):last-child) .dg-item:nth-child(-n+2) {
+  grid-column: span 6;
+}
+.detail-gallery:has(> :nth-child(5):last-child) .dg-item:nth-child(n+3) {
+  grid-column: span 4;
+}
+
+/* 6 ảnh: 2 hàng x 3 ảnh (4/12 mỗi ảnh) */
+.detail-gallery:has(> :nth-child(6):last-child) .dg-item {
+  grid-column: span 4;
+}
+
+/* 7 ảnh: Hàng 1 (3 ảnh: 4/12) + Hàng 2 (4 ảnh: 3/12) -> cả 2 hàng đều full 100% */
+.detail-gallery:has(> :nth-child(7):last-child) .dg-item:nth-child(-n+3) {
+  grid-column: span 4;
+}
+.detail-gallery:has(> :nth-child(7):last-child) .dg-item:nth-child(n+4) {
+  grid-column: span 3;
+}
+
+/* 8 ảnh: 2 hàng x 4 ảnh (3/12 mỗi ảnh) */
+.detail-gallery:has(> :nth-child(8):last-child) .dg-item {
+  grid-column: span 3;
+}
+
+@media (max-width: 767.98px) {
+  .detail-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .detail-gallery .dg-item {
+    grid-column: span 1 !important;
+    aspect-ratio: 4 / 3 !important;
+  }
+  /* Nếu số lượng ảnh là số lẻ trên mobile, ảnh đầu tiên chiếm full hàng đầu để các ảnh sau đi thành cặp 2 cột full hàng */
+  .detail-gallery:has(> :nth-child(odd):last-child) .dg-item:first-child {
+    grid-column: span 2 !important;
+    aspect-ratio: 16 / 10 !important;
+  }
 }
 
 /* ==================== LOCATION HERO STATS (banner /khu-vuc gộp) ==================== */

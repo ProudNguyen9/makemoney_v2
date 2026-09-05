@@ -235,7 +235,8 @@ public class PublicScrapQueryService : IPublicScrapQueryService
                 scrap.PrimaryImage,
                 scrap.PriceFrom,
                 scrap.PriceLabel,
-                scrap.Unit
+                scrap.Unit,
+                scrap.SeoKeywords
             })
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -246,11 +247,10 @@ public class PublicScrapQueryService : IPublicScrapQueryService
 
         var gallery = await _dbContext.ScrapImages
             .AsNoTracking()
-            .Where(image => image.ScrapItemId == item.Id)
+            .Where(image => image.ScrapItemId == item.Id && image.Caption != "banner")
             .OrderBy(image => image.OrderIndex)
             .ThenBy(image => image.Id)
             .Select(image => new ScrapGalleryImageDto(image.ImageUrl, image.Caption))
-            .Take(4)
             .ToListAsync(cancellationToken);
 
         var relatedRows = await _dbContext.ScrapItems
@@ -311,7 +311,7 @@ public class PublicScrapQueryService : IPublicScrapQueryService
                 "ScrapItem",
                 item.Id,
                 $"/phe-lieu/{item.Slug}",
-                new SeoDto(item.Name, item.ShortDescription ?? "Chi tiết mặt hàng phế liệu.", CanonicalUrl: $"/phe-lieu/{item.Slug}", OgImage: item.PrimaryImage),
+                new SeoDto(item.Name, item.ShortDescription ?? "Chi tiết mặt hàng phế liệu.", item.SeoKeywords, CanonicalUrl: $"/phe-lieu/{item.Slug}", OgImage: item.PrimaryImage),
                 cancellationToken),
             Item = detail,
             RelatedItems = related

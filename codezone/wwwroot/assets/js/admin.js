@@ -145,31 +145,74 @@
       drop.appendChild(preview);
 
       input.addEventListener('change', function () {
-        var file = input.files && input.files[0];
-        if (!file) {
+        if (!input.files || !input.files.length) {
           preview.hidden = true;
           preview.innerHTML = '';
           return;
         }
-        var sizeMb = (file.size / 1024 / 1024).toFixed(2);
-        preview.innerHTML =
-          '<span class="small text-muted d-block text-truncate"><i class="bi bi-image" aria-hidden="true"></i> ' +
-          file.name + ' (' + sizeMb + ' MB)</span>';
+
+        preview.innerHTML = '';
         preview.hidden = false;
-        if (typeof FileReader !== 'undefined' && /^image\//.test(file.type)) {
-          var reader = new FileReader();
-          reader.onload = function (e) {
-            var img = document.createElement('img');
-            img.src = e.target.result;
-            img.alt = 'Xem trước ảnh đã chọn';
-            img.width = 96;
-            img.height = 72;
-            img.style.objectFit = 'cover';
-            img.className = 'rounded border';
-            img.loading = 'lazy';
-            preview.insertBefore(img, preview.firstChild);
-          };
-          reader.readAsDataURL(file);
+
+        if (input.multiple && input.files.length > 1) {
+          var totalSize = 0;
+          for (var i = 0; i < input.files.length; i++) totalSize += input.files[i].size;
+          var totalMb = (totalSize / 1024 / 1024).toFixed(2);
+
+          var summary = document.createElement('span');
+          summary.className = 'small text-success fw-semibold d-block mb-2';
+          summary.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Đã chọn ' + input.files.length + ' ảnh (' + totalMb + ' MB)';
+          preview.appendChild(summary);
+
+          var thumbWrap = document.createElement('div');
+          thumbWrap.className = 'd-flex flex-wrap gap-2';
+          preview.appendChild(thumbWrap);
+
+          Array.from(input.files).slice(0, 10).forEach(function (f) {
+            if (typeof FileReader !== 'undefined' && /^image\//.test(f.type)) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = f.name;
+                img.title = f.name;
+                img.width = 64;
+                img.height = 48;
+                img.style.objectFit = 'cover';
+                img.className = 'rounded border';
+                img.loading = 'lazy';
+                thumbWrap.appendChild(img);
+              };
+              reader.readAsDataURL(f);
+            }
+          });
+          if (input.files.length > 10) {
+            var more = document.createElement('span');
+            more.className = 'small text-muted align-self-center';
+            more.textContent = '+' + (input.files.length - 10) + ' ảnh nữa';
+            thumbWrap.appendChild(more);
+          }
+        } else {
+          var file = input.files[0];
+          var sizeMb = (file.size / 1024 / 1024).toFixed(2);
+          preview.innerHTML =
+            '<span class="small text-muted d-block text-truncate"><i class="bi bi-image" aria-hidden="true"></i> ' +
+            file.name + ' (' + sizeMb + ' MB)</span>';
+          if (typeof FileReader !== 'undefined' && /^image\//.test(file.type)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              var img = document.createElement('img');
+              img.src = e.target.result;
+              img.alt = 'Xem trước ảnh đã chọn';
+              img.width = 96;
+              img.height = 72;
+              img.style.objectFit = 'cover';
+              img.className = 'rounded border';
+              img.loading = 'lazy';
+              preview.insertBefore(img, preview.firstChild);
+            };
+            reader.readAsDataURL(file);
+          }
         }
       });
     });
@@ -183,7 +226,14 @@
       var btn = e.target.closest('[data-row-remove]');
       if (!btn) return;
       var row = btn.closest('tr');
-      if (row) row.remove();
+      if (row) {
+        var tbody = row.closest('tbody');
+        row.remove();
+        if (tbody && tbody.children.length === 0) {
+          var wrap = tbody.closest('.table-admin-wrap');
+          if (wrap && wrap.id !== 'priceRowsTable') wrap.remove();
+        }
+      }
     });
   }
 

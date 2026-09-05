@@ -5,6 +5,7 @@
     ViewData["AdminSection"] = "scrap";
     ViewData["AdminSubSection"] = "form";
     var rowNumber = 0;
+    var galleryIndex = 0;
 }
 
 <div class="admin-page-head">
@@ -119,6 +120,22 @@
           <p class="small text-muted mt-2 mb-0">Lưu ý: lưu form sẽ thay thế toàn bộ dòng giá cũ của loại này; mỗi lần đổi giá được ghi lịch sử.</p>
         </div>
       </div>
+
+      <!-- Tối ưu SEO -->
+      <div class="admin-panel mt-3 mb-0">
+        <div class="panel-head">
+          <h2>Tối ưu SEO</h2>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label-tech" for="scrapSeoKeywords">Từ khóa SEO (meta keywords)</label>
+              <input class="form-control" id="scrapSeoKeywords" name="SeoKeywords" type="text" value="@Model.SeoKeywords" maxlength="255" placeholder="VD: thu mua đồng phế liệu, giá đồng đỏ hôm nay, phế liệu đồng vàng">
+              <p class="small text-muted mt-1 mb-0">Các từ khóa cách nhau bằng dấu phẩy. Từ khóa này được gắn vào thẻ &lt;meta name="keywords"&gt; của trang chi tiết mặt hàng.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -154,6 +171,51 @@
           <span class="form-label-tech mt-3">Ảnh banner (16:10)</span>
           @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000, tự chuyển WebP", "BannerFile", false))
           *@
+        </div>
+      </div>
+
+      <!-- Thư viện ảnh đã thu mua -->
+      <div class="admin-panel">
+        <div class="panel-head">
+          <h2>Ảnh đã thu mua</h2>
+        </div>
+        <div class="panel-body">
+          @if (Model.Gallery.Count > 0)
+          {
+            <div class="table-admin-wrap mb-3">
+              <table class="table table-admin align-middle">
+                <thead>
+                  <tr>
+                    <th style="width:70px">Ảnh</th>
+                    <th>Mô tả</th>
+                    <th style="width:50px;text-align:center"><span class="visually-hidden">Thao tác</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                @foreach (var image in Model.Gallery)
+                {
+                  <tr>
+                    <td class="ta-title" style="width:70px">
+                      <input type="hidden" name="Gallery.Index" value="@galleryIndex">
+                      <input type="hidden" name="Gallery[@galleryIndex].Id" value="@image.Id">
+                      <input type="hidden" name="Gallery[@galleryIndex].ImageUrl" value="@image.ImageUrl">
+                      <img src="@image.ImageUrl" alt="Ảnh gallery @(galleryIndex + 1)" width="56" height="42" loading="lazy" style="object-fit:cover;border-radius:4px">
+                    </td>
+                    <td><input class="form-control form-control-sm" type="text" name="Gallery[@galleryIndex].Caption" value="@image.Caption" maxlength="255" placeholder="Mô tả ngắn (tùy chọn)" aria-label="Mô tả ảnh @(galleryIndex + 1)"></td>
+                    <td class="text-center" style="width:50px">
+                      <div class="ta-actions justify-content-center">
+                        <button class="act-danger" type="button" data-row-remove aria-label="Xóa ảnh @(galleryIndex + 1)" title="Xóa ảnh này"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                  galleryIndex++;
+                }
+                </tbody>
+              </table>
+            </div>
+          }
+          @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải nhiều ảnh lên", "Chọn nhiều file — PNG, JPG, tối đa 20 ảnh, tự chuyển WebP", "GalleryFiles", true))
+          <p class="small text-muted mt-2 mb-0">Ảnh hiển thị ở mục "Ảnh đã thu mua" trên trang chi tiết phế liệu.</p>
         </div>
       </div>
 

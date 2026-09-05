@@ -271,8 +271,8 @@ img {
 
 .back-top {
   position: fixed;
-  right: 18px;
-  bottom: 84px;
+  right: 9px;
+  bottom: 14px;
   z-index: 1070;
   width: 42px;
   height: 42px;
@@ -281,7 +281,8 @@ img {
   background: #16181C;
   color: #fff;
   border: 0;
-  border-radius: 2px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
@@ -301,7 +302,10 @@ img {
 }
 @media (min-width: 992px) {
   .back-top {
+    right: 18px;
     bottom: 24px;
+    border-radius: 2px;
+    box-shadow: none;
   }
 }
 
@@ -1917,12 +1921,31 @@ textarea.form-control {
     grid-template-columns: repeat(4, 1fr);
   }
   .trust-strip .trust-item {
+    padding: 1.35rem 1.25rem;
+    gap: 1.125rem;
     border-bottom: 0;
     border-right: 1px solid #E3E1DC;
     justify-content: flex-start;
   }
   .trust-strip .trust-item:last-child {
     border-right: 0;
+  }
+  .trust-strip .trust-item i {
+    font-size: 1.85rem;
+  }
+  .trust-strip .trust-item .trust-text strong {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #1C1F24;
+    line-height: 1.25;
+  }
+  .trust-strip .trust-item .trust-text small {
+    display: block;
+    font-size: 0.875rem;
+    color: #555E68;
+    line-height: 1.35;
+    margin-top: 0.15rem;
   }
 }
 

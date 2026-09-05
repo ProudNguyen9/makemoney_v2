@@ -230,6 +230,7 @@ public sealed class AdminCommandService :
         item.Status = form.Status == Draft ? Draft : Published;
         item.SortOrder = form.SortOrder;
         item.IsFeatured = form.IsFeatured;
+        item.SeoKeywords = CleanOptional(form.SeoKeywords);
         item.UpdatedAt = DateTime.UtcNow;
         if (item.Status == Published && item.PublishedAt is null)
         {
@@ -267,6 +268,43 @@ public sealed class AdminCommandService :
         else if (form.RemoveBanner)
         {
             await RemoveScrapBannerAsync(item, cancellationToken);
+        }
+
+        // Gallery images: sync existing rows (removed rows from table are deleted on Save).
+        var remainingGalleryIds = form.Gallery.Select(row => row.Id).ToHashSet();
+        var existingGalleryImages = item.Images.Where(image => image.Caption != "banner").ToList();
+
+        // 1. Delete any image that was removed from the table
+        foreach (var image in existingGalleryImages.Where(image => !remainingGalleryIds.Contains(image.Id)))
+        {
+            await _imageUpload.DeleteUploadedImageAsync(image.ImageUrl, cancellationToken);
+            _dbContext.ScrapImages.Remove(image);
+        }
+
+        // 2. Update caption and order for remaining rows
+        for (var i = 0; i < form.Gallery.Count; i++)
+        {
+            var row = form.Gallery[i];
+            var image = existingGalleryImages.FirstOrDefault(img => img.Id == row.Id);
+            if (image != null)
+            {
+                image.Caption = CleanOptional(row.Caption);
+                image.OrderIndex = i;
+            }
+        }
+
+        // 3. Newly uploaded gallery files.
+        var nextGalleryOrder = form.Gallery.Count;
+        foreach (var file in form.GalleryFiles.Where(file => file is { Length: > 0 }))
+        {
+            var upload = await _imageUpload.SaveAsWebpAsync(file, "scrap", item.Slug, 1200, cancellationToken);
+            if (!upload.Success)
+            {
+                _logger.LogWarning("Bỏ qua ảnh gallery phế liệu không hợp lệ: {Error}", upload.Error);
+                continue;
+            }
+
+            item.Images.Add(new ScrapImage { ImageUrl = upload.Url!, Caption = null, OrderIndex = nextGalleryOrder++ });
         }
 
         _dbContext.ScrapPrices.RemoveRange(item.Prices);
@@ -359,6 +397,7 @@ public sealed class AdminCommandService :
         entity.Slug = candidate;
         entity.Description = CleanOptional(form.Description);
         entity.Status = form.Status == Draft ? Draft : Published;
+        entity.SeoKeywords = CleanOptional(form.SeoKeywords);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await RenumberSortAsync(_dbContext.ScrapCategories, entity.Id, form.SortOrder, cancellationToken);
         return entity.Id;
@@ -421,6 +460,7 @@ public sealed class AdminCommandService :
         entity.Status = form.Status == Draft ? Draft : Published;
         entity.SortOrder = form.SortOrder;
         entity.IsFeatured = form.IsFeatured;
+        entity.SeoKeywords = CleanOptional(form.SeoKeywords);
         entity.UpdatedAt = DateTime.UtcNow;
         if (entity.Status == Published && entity.PublishedAt is null)
         {
@@ -578,6 +618,7 @@ public sealed class AdminCommandService :
         entity.Status = form.Status == Draft ? Draft : Published;
         entity.SortOrder = form.SortOrder;
         entity.IsFeatured = form.IsFeatured;
+        entity.SeoKeywords = CleanOptional(form.SeoKeywords);
         entity.UpdatedAt = DateTime.UtcNow;
         if (entity.Status == Published && entity.PublishedAt is null)
         {

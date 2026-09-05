@@ -31,9 +31,14 @@
           }, 300);
         }
       });
-      // Bấm để xổ / bấm lần nữa để thu
+      // Bấm vào link để chuyển trang nếu có href hợp lệ
       toggle.addEventListener('click', function (e) {
         if (window.matchMedia('(min-width: 992px)').matches) {
+          var href = toggle.getAttribute('href');
+          if (href && href !== '#' && href !== 'javascript:void(0)') {
+            window.location.href = href;
+            return;
+          }
           e.preventDefault();
           var dd = bootstrap.Dropdown.getOrCreateInstance(toggle);
           if (li.classList.contains('show')) {

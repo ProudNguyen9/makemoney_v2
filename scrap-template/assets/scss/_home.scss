@@ -227,7 +227,7 @@
 
   .trust-strip-inner {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid $c-border;
   }
 
@@ -237,9 +237,17 @@
     gap: .875rem;
     padding: 1.125rem 1rem;
     border-bottom: 1px solid $c-border;
+    border-right: 1px solid $c-border;
+
+    &:nth-child(2n) {
+      border-right: 0;
+    }
+    &:nth-last-child(-n+2) {
+      border-bottom: 0;
+    }
 
     i {
-      font-size: 1.375rem;
+      font-size: 1.6rem;
       color: $c-primary;
       flex: 0 0 auto;
     }
@@ -247,25 +255,52 @@
       strong {
         display: block;
         font-family: $font-heading;
-        font-size: .875rem;
-        font-weight: $fw-semibold;
-        letter-spacing: .06em;
+        font-size: .95rem;
+        font-weight: $fw-bold;
+        letter-spacing: .04em;
         text-transform: uppercase;
+        color: $c-dark;
+        line-height: 1.25;
       }
-      small { font-size: .75rem; color: $c-muted; }
+      small {
+        display: block;
+        font-size: .825rem;
+        color: $c-muted;
+        line-height: 1.35;
+        margin-top: .15rem;
+      }
     }
   }
 
-  @include up(md) {
-    .trust-strip-inner { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 575.98px) {
+    .trust-item {
+      padding: .875rem .625rem;
+      gap: .625rem;
+      i { font-size: 1.4rem; }
+      .trust-text {
+        strong { font-size: .875rem; }
+        small { font-size: .775rem; }
+      }
+    }
   }
+
   @include up(lg) {
     .trust-strip-inner { grid-template-columns: repeat(4, 1fr); }
     .trust-item {
+      padding: 1.35rem 1.25rem;
+      gap: 1.125rem;
       border-bottom: 0;
       border-right: 1px solid $c-border;
       justify-content: flex-start;
+      &:nth-child(2n) {
+        border-right: 1px solid $c-border;
+      }
       &:last-child { border-right: 0; }
+      i { font-size: 1.85rem; }
+      .trust-text {
+        strong { font-size: 1.05rem; letter-spacing: .05em; }
+        small { font-size: .875rem; }
+      }
     }
   }
 }

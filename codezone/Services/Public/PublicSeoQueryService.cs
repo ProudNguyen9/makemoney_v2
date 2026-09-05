@@ -45,7 +45,7 @@ public class PublicSeoQueryService : IPublicSeoQueryService
             .Select(item => new SeoDto(
                 item.SeoTitle,
                 item.MetaDescription ?? fallback.Description,
-                item.Keywords,
+                item.Keywords ?? fallback.Keywords,
                 item.CanonicalUrl ?? item.RoutePath,
                 item.OgTitle,
                 item.OgDescription,

@@ -307,7 +307,7 @@
   /* Floating contact buttons position above mobile bar */
   .floating-contact {
     right: 8px !important;
-    bottom: 68px !important;
+    bottom: 66px !important;
     gap: 0.45rem !important;
     z-index: 1070 !important;
   }
@@ -318,6 +318,12 @@
   }
   .floating-contact .fc-zalo {
     font-size: 0.82rem !important;
+  }
+  .back-top {
+    right: 9px !important;
+    bottom: 14px !important;
+    width: 42px !important;
+    height: 42px !important;
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -206,8 +206,8 @@
   }
 
   /* ---------------------------------------------------------------
-   * Carousel nhóm phế liệu ở trang chủ (.cat-swiper)
-   * 4 card/lượt trên desktop, vuốt hoặc bấm mũi tên.
+   * Carousel nhóm / loại phế liệu ở trang chủ (.cat-swiper)
+   * 8 card (2 hàng x 4 cột) trên desktop, vuốt hoặc bấm mũi tên cuộn tiếp.
    * --------------------------------------------------------------- */
   function initCatCarousel() {
     document.querySelectorAll('.cat-swiper').forEach(function (el) {
@@ -221,9 +221,26 @@
           prevEl: el.querySelector('.swiper-button-prev')
         },
         breakpoints: {
-          576: { slidesPerView: 2, spaceBetween: 16 },
-          992: { slidesPerView: 3, spaceBetween: 20 },
-          1200: { slidesPerView: 4, spaceBetween: 20 }
+          576: {
+            slidesPerView: 2,
+            spaceBetween: 16
+          },
+          992: {
+            slidesPerView: 4,
+            grid: {
+              rows: 2,
+              fill: 'row'
+            },
+            spaceBetween: 20
+          },
+          1200: {
+            slidesPerView: 4,
+            grid: {
+              rows: 2,
+              fill: 'row'
+            },
+            spaceBetween: 20
+          }
         }
       });
     });

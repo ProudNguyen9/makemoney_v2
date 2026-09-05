@@ -229,5 +229,17 @@ public class AppDbContext : DbContext
             .WithMany(project => project.Images)
             .HasForeignKey(image => image.ProjectId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ScrapItem>()
+            .Property(item => item.SeoKeywords)
+            .HasMaxLength(255);
+
+        modelBuilder.Entity<Service>()
+            .Property(service => service.SeoKeywords)
+            .HasMaxLength(255);
+
+        modelBuilder.Entity<Project>()
+            .Property(project => project.SeoKeywords)
+            .HasMaxLength(255);
     }
 }

@@ -203,8 +203,8 @@ img { max-width: 100%; }
 // Back to top
 .back-top {
   position: fixed;
-  right: 18px;
-  bottom: 84px; // trên mobile contact bar
+  right: 9px;
+  bottom: 14px; // dưới nút Zalo
   z-index: $z-backtop;
   width: 42px;
   height: 42px;
@@ -213,7 +213,8 @@ img { max-width: 100%; }
   background: $c-dark;
   color: #fff;
   border: 0;
-  border-radius: $radius-sm;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
@@ -223,7 +224,12 @@ img { max-width: 100%; }
   &:hover { background: $c-primary; }
   @include focus-ring(#fff);
 
-  @include up(lg) { bottom: 24px; }
+  @include up(lg) {
+    right: 18px;
+    bottom: 24px;
+    border-radius: $radius-sm;
+    box-shadow: none;
+  }
 }
 
 // Chừa khoảng cho mobile contact bar che footer

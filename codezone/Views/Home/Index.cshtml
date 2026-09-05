@@ -7,7 +7,6 @@
         : new List<string> { Model.HeroBanner.ImageUrl ?? "/assets/images/imported/brand/banner-1.jpg" };
     var heroImage = AssetHelper.NormalizePath(heroImages.ElementAtOrDefault(0) ?? "/assets/images/imported/brand/banner-1.jpg");
     var heroImage2 = AssetHelper.NormalizePath(heroImages.ElementAtOrDefault(1) ?? heroImage);
-    var heroImage3 = AssetHelper.NormalizePath(heroImages.ElementAtOrDefault(2) ?? heroImage);
     var featuredScrap = Model.FeaturedScrapItems;
     var latestPosts = Model.LatestPosts;
     string PostImage(int index, string fallback)
@@ -72,7 +71,6 @@
             <div class="carousel-indicators">
               <button type="button" data-bs-target="#heroMainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Ảnh sân kho"></button>
               <button type="button" data-bs-target="#heroMainCarousel" data-bs-slide-to="1" aria-label="Ảnh thu gom tận nơi"></button>
-              <button type="button" data-bs-target="#heroMainCarousel" data-bs-slide-to="2" aria-label="Ảnh xử lý nhà xưởng"></button>
             </div>
             <div class="carousel-inner">
               <div class="carousel-item active">
@@ -80,9 +78,6 @@
               </div>
               <div class="carousel-item">
                 <img src="@heroImage2" alt="Đội xe thu gom phế liệu tận nơi" width="1600" height="1000" loading="lazy">
-              </div>
-              <div class="carousel-item">
-                <img src="@heroImage3" alt="Công nhân xử lý phế liệu tại nhà xưởng" width="1600" height="1000" loading="lazy">
               </div>
             </div>
             <button class="carousel-control-prev hero-control d-lg-none" type="button" data-bs-target="#heroMainCarousel" data-bs-slide="prev" aria-label="Ảnh trước">
@@ -149,34 +144,62 @@
         </div>
       </div>
 
-      <!-- CATEGORY CAROUSEL — 4 card/hàng, vuốt hoặc bấm mũi tên, dữ liệu nhóm lấy từ database -->
+      <!-- CATEGORY / PRODUCTS CAROUSEL — 8 loại phế liệu thu mua, vuốt hoặc bấm mũi tên -->
       <div class="swiper cat-swiper reveal">
         <div class="swiper-wrapper">
-          @foreach (var group in Model.CategoryGroups)
+          @if (Model.FeaturedScrapItems.Count > 0)
           {
-            <div class="swiper-slide">
-              <a class="scrap-card" href="/phe-lieu/nhom/@group.Slug" aria-label="@group.Name — @group.ItemCount loại phế liệu">
-                <span class="scrap-card-media">
-                  <img src="@AssetHelper.NormalizePath(group.ImageUrl)" alt="@group.Name" width="400" height="300" loading="lazy">
-                </span>
-                <span class="scrap-card-body">
-                  <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @group.ItemCount loại</span>
-                  <h3>@group.Name</h3>
-                  @if (!string.IsNullOrWhiteSpace(group.SampleText))
-                  {
-                    <p class="scrap-card-desc">@group.SampleText</p>
-                  }
-                  <span class="scrap-card-foot">
-                    <span class="scrap-card-price">@(group.MinPriceFrom.HasValue ? $"từ {group.MinPriceFrom.Value:N0}đ/kg" : "Liên hệ báo giá")</span>
-                    <span class="scrap-card-cta">Xem nhóm <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+            @foreach (var item in Model.FeaturedScrapItems)
+            {
+              <div class="swiper-slide">
+                <a class="scrap-card" href="/phe-lieu/@item.Slug" aria-label="@item.Name — @item.CategoryName">
+                  <span class="scrap-card-media">
+                    <img src="@AssetHelper.NormalizePath(item.ImageUrl ?? "/assets/images/scrap/scrap-default.svg")" alt="@item.Name" width="400" height="300" loading="lazy">
                   </span>
-                </span>
-              </a>
-            </div>
+                  <span class="scrap-card-body">
+                    <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @item.CategoryName</span>
+                    <h3>@item.Name</h3>
+                    @if (!string.IsNullOrWhiteSpace(item.ShortDescription))
+                    {
+                      <p class="scrap-card-desc">@item.ShortDescription</p>
+                    }
+                    <span class="scrap-card-foot">
+                      <span class="scrap-card-price">@item.PriceText</span>
+                      <span class="scrap-card-cta">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                    </span>
+                  </span>
+                </a>
+              </div>
+            }
+          }
+          else
+          {
+            @foreach (var group in Model.CategoryGroups)
+            {
+              <div class="swiper-slide">
+                <a class="scrap-card" href="/phe-lieu/nhom/@group.Slug" aria-label="@group.Name — @group.ItemCount loại phế liệu">
+                  <span class="scrap-card-media">
+                    <img src="@AssetHelper.NormalizePath(group.ImageUrl)" alt="@group.Name" width="400" height="300" loading="lazy">
+                  </span>
+                  <span class="scrap-card-body">
+                    <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @group.ItemCount loại</span>
+                    <h3>@group.Name</h3>
+                    @if (!string.IsNullOrWhiteSpace(group.SampleText))
+                    {
+                      <p class="scrap-card-desc">@group.SampleText</p>
+                    }
+                    <span class="scrap-card-foot">
+                      <span class="scrap-card-price">@(group.MinPriceFrom.HasValue ? $"từ {group.MinPriceFrom.Value:N0}đ/kg" : "Liên hệ báo giá")</span>
+                      <span class="scrap-card-cta">Xem nhóm <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                    </span>
+                  </span>
+                </a>
+              </div>
+            }
           }
         </div>
-        <div class="swiper-button-prev" aria-label="Xem các nhóm trước" role="button" tabindex="0"></div>
-        <div class="swiper-button-next" aria-label="Xem các nhóm sau" role="button" tabindex="0"></div>
+        <div class="swiper-button-prev" aria-label="Xem các mục trước" role="button" tabindex="0"></div>
+        <div class="swiper-button-next" aria-label="Xem các mục sau" role="button" tabindex="0"></div>
       </div>
       <!-- CATEGORY CAROUSEL END -->
     </div>

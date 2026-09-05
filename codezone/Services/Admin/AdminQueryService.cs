@@ -155,12 +155,19 @@ public sealed class AdminQueryService :
                 Status = item.Status,
                 SortOrder = item.SortOrder,
                 IsFeatured = item.IsFeatured,
+                SeoKeywords = item.SeoKeywords,
                 CurrentThumbUrl = item.PrimaryImage,
                 CurrentBannerUrl = item.Images.FirstOrDefault(image => image.Caption == "banner")?.ImageUrl,
                 PriceRows = item.Prices
                     .OrderByDescending(price => price.EffectiveDate)
                     .ThenBy(price => price.Id)
                     .Select(price => new ScrapPriceRowInput { Label = price.PriceLabel, PriceValue = price.PriceValue, Unit = price.Unit })
+                    .ToList(),
+                Gallery = item.Images
+                    .Where(image => image.Caption != "banner")
+                    .OrderBy(image => image.OrderIndex)
+                    .ThenBy(image => image.Id)
+                    .Select(image => new ScrapGalleryRowInput { Id = image.Id, ImageUrl = image.ImageUrl, Caption = image.Caption, OrderIndex = image.OrderIndex })
                     .ToList()
             };
         }
@@ -207,7 +214,8 @@ public sealed class AdminQueryService :
                 Slug = entity.Slug,
                 Description = entity.Description,
                 SortOrder = entity.SortOrder,
-                Status = entity.Status
+                Status = entity.Status,
+                SeoKeywords = entity.SeoKeywords
             };
     }
 
@@ -579,7 +587,8 @@ public sealed class AdminQueryService :
                 CurrentCoverUrl = entity.CoverImage,
                 Status = entity.Status,
                 SortOrder = entity.SortOrder,
-                IsFeatured = entity.IsFeatured
+                IsFeatured = entity.IsFeatured,
+                SeoKeywords = entity.SeoKeywords
             };
     }
 
@@ -744,6 +753,7 @@ public sealed class AdminQueryService :
                 Status = entity.Status,
                 SortOrder = entity.SortOrder,
                 IsFeatured = entity.IsFeatured,
+                SeoKeywords = entity.SeoKeywords,
                 Gallery = entity.Images
                     .OrderBy(image => image.SortOrder)
                     .ThenBy(image => image.Id)

@@ -12,6 +12,8 @@ public class ScrapCategory
 
     public int SortOrder { get; set; }
 
+    public string? SeoKeywords { get; set; }
+
     public string Status { get; set; } = "published";
 
     public ICollection<ScrapItem> ScrapItems { get; set; } = new List<ScrapItem>();

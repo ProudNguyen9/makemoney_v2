@@ -14,6 +14,21 @@ public sealed class ScrapPriceRowInput
     public string Unit { get; set; } = "kg";
 }
 
+public sealed class ScrapGalleryRowInput
+{
+    public int Id { get; set; }
+
+    public string? ImageUrl { get; set; }
+
+    [MaxLength(255)]
+    public string? Caption { get; set; }
+
+    [Range(0, 9999)]
+    public int OrderIndex { get; set; }
+
+    public bool Remove { get; set; }
+}
+
 public sealed class ScrapItemFormViewModel
 {
     public int Id { get; set; }
@@ -47,6 +62,9 @@ public sealed class ScrapItemFormViewModel
 
     public bool IsFeatured { get; set; }
 
+    [MaxLength(255)]
+    public string? SeoKeywords { get; set; }
+
     public IFormFile? ThumbFile { get; set; }
 
     public IFormFile? BannerFile { get; set; }
@@ -60,6 +78,10 @@ public sealed class ScrapItemFormViewModel
     public bool RemoveBanner { get; set; }
 
     public List<ScrapPriceRowInput> PriceRows { get; set; } = new();
+
+    public List<ScrapGalleryRowInput> Gallery { get; set; } = new();
+
+    public List<IFormFile> GalleryFiles { get; set; } = new();
 
     public IReadOnlyList<AdminCategoryOptionDto> Categories { get; set; } = Array.Empty<AdminCategoryOptionDto>();
 }
@@ -82,6 +104,9 @@ public sealed class ScrapCategoryFormViewModel
 
     [MaxLength(30)]
     public string Status { get; set; } = "published";
+
+    [MaxLength(255)]
+    public string? SeoKeywords { get; set; }
 }
 
 public sealed class PriceBulkRowInput
@@ -131,6 +156,9 @@ public sealed class ServiceFormViewModel
     public int SortOrder { get; set; }
 
     public bool IsFeatured { get; set; }
+
+    [MaxLength(255)]
+    public string? SeoKeywords { get; set; }
 }
 
 public sealed class LocationFormViewModel
@@ -451,6 +479,9 @@ public sealed class ProjectFormViewModel
     public int SortOrder { get; set; }
 
     public bool IsFeatured { get; set; }
+
+    [MaxLength(255)]
+    public string? SeoKeywords { get; set; }
 
     public List<ProjectGalleryRowInput> Gallery { get; set; } = new();
 

@@ -51,6 +51,11 @@
                 <option value="draft" selected="@(Model.Status != "published")">Bản nháp (ẩn)</option>
               </select>
             </div>
+            <div class="col-12">
+              <label class="form-label-tech" for="catSeoKeywords">Từ khóa SEO (meta keywords)</label>
+              <input class="form-control" id="catSeoKeywords" name="SeoKeywords" type="text" value="@Model.SeoKeywords" maxlength="255" placeholder="VD: phế liệu đồng, thu mua đồng đỏ, giá đồng phế liệu">
+              <p class="small text-muted mt-1 mb-0">Các từ khóa cách nhau bằng dấu phẩy.</p>
+            </div>
           </div>
         </div>
       </div>

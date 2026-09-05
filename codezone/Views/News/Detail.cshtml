@@ -106,3 +106,23 @@
     </section>
   }
 </main>
+
+@section Schema {
+<!script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "NewsArticle",
+  "headline": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Post.Title))",
+  "image": [
+    "@(Model.Post.CoverImage != null ? (Model.Post.CoverImage.StartsWith("http") ? Model.Post.CoverImage : $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Post.CoverImage}") : "")"
+  ],
+  "datePublished": "@Model.Post.PublishedAt.ToString("o")",
+  "dateModified": "@Model.Post.PublishedAt.ToString("o")",
+  "author": [{
+    "@@type": "Person",
+    "name": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(string.IsNullOrWhiteSpace(Model.Post.AuthorName) ? "Phế Liệu Minh Đức" : Model.Post.AuthorName))"
+  }],
+  "description": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Post.Excerpt ?? Model.Post.Title))"
+}
+</!script>
+}

@@ -46,31 +46,7 @@
     </div>
   </section>
 
-  <section class="section" aria-labelledby="desc-title">
-    <div class="container">
-      <div class="row row-editorial">
-        <div class="col-lg-7 reveal">
-          <div class="sec-head">
-            <span class="sec-label">Tổng quan</span>
-            <h2 class="sec-title" id="desc-title">Về @Model.Item.Name.Replace("Thu mua ", string.Empty).ToLower()</h2>
-          </div>
-          <div class="article-body">
-            @Html.Raw(Model.Item.DescriptionHtml ?? Model.Item.ShortDescription ?? "Liên hệ để được tư vấn chi tiết.")
-          </div>
-        </div>
-        <div class="col-lg-5 reveal">
-          <table class="spec-table">
-            <caption class="visually-hidden">Thông tin giá @Model.Item.Name</caption>
-            <tbody>
-              <tr><th scope="row">Danh mục</th><td>@Model.Item.CategoryName</td></tr>
-              <tr><th scope="row">Đơn vị</th><td>@(Model.Item.Unit ?? "kg")</td></tr>
-              <tr><th scope="row">Giá</th><td><span class="price-value">@Model.Item.PriceText</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
+
 
   @if (Model.Item.GalleryImages.Count > 0)
   {
@@ -128,3 +104,31 @@
     </div>
   </section>
 </main>
+
+@section Schema {
+<!script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "Product",
+  "name": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Item.Name))",
+  "image": [
+    "@(Model.Item.ImageUrl != null ? (Model.Item.ImageUrl.StartsWith("http") ? Model.Item.ImageUrl : $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Item.ImageUrl}") : "")"
+  ],
+  "description": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Item.ShortDescription ?? Model.Item.Name))",
+  "category": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Item.CategoryName))",
+  "offers": {
+    "@@type": "Offer",
+    "url": "@($"{Context.Request.Scheme}://{Context.Request.Host}/phe-lieu/{Model.Item.Slug}")",
+    "priceCurrency": "VND",
+    "price": "0",
+    "priceSpecification": {
+      "@@type": "UnitPriceSpecification",
+      "priceCurrency": "VND",
+      "unitText": "@(Model.Item.Unit ?? "kg")"
+    },
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/UsedCondition"
+  }
+}
+</!script>
+}

@@ -24,6 +24,8 @@ public class Project
 
     public string? DurationText { get; set; }
 
+    public string? SeoKeywords { get; set; }
+
     public string Status { get; set; } = "published";
 
     public int SortOrder { get; set; }

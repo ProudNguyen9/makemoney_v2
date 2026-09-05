@@ -134,7 +134,7 @@ public sealed class PublicHtmlDataMiddleware
         var genericMetric = Get(settings, "public.metric.generic", "20");
         var searchCount = Get(settings, "public.search.result_count", "12");
 
-        return Regex.Replace(html, @"\[([^\]]+)\]", match =>
+        return Regex.Replace(html, @"\[(XX|X|20XX|nếu có)\]", match =>
         {
             var value = match.Groups[1].Value.Trim();
             return value switch
@@ -143,7 +143,7 @@ public sealed class PublicHtmlDataMiddleware
                 "X" => searchCount,
                 "20XX" => "2014",
                 "nếu có" => "theo điều khoản hợp đồng",
-                _ => value
+                _ => match.Value
             };
         });
     }

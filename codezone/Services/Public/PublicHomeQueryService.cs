@@ -58,7 +58,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
                 item.SortOrder,
                 item.PublishedAt
             })
-            .Take(8)
+            .Take(24)
             .ToListAsync(cancellationToken);
 
         var scrapItems = scrapRows
@@ -119,7 +119,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             .Concat(new[] { banner?.ImageUrl }.Where(image => !string.IsNullOrWhiteSpace(image)).Select(image => image!))
             .Where(image => !string.IsNullOrWhiteSpace(image))
             .Distinct(StringComparer.OrdinalIgnoreCase)
-            .Take(3)
+            .Take(2)
             .ToList();
 
         var homeSettingKeys = new[]
