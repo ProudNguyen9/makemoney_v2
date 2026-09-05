@@ -1,0 +1,82 @@
+@model ScrapWebsite.Areas.Admin.ViewModels.Data.AdminScrapCategoryListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Nhóm phế liệu";
+    ViewData["AdminSection"] = "scrap";
+    ViewData["AdminSubSection"] = "categories";
+}
+
+<div class="admin-page-head">
+  <h1>Nhóm phế liệu<small>Quản lý nhóm chất liệu hiển thị ở dropdown và trang public — @Model.Items.Count nhóm</small></h1>
+  <div class="aph-actions">
+    <a class="btn btn-primary" href="/admin/scrap/CategoryForm"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm nhóm</a>
+  </div>
+</div>
+
+<section class="admin-panel">
+  <div class="panel-head">
+    <h2>Danh sách nhóm phế liệu</h2>
+    <div class="panel-head-actions">
+      <a class="small text-muted" href="/admin/scrap"><i class="bi bi-arrow-left" aria-hidden="true"></i> Về danh sách loại phế liệu</a>
+    </div>
+  </div>
+  <div class="table-admin-wrap">
+    <table class="table table-admin align-middle">
+      <thead>
+        <tr>
+          <th scope="col">Tên nhóm</th>
+          <th scope="col">Slug</th>
+          <th scope="col">Mô tả</th>
+          <th scope="col">Số loại phế liệu</th>
+          <th scope="col">Trạng thái</th>
+          <th scope="col">Vị trí</th>
+          <th scope="col">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+      @foreach (var item in Model.Items)
+      {
+        <tr>
+          <td><strong><a class="text-decoration-none" href="/admin/scrap/CategoryForm/@item.Id">@item.Name</a></strong></td>
+          <td><code>@item.Slug</code></td>
+          <td class="text-muted">@(string.IsNullOrWhiteSpace(item.Description) ? "—" : (item.Description.Length > 80 ? item.Description[..80] + "…" : item.Description))</td>
+          <td>@item.ItemCount</td>
+          <td>
+            <form method="post" action="/admin/scrap/ToggleCategoryStatus" data-autosubmit>
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="id" value="@item.Id">
+              <div class="form-check form-switch m-0">
+                <input class="form-check-input" type="checkbox" @(item.Status == "published" ? "checked" : "") aria-label="Hiển thị @item.Name">
+              </div>
+            </form>
+          </td>
+          <td>@item.SortOrder</td>
+          <td>
+            <div class="ta-actions">
+              <a href="/admin/scrap/CategoryForm/@item.Id" aria-label="Sửa @item.Name"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+              @if (item.ItemCount == 0)
+              {
+                <form method="post" action="/admin/scrap/DeleteCategory" class="d-inline" onsubmit="return confirm('Xóa nhóm rỗng &quot;@item.Name&quot;?')">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@item.Id">
+                  <button class="act-danger" type="submit" aria-label="Xóa @item.Name"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                </form>
+              }
+              else
+              {
+                <span title="Chỉ xóa được nhóm không còn loại phế liệu nào" class="text-muted"><i class="bi bi-trash" aria-hidden="true"></i></span>
+              }
+            </div>
+          </td>
+        </tr>
+      }
+      @if (Model.Items.Count == 0)
+      {
+        <tr>
+          <td colspan="7" class="text-center text-muted py-4">Chưa có nhóm phế liệu nào.</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+</section>

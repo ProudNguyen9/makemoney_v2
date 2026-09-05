@@ -15,8 +15,8 @@
 <aside class="admin-sidebar" aria-label="Menu quản trị">
     <div class="sidebar-brand">
         <div class="sidebar-brand-main">
-            <img src="/assets/images/imported/brand/logo-footer.png" alt="Logo Phế Liệu Thành Trung" width="140" height="32" />
-            <strong>Quản trị<small>Phế Liệu Thành Trung</small></strong>
+            <img src="/assets/images/imported/brand/17acae55-4f1c-44a4-80e2-5ccd32b3a346.png" alt="Logo Phế Liệu Minh Đức" width="140" height="32" />
+            <strong>Quản trị<small>Phế Liệu Minh Đức</small></strong>
         </div>
         <button class="sidebar-collapse-toggle" type="button" aria-label="Thu gọn menu quản trị">
             <i class="bi bi-chevron-left" aria-hidden="true"></i>
@@ -25,7 +25,7 @@
 
     <nav class="sidebar-nav">
         <ul class="list-unstyled mb-0">
-            <li><a class="@(Active("dashboard"))" href="/admin"><i class="bi bi-speedometer2" aria-hidden="true"></i>Dashboard</a></li>
+            <li><a class="@(Active("dashboard"))" href="/admin"><i class="bi bi-speedometer2" aria-hidden="true"></i>Tổng quan</a></li>
 
             <li><h2 class="nav-sec">Thu mua</h2></li>
             <li>
@@ -47,18 +47,21 @@
                 </button>
                 <ul class="sidebar-sub list-unstyled">
                     <li><a class="@(SubActive("index"))" href="/admin/scrap">Danh sách</a></li>
+                    <li><a class="@(SubActive("categories"))" href="/admin/scrap/Categories">Nhóm phế liệu</a></li>
                     <li><a class="@(SubActive("form"))" href="/admin/scrap/form">Thêm loại phế liệu</a></li>
                 </ul>
             </li>
             <li><a class="@(Active("services"))" href="/admin/services"><i class="bi bi-briefcase-fill" aria-hidden="true"></i>Dịch vụ</a></li>
+            @* Tạm ẩn mục Khu vực (trang public đã chuyển sang giao diện danh bạ 5 tỉnh thành tĩnh). Bỏ comment để mở lại:
             <li><a class="@(Active("locations"))" href="/admin/locations"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Khu vực</a></li>
+            *@
             <li><a class="@(Active("projects"))" href="/admin/projects"><i class="bi bi-building" aria-hidden="true"></i>Dự án</a></li>
             <li><a class="@(Active("articles"))" href="/admin/articles"><i class="bi bi-newspaper" aria-hidden="true"></i>Bài viết</a></li>
-            <li><a class="@(Active("faq"))" href="/admin/faq"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>FAQ</a></li>
+            <li><a class="@(Active("faq"))" href="/admin/faq"><i class="bi bi-question-circle-fill" aria-hidden="true"></i>Hỏi đáp</a></li>
 
             <li><h2 class="nav-sec">Website</h2></li>
             <li><a class="@(Active("homepage"))" href="/admin/homepage"><i class="bi bi-house-door-fill" aria-hidden="true"></i>Trang chủ</a></li>
-            <li><a class="@(Active("media"))" href="/admin/media"><i class="bi bi-images" aria-hidden="true"></i>Media</a></li>
+            <li><a class="@(Active("media"))" href="/admin/media"><i class="bi bi-images" aria-hidden="true"></i>Thư viện ảnh</a></li>
             <li><a class="@(Active("seo"))" href="/admin/seo"><i class="bi bi-search" aria-hidden="true"></i>SEO</a></li>
 
             <li><h2 class="nav-sec">Hệ thống</h2></li>

@@ -40,16 +40,18 @@
               <label class="form-label-tech" for="faqAssign">Gán vào</label>
               <select class="form-select" id="faqAssign" name="EntityType">
                 <option value="home" selected="@(Model.EntityType == "home")">Trang chủ</option>
-                <option value="scrap" selected="@(Model.EntityType == "scrap")">Loại phế liệu</option>
                 <option value="services" selected="@(Model.EntityType == "services" || Model.EntityType == "service")">Dịch vụ</option>
+                @* Các nhóm dưới tạm ẩn do trang public chưa đặt Accordion FAQ. Bỏ comment để mở lại:
+                <option value="scrap" selected="@(Model.EntityType == "scrap")">Loại phế liệu</option>
                 <option value="location" selected="@(Model.EntityType == "location")">Khu vực</option>
                 <option value="referral" selected="@(Model.EntityType == "referral")">Hoa hồng</option>
+                *@
               </select>
-              <p class="small text-muted mt-1 mb-0">Chọn nhóm trang hiển thị FAQ này.</p>
+              <p class="small text-muted mt-1 mb-0">Chọn nhóm trang hiển thị câu hỏi này.</p>
             </div>
             <div class="col-md-3">
               <label class="form-label-tech" for="faqOrder">Thứ tự</label>
-              <input class="form-control" id="faqOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các FAQ khác trong cùng nhóm.">
+              <input class="form-control" id="faqOrder" name="SortOrder" type="number" min="0" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các FAQ khác trong cùng nhóm.">
               <p class="small text-muted mt-1 mb-0">Lưu sẽ đánh lại số liên tục.</p>
             </div>
             <div class="col-md-3">

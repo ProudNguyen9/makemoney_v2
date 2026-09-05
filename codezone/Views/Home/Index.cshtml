@@ -1,6 +1,7 @@
 @model HomeViewModel
 @{
     ViewData["Title"] = "Trang chủ";
+    ViewData["BodyClass"] = "is-home";
     var heroImages = Model.HeroImageUrls.Count > 0
         ? Model.HeroImageUrls
         : new List<string> { Model.HeroBanner.ImageUrl ?? "/assets/images/imported/brand/banner-1.jpg" };
@@ -9,11 +10,6 @@
     var heroImage3 = AssetHelper.NormalizePath(heroImages.ElementAtOrDefault(2) ?? heroImage);
     var featuredScrap = Model.FeaturedScrapItems;
     var latestPosts = Model.LatestPosts;
-    string ScrapImage(int index, string fallback)
-    {
-        var image = featuredScrap.ElementAtOrDefault(index)?.ImageUrl;
-        return AssetHelper.NormalizePath(string.IsNullOrWhiteSpace(image) ? fallback : image);
-    }
     string PostImage(int index, string fallback)
     {
         var image = latestPosts.ElementAtOrDefault(index)?.CoverImage;
@@ -28,20 +24,11 @@
     {
         return latestPosts.ElementAtOrDefault(index)?.Title ?? fallback;
     }
-    string PostCategory(int index, string fallback)
-    {
-        return latestPosts.ElementAtOrDefault(index)?.CategoryName ?? fallback;
-    }
-    string PostDate(int index)
-    {
-        var post = latestPosts.ElementAtOrDefault(index);
-        return post is null ? DateTime.Today.ToString("dd/MM/yyyy") : post.PublishedAt.ToString("dd/MM/yyyy");
-    }
-    string PostExcerpt(int index, string fallback)
-    {
-        return latestPosts.ElementAtOrDefault(index)?.Excerpt ?? fallback;
-    }
-    var priceRows = featuredScrap.Take(5).ToList();
+    var priceRows = featuredScrap.Take(6).ToList();
+    var priceGroups = priceRows
+        .GroupBy(item => item.CategoryName)
+        .Select(group => new { Name = group.Key, Rows = group.ToList() })
+        .ToList();
 }
 
 <main>
@@ -50,16 +37,17 @@
   <section class="hero-home" aria-label="Giới thiệu nhanh">
     <div class="hero-grid">
       <div class="hero-copy">
-          <p class="hero-kicker">Doanh nghiệp &amp; cá nhân — thanh lý toàn bộ</p>
-          <h1 class="hero-title">
+          <!-- Desktop hero (giữ nguyên) -->
+          <p class="hero-kicker d-none d-lg-inline-flex">Doanh nghiệp &amp; cá nhân — thanh lý toàn bộ</p>
+          <h1 class="hero-title d-none d-lg-block">
             Thu mua phế liệu<br>
             <span class="hero-title-accent">giá tốt — tận nơi</span>
           </h1>
-          <p class="hero-sub">
+          <p class="hero-sub d-none d-lg-block">
             Chúng tôi mua phế liệu đồng, sắt, nhôm, inox, dây điện, máy móc cũ… của cá nhân,
             nhà xưởng và công trình. Khảo sát nhanh, cân minh bạch, thanh toán ngay tại kho khách hàng.
           </p>
-          <div class="hero-actions">
+          <div class="hero-actions d-none d-lg-flex">
             <button class="btn btn-primary btn-lg" type="button" data-quote-open>
               <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình báo giá
             </button>
@@ -71,11 +59,13 @@
               </span>
             </a>
           </div>
-          <div class="hero-meta">
+          <div class="hero-meta d-none d-lg-flex">
             <span class="hero-meta-item"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>@string.Join(" · ", Model.Chrome.PurchaseAreas)</span>
             <span class="hero-meta-item"><i class="bi bi-truck" aria-hidden="true"></i>Có xe &amp; nhân công đến tận nơi</span>
             <span class="hero-meta-item"><i class="bi bi-cash-coin" aria-hidden="true"></i>Thanh toán ngay sau cân</span>
           </div>
+          <!-- Mobile hero: 1 dòng duy nhất -->
+          <h1 class="hero-title hero-title--mobile d-lg-none">Thu mua phế liệu giá cao</h1>
         </div>
         <div class="hero-media">
           <div id="heroMainCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="4200" data-bs-touch="true">
@@ -95,6 +85,12 @@
                 <img src="@heroImage3" alt="Công nhân xử lý phế liệu tại nhà xưởng" width="1600" height="1000" loading="lazy">
               </div>
             </div>
+            <button class="carousel-control-prev hero-control d-lg-none" type="button" data-bs-target="#heroMainCarousel" data-bs-slide="prev" aria-label="Ảnh trước">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next hero-control d-lg-none" type="button" data-bs-target="#heroMainCarousel" data-bs-slide="next" aria-label="Ảnh tiếp">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
           </div>
           <div class="hero-img-badge">
             <small>Bảng giá hôm nay</small>
@@ -125,7 +121,7 @@
           </div>
         </div>
         <div class="trust-item">
-          <i class="bi bi-scale" aria-hidden="true"></i>
+          <i class="bi bi-shield-check" aria-hidden="true"></i>
           <div class="trust-text">
             <strong>Cân minh bạch</strong>
             <small>Cân điện tử trước mặt khách</small>
@@ -186,11 +182,11 @@
     </div>
   </section>
   <!-- ============================ CATEGORY MOSAIC END ============================ -->
-
+@* 
   <!-- ============================ PRICE BOARD START ============================ -->
   <section class="section section--paper" aria-labelledby="price-title">
     <div class="container">
-      <div class="price-board">
+      <div class="price-board price-board--home">
         <div class="price-board-head reveal">
           <div class="sec-head mb-0">
             <span class="sec-label">Bảng giá tham khảo</span>
@@ -207,21 +203,37 @@
             <caption class="visually-hidden">Bảng giá thu mua một số loại phế liệu phổ biến, đơn vị tính theo kg</caption>
             <thead>
               <tr>
-                <th scope="col">Loại</th>
+                <th scope="col">Loại phế liệu</th>
                 <th scope="col">Phân loại</th>
-                <th scope="col" class="text-end">Giá thu mua (đ/kg)</th>
-                <th scope="col" class="text-end">Xu hướng</th>
+                <th scope="col" class="text-end">Giá thu mua</th>
               </tr>
             </thead>
             <tbody>
-              @foreach (var item in priceRows)
+              @foreach (var group in priceGroups)
               {
-                <tr>
-                  <td class="mat-name"><span class="mat-swatch" style="background:#B87333"></span>@item.CategoryName</td>
-                  <td class="mat-type"><a href="/phe-lieu/@item.Slug">@item.Name</a></td>
-                  <td class="text-end"><span class="price-value">@item.PriceText</span></td>
-                  <td class="text-end"><span class="price-trend flat"><i class="bi bi-dash-lg" aria-hidden="true"></i>Liên hệ</span></td>
+                <tr class="price-section-row">
+                  <th scope="rowgroup" colspan="3">
+                    <span>@group.Name</span>
+                    <small>@group.Rows.Count dòng giá</small>
+                  </th>
                 </tr>
+                @foreach (var item in group.Rows)
+                {
+                  <tr>
+                    <td class="mat-name">
+                      <span class="mat-thumb">
+                        <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="72" height="54" loading="lazy">
+                      </span>
+                      <span class="mat-name-text">
+                        <strong>@item.Name</strong>
+                      </span>
+                    </td>
+                    <td class="mat-type">
+                      <a href="/phe-lieu/@item.Slug">@item.CategoryName</a>
+                    </td>
+                    <td class="text-end"><span class="price-value">@item.PriceText</span></td>
+                  </tr>
+                }
               }
             </tbody>
           </table>
@@ -236,7 +248,7 @@
       </div>
     </div>
   </section>
-  <!-- ============================ PRICE BOARD END ============================ -->
+  <!-- ============================ PRICE BOARD END ============================ --> *@
 
   <!-- ============================ REFERRAL BAND START ============================ -->
   <section class="referral-band" aria-labelledby="referral-title">
@@ -275,7 +287,7 @@
   </section>
   <!-- ============================ REFERRAL BAND END ============================ -->
 
-  <!-- ============================ STORY START ============================ -->
+  @* <!-- ============================ STORY START ============================ -->
   <section class="section section--surface story-block" aria-labelledby="story-title">
     <div class="container">
       <div class="row row-editorial align-items-center">
@@ -334,9 +346,9 @@
       </div>
     </div>
   </section>
-  <!-- ============================ STORY END ============================ -->
+  <!-- ============================ STORY END ============================ --> *@
 
-  <!-- ============================ STATS BAND START ============================ -->
+  @* <!-- ============================ STATS BAND START ============================ -->
   <section class="section section--md stats-band stats-band--orange" aria-label="Năng lực qua số liệu">
     <div class="container">
       <div class="stats-grid">
@@ -363,9 +375,9 @@
       </div>
     </div>
   </section>
-  <!-- ============================ STATS BAND END ============================ -->
+  <!-- ============================ STATS BAND END ============================ --> *@
 
-  <!-- ============================ WHY CHOOSE US START ============================ -->
+  @* <!-- ============================ WHY CHOOSE US START ============================ -->
   <section class="section section--surface" aria-labelledby="why-title">
     <div class="container">
       <div class="row row-editorial">
@@ -412,21 +424,20 @@
       </div>
     </div>
   </section>
-  <!-- ============================ WHY CHOOSE US END ============================ -->
+  <!-- ============================ WHY CHOOSE US END ============================ --> *@
 
   <!-- ============================ PROJECT SHOWCASE START ============================ -->
   <section class="section section--paper section--bordered" aria-labelledby="showcase-title">
     <div class="container">
-      <div class="sec-head sec-head--row reveal">
+      <div class="sec-head reveal">
         <div>
           <span class="sec-label">Dự án tiêu biểu</span>
           <h2 class="sec-title" id="showcase-title">Dự án thu mua gần đây</h2>
         </div>
-        <a class="link-arrow" href="/du-an">Xem tất cả dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
       </div>
 
       <div class="showcase-grid reveal">
-        <a class="show-item show-main" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+        <a class="show-item show-main" href="/du-an/thao-do-thanh-ly-nha-xuong-2000m2">
           <img src="@AssetHelper.NormalizePath(Model.Chrome.ProjectImage1)" alt="Tháo dỡ và thu mua nhà xưởng 2.000m² tại Biên Hòa" width="1280" height="800" loading="lazy">
           <span class="show-overlay"></span>
           <span class="show-info">
@@ -437,7 +448,7 @@
           </span>
         </a>
         <div class="show-col">
-          <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+          <a class="show-item" href="/du-an/thu-mua-phe-lieu-cong-trinh-cao-oc-thu-duc">
             <img src="@AssetHelper.NormalizePath(Model.Chrome.ProjectImage2)" alt="Thu gom sắt thép công trình tại Quận 9" width="1280" height="800" loading="lazy">
             <span class="show-overlay"></span>
             <span class="show-info">
@@ -447,7 +458,7 @@
               <span class="show-view">Xem dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
             </span>
           </a>
-          <a class="show-item" href="/du-an/thanh-ly-nha-xuong-bien-hoa">
+          <a class="show-item" href="/du-an/thanh-ly-day-chuyen-may-moc-xuong-go">
             <img src="@AssetHelper.NormalizePath(Model.Chrome.ProjectImage3)" alt="Mua lại dây chuyền máy móc sản xuất tại Dĩ An" width="1280" height="800" loading="lazy">
             <span class="show-overlay"></span>
             <span class="show-info">
@@ -459,11 +470,14 @@
           </a>
         </div>
       </div>
+      <div class="text-center mt-4">
+        <a class="btn btn-outline-dark" href="/du-an">Xem tất cả dự án <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
     </div>
   </section>
   <!-- ============================ PROJECT SHOWCASE END ============================ -->
 
-  <!-- ============================ PROCESS START ============================ -->
+  @* <!-- ============================ PROCESS START ============================ -->
   <section class="section section--surface" aria-labelledby="process-title">
     <div class="container">
       <div class="sec-head reveal">
@@ -504,9 +518,9 @@
       </ol>
     </div>
   </section>
-  <!-- ============================ PROCESS END ============================ -->
+  <!-- ============================ PROCESS END ============================ --> *@
 
-  <!-- ============================ LOCATION DIRECTORY START ============================ -->
+  @* <!-- ============================ LOCATION DIRECTORY START ============================ -->
   <section class="section section--paper section--bordered" aria-labelledby="loc-title">
     <div class="container">
       <div class="sec-head sec-head--row reveal">
@@ -550,17 +564,16 @@
       </div>
     </div>
   </section>
-  <!-- ============================ LOCATION DIRECTORY END ============================ -->
+  <!-- ============================ LOCATION DIRECTORY END ============================ --> *@
 
   <!-- ============================ NEWS START ============================ -->
   <section class="section section--paper" aria-labelledby="news-title">
     <div class="container">
-      <div class="sec-head sec-head--row reveal">
+      <div class="sec-head reveal">
         <div>
           <span class="sec-label">Tin tức — kiến thức</span>
           <h2 class="sec-title" id="news-title">Cập nhật giá &amp; kinh nghiệm bán phế liệu</h2>
         </div>
-        <a class="link-arrow" href="/tin-tuc">Xem tất cả bài viết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
       </div>
 
       <div class="news-editorial reveal">
@@ -584,10 +597,13 @@
           }
         </div>
       </div>
+      <div class="text-center mt-4">
+        <a class="btn btn-outline-dark" href="/tin-tuc">Xem tất cả bài viết <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+      </div>
     </div>
   </section>
   <!-- ============================ NEWS END ============================ -->
-
+@* 
   <!-- ============================ FAQ START ============================ -->
   <section class="section section--surface" aria-labelledby="faq-title">
     <div class="container">
@@ -605,7 +621,7 @@
       </div>
     </div>
   </section>
-  <!-- ============================ FAQ END ============================ -->
+  <!-- ============================ FAQ END ============================ --> *@
 
   <!-- ============================ FINAL CTA START ============================ -->
   <section class="cta-final" aria-labelledby="cta-title">

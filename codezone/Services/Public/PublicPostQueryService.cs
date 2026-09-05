@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ScrapWebsite.Data;
+using ScrapWebsite.Services.Admin;
 using ScrapWebsite.Services.Interfaces;
 using ScrapWebsite.ViewModels;
 using ScrapWebsite.ViewModels.Public;
@@ -12,12 +14,18 @@ public class PublicPostQueryService : IPublicPostQueryService
     private const int MaxPageSize = 20;
     private readonly AppDbContext _dbContext;
     private readonly IPublicSeoQueryService _seoQueryService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PublicPostQueryService(AppDbContext dbContext, IPublicSeoQueryService seoQueryService)
+    public PublicPostQueryService(AppDbContext dbContext, IPublicSeoQueryService seoQueryService, IHttpContextAccessor httpContextAccessor)
     {
         _dbContext = dbContext;
         _seoQueryService = seoQueryService;
+        _httpContextAccessor = httpContextAccessor;
     }
+
+    private bool IsAdminRequest =>
+        _httpContextAccessor.HttpContext?.User.Identity is { IsAuthenticated: true } identity
+        && identity.AuthenticationType == AdminAuthDefaults.AuthenticationScheme;
 
     public async Task<NewsIndexViewModel> GetNewsIndexAsync(PostListQueryDto query, CancellationToken cancellationToken)
     {
@@ -92,9 +100,11 @@ public class PublicPostQueryService : IPublicPostQueryService
 
     public async Task<NewsDetailViewModel?> GetNewsDetailAsync(string slug, CancellationToken cancellationToken)
     {
-        var post = await _dbContext.Posts
+        var postQuery = _dbContext.Posts
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null && item.Slug == slug)
+            .Where(item => item.DeletedAt == null && item.Status == PublicConstants.Published && item.Slug == slug);
+
+        var post = await postQuery
             .Select(item => new PostDetailDto(
                 item.Id,
                 item.Title,
@@ -104,7 +114,9 @@ public class PublicPostQueryService : IPublicPostQueryService
                 item.Content,
                 item.CoverImage,
                 item.AuthorName ?? "Quản trị viên",
-                item.PublishedAt))
+                item.PublishedAt,
+                item.SeoKeywords,
+                IsDraft: item.Status != PublicConstants.Published))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (post is null)
@@ -160,7 +172,7 @@ public class PublicPostQueryService : IPublicPostQueryService
                 "Post",
                 post.Id,
                 $"/tin-tuc/{post.Slug}",
-                new SeoDto(post.Title, post.Excerpt ?? "Chi tiết tin tức.", CanonicalUrl: $"/tin-tuc/{post.Slug}", OgImage: post.CoverImage, OgType: "article"),
+                new SeoDto(post.Title, post.Excerpt ?? "Chi tiết tin tức.", post.SeoKeywords, CanonicalUrl: $"/tin-tuc/{post.Slug}", OgImage: post.CoverImage, OgType: "article"),
                 cancellationToken),
             Post = post,
             Images = images,
@@ -209,7 +221,7 @@ public class PublicPostQueryService : IPublicPostQueryService
             return null;
         }
 
-        var rows = await ApplyCursor(_dbContext.Posts.AsNoTracking().Where(post => post.Status == PublicConstants.Published), cursor)
+        var rows = await ApplyCursor(_dbContext.Posts.AsNoTracking().Where(post => post.Status == PublicConstants.Published && post.DeletedAt == null), cursor)
             .OrderByDescending(post => post.IsFeatured)
             .ThenBy(post => post.SortOrder)
             .ThenByDescending(post => post.PublishedAt)

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ScrapWebsite.Models;
 using ScrapWebsite.Services.Interfaces;
 using ScrapWebsite.Services.Media;
@@ -8,13 +9,23 @@ namespace ScrapWebsite.Services;
 
 public class ContactService : IContactService
 {
+    private const string AdminEmailSettingKey = "contact.email";
+
     private readonly AppDbContext _dbContext;
     private readonly IImageUploadService _imageUploadService;
+    private readonly IEmailNotificationService _emailNotificationService;
+    private readonly ILogger<ContactService> _logger;
 
-    public ContactService(AppDbContext dbContext, IImageUploadService imageUploadService)
+    public ContactService(
+        AppDbContext dbContext,
+        IImageUploadService imageUploadService,
+        IEmailNotificationService emailNotificationService,
+        ILogger<ContactService> logger)
     {
         _dbContext = dbContext;
         _imageUploadService = imageUploadService;
+        _emailNotificationService = emailNotificationService;
+        _logger = logger;
     }
 
     public async Task<int> SaveRequestAsync(ContactRequest request, CancellationToken cancellationToken = default)
@@ -23,6 +34,9 @@ public class ContactService : IContactService
         request.Status = string.IsNullOrWhiteSpace(request.Status) ? "new" : request.Status;
         _dbContext.ContactRequests.Add(request);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await NotifyAdminAsync(request, cancellationToken);
+
         return request.Id;
     }
 
@@ -70,7 +84,32 @@ public class ContactService : IContactService
         }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await NotifyAdminAsync(request, cancellationToken);
+
         return request.Id;
+    }
+
+    private async Task NotifyAdminAsync(ContactRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var adminEmail = await _dbContext.SiteSettings
+                .AsNoTracking()
+                .Where(setting => setting.Key == AdminEmailSettingKey)
+                .Select(setting => setting.Value)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            await _emailNotificationService.SendContactLeadEmailAsync(request, $"LE-{request.Id:0000}", adminEmail);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Không gửi được thông báo yêu cầu LE-{Id:0000}.", request.Id);
+        }
     }
 
     private static string? Clean(string? value)

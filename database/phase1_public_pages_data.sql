@@ -25,7 +25,7 @@ VALUES
     (N'public.image.news', N'/assets/images/imported/brand/seo-og-image.png', N'public', N'Fallback news image'),
     (N'home.response_time_text', N'30 phút', N'home', N'Public response time text'),
     (N'home.price_updated_text', CONVERT(nvarchar(10), GETDATE(), 103), N'home', N'Public price updated text'),
-    (N'public.about.hero_title', N'Giới thiệu Phế Liệu Thành Trung', N'public', N'About page hero title'),
+    (N'public.about.hero_title', N'Giới thiệu Phế Liệu Minh Đức', N'public', N'About page hero title'),
     (N'public.capability.hero_title', N'Năng lực thu mua phế liệu', N'public', N'Capability page hero title'),
     (N'public.services.hero_title', N'Dịch vụ thu mua phế liệu', N'public', N'Services page hero title'),
     (N'public.prices.hero_title', N'Bảng giá phế liệu hôm nay', N'public', N'Prices page hero title'),
@@ -68,9 +68,9 @@ WHEN NOT MATCHED THEN
 
 UPDATE dbo.SiteSettings
 SET SettingValue = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(SettingValue,
-    N'[HOTLINE]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.phone'), N'0974640626')),
-    N'[ZALO]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.zalo'), N'0974640626')),
-    N'[EMAIL]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.email'), N'phelieuthanhtrung@gmail.com')),
+    N'[HOTLINE]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.phone'), N'0985565323')),
+    N'[ZALO]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.zalo'), N'0985565323')),
+    N'[EMAIL]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.email'), N'phelieuminhduc@gmail.com')),
     N'[ĐỊA CHỈ]', COALESCE((SELECT TOP (1) SettingValue FROM dbo.SiteSettings WHERE SettingKey = N'contact.warehouse_address'), N'TP.HCM')),
     N'[DD/MM/YYYY]', CONVERT(nvarchar(10), GETDATE(), 103)),
     N'[XX]', N'10'),

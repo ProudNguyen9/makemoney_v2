@@ -33,17 +33,19 @@
 
   <div class="footer-top">
     <div class="container">
-      <div class="row g-4">
-        <div class="col-lg-4 col-md-6 footer-brand">
-          <img class="brand-logo" src="@Model.FooterLogoUrl" asp-append-version="true" alt="Logo @Model.CompanyName" width="1137" height="566" loading="lazy">
-          <p>Thu mua phế liệu đồng, sắt, nhôm, inox tận nơi cho cá nhân, công trình và doanh nghiệp. Cân đo minh bạch, thanh toán ngay.</p>
+      <div class="row g-3 g-md-4">
+        <div class="col-lg-4 col-12 footer-brand">
+          <div class="footer-brand-main">
+            <img class="brand-logo" src="@Model.FooterLogoUrl" asp-append-version="true" alt="Logo @Model.CompanyName" width="1137" height="566" loading="lazy">
+            <p>Thu mua phế liệu đồng, sắt, nhôm, inox tận nơi cho cá nhân, công trình và doanh nghiệp. Cân đo minh bạch, thanh toán ngay.</p>
+          </div>
           <div class="footer-cert">
             <span class="cert-chip"><i class="bi bi-patch-check-fill" aria-hidden="true"></i>MST: @Model.TaxCode</span>
             <span class="cert-chip"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i>Kho: @Model.WarehouseAddress</span>
           </div>
         </div>
 
-        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Phế liệu thu mua">
+        <nav class="col-lg-2 col-md-3 col-6 footer-col" aria-label="Phế liệu thu mua">
           <h2 class="footer-col-title">Phế liệu</h2>
           <ul class="footer-links">
             <li><a href="/phe-lieu/nhom/dong">Phế liệu đồng</a></li>
@@ -56,18 +58,18 @@
           </ul>
         </nav>
 
-        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Dịch vụ">
+        <nav class="col-lg-2 col-md-3 col-6 footer-col" aria-label="Dịch vụ">
           <h2 class="footer-col-title">Dịch vụ</h2>
           <ul class="footer-links">
-            <li><a href="/dich-vu/thu-mua-tan-noi">Thu mua tận nơi</a></li>
-            <li><a href="/dich-vu/thu-mua-tan-noi">Thanh lý nhà xưởng</a></li>
-            <li><a href="/dich-vu/thu-mua-tan-noi">Thu mua công trình</a></li>
-            <li><a href="/dich-vu/thu-mua-tan-noi">Thu mua máy móc</a></li>
+            <li><a href="/dich-vu/thu-mua-phe-lieu-tan-noi">Thu mua tận nơi</a></li>
+            <li><a href="/dich-vu/thu-mua-thanh-ly-nha-xuong">Thanh lý nhà xưởng</a></li>
+            <li><a href="/dich-vu/thu-mua-phe-lieu-cong-trinh">Thu mua công trình</a></li>
+            <li><a href="/dich-vu/thu-mua-may-moc-cu">Thu mua máy móc</a></li>
             <li><a href="/hoa-hong">Chính sách hoa hồng</a></li>
           </ul>
         </nav>
 
-        <nav class="col-lg-2 col-md-6 col-6 footer-col" aria-label="Khu vực">
+        <nav class="col-lg-2 col-md-3 col-6 footer-col" aria-label="Khu vực">
           <h2 class="footer-col-title">Khu vực</h2>
           <ul class="footer-links">
             <li><a href="/khu-vuc">Đồng Nai</a></li>
@@ -78,7 +80,7 @@
           </ul>
         </nav>
 
-        <div class="col-lg-2 col-md-6 footer-col">
+        <div class="col-lg-2 col-md-3 col-6 footer-col footer-col--contact">
           <h2 class="footer-col-title">Liên hệ</h2>
           <ul class="footer-contact">
             <li>
@@ -96,7 +98,7 @@
           </ul>
           <div class="footer-hours">
             <i class="bi bi-clock-fill" aria-hidden="true"></i>
-            Thứ 2 – Chủ nhật: @Model.WorkingHours
+            Thứ 2 – CN: @Model.WorkingHours
           </div>
         </div>
       </div>

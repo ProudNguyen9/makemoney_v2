@@ -10,7 +10,8 @@
   <h1>Cài đặt công ty <small>Thông tin liên hệ hiển thị toàn website</small></h1>
   <div class="aph-actions">
     <button class="btn btn-outline-dark" type="submit" form="companySettingsForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu thông tin</button>
-    <button class="btn btn-primary" type="submit" form="faviconForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu favicon</button>
+    <button class="btn btn-primary" type="submit" form="smtpForm"><i class="bi bi-envelope-check" aria-hidden="true"></i> Lưu email (SMTP)</button>
+    <button class="btn btn-outline-dark" type="submit" form="faviconForm"><i class="bi bi-check-lg" aria-hidden="true"></i> Lưu favicon</button>
   </div>
 </div>
 
@@ -82,6 +83,69 @@
         </div>
         <label class="form-label-tech" for="faviconFile">Ảnh favicon mới</label>
         <input class="form-control js-image-preview-input" id="faviconFile" type="file" name="FaviconFile" accept="image/*" data-preview-target="faviconPreview" data-name-target="faviconFileName">
+      </form>
+    </div>
+
+    <div class="admin-panel">
+      <div class="panel-head"><h2>Email gửi thông báo liên hệ (SMTP)</h2></div>
+      <form id="smtpForm" class="panel-body" action="/admin/settings/SaveSmtp" method="post">
+        @Html.AntiForgeryToken()
+        <p class="small text-muted">Mỗi khi khách gửi form liên hệ / báo giá nhanh, website sẽ dùng máy chủ SMTP này để gửi email thông báo tới địa chỉ nhận. Nếu bỏ trống, hệ thống dùng cấu hình mặc định trong file cấu hình.</p>
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label-tech" for="smtpHost">Máy chủ SMTP (Host)</label>
+            <input class="form-control" id="smtpHost" name="Host" type="text" value="@Model.SmtpHost" maxlength="160" placeholder="smtp.gmail.com">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-tech" for="smtpPort">Cổng (Port)</label>
+            <input class="form-control" id="smtpPort" name="Port" type="number" min="1" max="65535" value="@Model.SmtpPort">
+          </div>
+          <div class="col-12">
+            <div class="form-check form-switch">
+              <input class="form-check-input" id="smtpSsl" name="EnableSsl" type="checkbox" value="true" @(Model.SmtpEnableSsl ? "checked" : "")>
+              <label class="form-check-label" for="smtpSsl">Bật SSL/TLS</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="smtpUser">Tên đăng nhập SMTP</label>
+            <input class="form-control" id="smtpUser" name="UserName" type="text" value="@Model.SmtpUserName" maxlength="160" autocomplete="off" placeholder="thường là địa chỉ email gửi">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="smtpPassword">Mật khẩu / App password</label>
+            <input class="form-control" id="smtpPassword" name="Password" type="password" maxlength="200" autocomplete="new-password" placeholder="@(Model.SmtpHasPassword ? "•••••••• (đã lưu — bỏ trống để giữ nguyên)" : "Nhập mật khẩu ứng dụng")">
+            <small class="text-muted">Vì bảo mật, mật khẩu không hiển thị lại. Bỏ trống nếu không muốn đổi. Với Gmail hãy dùng App Password.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="smtpFromEmail">Email người gửi (From)</label>
+            <input class="form-control" id="smtpFromEmail" name="FromEmail" type="email" value="@Model.SmtpFromEmail" maxlength="160">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="smtpFromName">Tên hiển thị người gửi</label>
+            <input class="form-control" id="smtpFromName" name="FromName" type="text" value="@Model.SmtpFromName" maxlength="160">
+          </div>
+          <div class="col-12">
+            <label class="form-label-tech" for="smtpToEmail">Email nhận thông báo liên hệ</label>
+            <input class="form-control" id="smtpToEmail" name="ToEmail" type="email" value="@Model.SmtpToEmail" maxlength="200">
+            <small class="text-muted">Địa chỉ email của admin sẽ nhận thư mỗi khi có yêu cầu mới từ website.</small>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="admin-panel">
+      <div class="panel-head"><h2>Gửi email thử nghiệm</h2></div>
+      <form class="panel-body" action="/admin/settings/SendSmtpTest" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-2 align-items-end">
+          <div class="col-sm-8">
+            <label class="form-label-tech" for="smtpTestEmail">Gửi tới</label>
+            <input class="form-control" id="smtpTestEmail" name="testEmail" type="email" value="@Model.SmtpToEmail" maxlength="200">
+          </div>
+          <div class="col-sm-4">
+            <button class="btn btn-primary w-100" type="submit"><i class="bi bi-send" aria-hidden="true"></i> Gửi thử</button>
+          </div>
+        </div>
+        <small class="text-muted d-block mt-2">Dùng cấu hình SMTP đã lưu để kiểm tra kết nối. Hãy bấm "Lưu email (SMTP)" trước khi gửi thử.</small>
       </form>
     </div>
 

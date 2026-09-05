@@ -4,8 +4,6 @@
     ViewData["Title"] = "Loại phế liệu";
     ViewData["AdminSection"] = "scrap";
     ViewData["AdminSubSection"] = "index";
-
-    string StatusLabel(string status) => status == "published" ? "Đang hiển thị" : status == "draft" ? "Ẩn" : status;
 }
 
 <div class="admin-page-head">
@@ -88,7 +86,16 @@
           <td>
             <div class="ta-actions">
               <a href="/admin/scrap/Form/@item.Id" aria-label="Sửa @item.Name"><i class="bi bi-pencil" aria-hidden="true"></i></a>
-              <form method="post" action="/admin/scrap/Delete" class="d-inline" onsubmit="return confirm('Xóa loại phế liệu &quot;@item.Name&quot; kèm dòng giá và ảnh?')">
+              <form method="post" action="/admin/scrap/ToggleFeatured" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@item.Id">
+                <input type="hidden" name="group" value="@Model.Group">
+                <input type="hidden" name="status" value="@Model.Status">
+                <input type="hidden" name="q" value="@Model.Query">
+                <input type="hidden" name="page" value="@Model.Page">
+                <button type="submit" class="@(item.IsFeatured ? "act-featured" : "")" aria-label="Nổi bật @item.Name" title="@(item.IsFeatured ? "Bỏ nổi bật" : "Nổi bật")"><i class="bi bi-star@(item.IsFeatured ? "-fill" : "")" aria-hidden="true"></i></button>
+              </form>
+              <form method="post" action="/admin/scrap/Delete" class="d-inline" onsubmit="return confirm('Xóa mềm loại phế liệu &quot;@item.Name&quot;? Sẽ bị ẩn khỏi danh sách và website, có thể khôi phục trong DB.')">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@item.Id">
                 <input type="hidden" name="group" value="@Model.Group">

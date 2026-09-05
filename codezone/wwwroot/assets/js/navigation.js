@@ -15,15 +15,45 @@
     items.forEach(function (li) {
       var toggle = li.querySelector('[data-bs-toggle="dropdown"]');
       if (!toggle) return;
+      var hideTimer = null;
 
       li.addEventListener('mouseenter', function () {
         if (window.matchMedia('(min-width: 992px)').matches) {
+          if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
           bootstrap.Dropdown.getOrCreateInstance(toggle).show();
         }
       });
       li.addEventListener('mouseleave', function () {
         if (window.matchMedia('(min-width: 992px)').matches) {
-          bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+          if (hideTimer) clearTimeout(hideTimer);
+          hideTimer = setTimeout(function () {
+            bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+          }, 300);
+        }
+      });
+      // Bấm để xổ / bấm lần nữa để thu
+      toggle.addEventListener('click', function (e) {
+        if (window.matchMedia('(min-width: 992px)').matches) {
+          e.preventDefault();
+          var dd = bootstrap.Dropdown.getOrCreateInstance(toggle);
+          if (li.classList.contains('show')) {
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+            dd.hide();
+          } else {
+            if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+            dd.show();
+          }
+        }
+      });
+    });
+
+    // Click ra ngoài thì đóng hết
+    document.addEventListener('click', function (e) {
+      if (!window.matchMedia('(min-width: 992px)').matches) return;
+      items.forEach(function (li) {
+        if (!li.contains(e.target)) {
+          var toggle = li.querySelector('[data-bs-toggle="dropdown"]');
+          if (toggle) bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
         }
       });
     });

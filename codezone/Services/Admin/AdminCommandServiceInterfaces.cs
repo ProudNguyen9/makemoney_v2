@@ -29,6 +29,13 @@ public interface IAdminScrapCommandService
     Task<bool> UpdateSortAsync(int id, int sortOrder, CancellationToken cancellationToken);
 
     Task<bool> DeleteScrapItemAsync(int id, CancellationToken cancellationToken);
+
+    Task<int> SaveScrapCategoryAsync(ScrapCategoryFormViewModel form, CancellationToken cancellationToken);
+
+    Task<bool> ToggleCategoryStatusAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>Chỉ xóa được nhóm rỗng; ném InvalidOperationException nếu nhóm còn phế liệu.</summary>
+    Task<bool> DeleteScrapCategoryAsync(int id, CancellationToken cancellationToken);
 }
 
 public interface IAdminServiceCommandService
@@ -74,6 +81,9 @@ public interface IAdminArticleCommandService
 {
     Task<int> SaveArticleAsync(PostFormViewModel form, CancellationToken cancellationToken);
 
+    /// <summary>Tự lưu nội dung đang soạn vào bảng PostAutosaves (không đụng bài đã xuất bản).</summary>
+    Task AutoSaveArticleDraftAsync(string postKey, PostFormViewModel form, CancellationToken cancellationToken);
+
     Task<bool> ToggleStatusAsync(int id, CancellationToken cancellationToken);
 
     Task<bool> ToggleFeaturedAsync(int id, CancellationToken cancellationToken);
@@ -105,6 +115,8 @@ public interface IAdminSettingsCommandService
     Task SaveBrandAssetsAsync(BrandAssetsFormViewModel form, CancellationToken cancellationToken);
 
     Task SaveFaviconAsync(FaviconFormViewModel form, CancellationToken cancellationToken);
+
+    Task SaveSmtpSettingsAsync(SmtpSettingsFormViewModel form, CancellationToken cancellationToken);
 }
 
 public interface IAdminMediaCommandService

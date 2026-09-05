@@ -20,7 +20,9 @@ public sealed record PostDetailDto(
     string? ContentHtml,
     string? CoverImage,
     string AuthorName,
-    DateTime PublishedAt);
+    DateTime PublishedAt,
+    string? SeoKeywords = null,
+    bool IsDraft = false);
 
 public sealed record PostLinkedProductDto(
     int Id,

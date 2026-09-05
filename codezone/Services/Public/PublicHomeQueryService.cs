@@ -38,7 +38,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
 
         var scrapRows = await _dbContext.ScrapItems
             .AsNoTracking()
-            .Where(item => item.Status == PublicConstants.Published)
+            .Where(item => item.Status == PublicConstants.Published && item.DeletedAt == null)
             .OrderByDescending(item => item.IsFeatured)
             .ThenBy(item => item.SortOrder)
             .ThenByDescending(item => item.PublishedAt)
@@ -78,7 +78,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
 
         var latestPosts = await _dbContext.Posts
             .AsNoTracking()
-            .Where(post => post.Status == PublicConstants.Published)
+            .Where(post => post.Status == PublicConstants.Published && post.DeletedAt == null)
             .OrderByDescending(post => post.PublishedAt)
             .ThenByDescending(post => post.Id)
             .Select(post => new PostCardDto(
@@ -145,7 +145,7 @@ public class PublicHomeQueryService : IPublicHomeQueryService
             .Select(setting => new { setting.Key, setting.Value })
             .ToDictionaryAsync(setting => setting.Key, setting => setting.Value ?? string.Empty, cancellationToken);
 
-        var hotline = GetSetting(homeSettings, "contact.phone", "0974640626");
+        var hotline = GetSetting(homeSettings, "contact.phone", "0985565323");
         var zalo = GetSetting(homeSettings, "contact.zalo", hotline);
         var chrome = new HomeChromeDto(
             Hotline: hotline,

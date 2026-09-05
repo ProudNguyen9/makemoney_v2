@@ -3,7 +3,6 @@
     ViewData["Title"] = Model.Seo.Title;
     var current = Model.Current;
 }
-
 <main>
   <section class="page-hero" aria-label="Danh mục phế liệu thu mua">
     <div class="page-hero-bg" aria-hidden="true">
@@ -40,22 +39,25 @@
 
   <section class="section section--paper" aria-labelledby="group-title">
     <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-label">Nhóm chất liệu</span>
-        <h2 class="sec-title" id="group-title">@(current is null ? "Tất cả nhóm phế liệu" : $"Chọn nhóm khác")</h2>
-      </div>
-
-      <div class="cat-chip-row reveal">
-        @foreach (var group in Model.Groups)
-        {
-          <a class="cat-chip @(current?.Slug == group.Slug ? "active" : "")" href="/phe-lieu/nhom/@group.Slug">
-            @group.Name <span class="cat-chip-count">@group.ItemCount</span>
-          </a>
-        }
-      </div>
-
       @if (current is null)
       {
+        <!-- Filter bar thiết kế đẹp, vừa khít -->
+        <div class="cat-filter-bar reveal" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; background:linear-gradient(180deg,#FFFFFF 0%,#FFFBF5 100%); border:1px solid #F0E6D8; border-radius:14px; padding:0.85rem 1rem; box-shadow:0 10px 28px rgba(228,87,15,0.07), 0 2px 8px rgba(22,24,28,0.04); margin-bottom:1.5rem;">
+          <span style="display:inline-flex; align-items:center; gap:0.5rem; font-family:Oswald; font-size:0.8rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#E4570F; flex:0 0 auto;"><i class="bi bi-sliders" aria-hidden="true" style="font-size:1rem;"></i> Bộ lọc</span>
+          <span style="width:1px; height:28px; background:#E3E1DC; flex:0 0 auto;" class="d-none d-sm-block" aria-hidden="true"></span>
+          <div style="position:relative; flex:1 1 220px; min-width:180px;">
+            <i class="bi bi-search" aria-hidden="true" style="position:absolute; left:0.9rem; top:50%; transform:translateY(-50%); color:#9AA3AE; font-size:0.95rem;"></i>
+            <input id="catSearch" type="search" class="form-control" placeholder="Tìm nhóm: Đồng, Nhôm, Sắt..." style="padding-left:2.5rem; height:42px; border-radius:10px; border:1px solid #E8E0D6; background:#FFFFFF; font-size:0.92rem; box-shadow:inset 0 1px 2px rgba(22,24,28,0.04);">
+          </div>
+          <select id="catGroupFilter" class="form-select" style="flex:3 1 0; min-width:0; height:42px; border-radius:10px; border:1px solid #E8E0D6; background-color:#FFFFFF; font-size:0.92rem;">
+            <option value="">Tất cả</option>
+            @foreach (var group in Model.Groups)
+            {
+              <option value="@group.Slug" selected="@(current?.Slug == group.Slug)">@group.Name — @group.ItemCount loại</option>
+            }
+          </select>
+          <button id="catFilterBtn" class="btn btn-primary" type="button" style="height:42px; padding:0 1.35rem; border-radius:10px; font-weight:600; letter-spacing:0.02em; white-space:nowrap; box-shadow:0 4px 12px rgba(228,87,15,0.25);"><i class="bi bi-funnel-fill" aria-hidden="true"></i> Lọc</button>
+        </div>
         <div class="scrap-card-grid scrap-card-grid--3" style="margin-top:2rem">
           @foreach (var group in Model.Groups)
           {
@@ -81,20 +83,25 @@
       }
       else
       {
-        <div class="sec-head sec-head--row reveal" style="margin-top:2.5rem">
-          <div>
-            <span class="sec-label">Bảng giá @(current.Name.ToLower())</span>
-            <h2 class="sec-title">Giá thu mua @(current.Name.ToLower()) hôm nay</h2>
-            @if (!string.IsNullOrWhiteSpace(Model.CurrentDescription))
-            {
-              <p class="sec-desc">@Model.CurrentDescription</p>
-            }
+        <div class="sec-head reveal">
+          @* <span class="sec-label">Bảng giá @(current.Name.ToLower())</span> *@
+          <h2 class="sec-title">Giá thu mua @(current.Name.ToLower()) hôm nay</h2>
+          @if (!string.IsNullOrWhiteSpace(Model.CurrentDescription))
+          {
+            <p class="sec-desc">@Model.CurrentDescription</p>
+          }
+        </div>
+        <!-- Thanh lọc một hàng trên như các trang còn lại -->
+        <div class="cat-filter-bar reveal" style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; background:linear-gradient(180deg,#FFFFFF 0%,#FFFBF5 100%); border:1px solid #F0E6D8; border-radius:12px; padding:0.75rem 0.9rem; box-shadow:0 8px 20px rgba(228,87,15,0.06); margin-bottom:1.25rem;">
+          <div style="position:relative; flex:1 1 260px; min-width:180px;">
+            <i class="bi bi-search" aria-hidden="true" style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:#9AA3AE;"></i>
+            <input id="priceSearch" type="search" class="form-control" placeholder="Tìm trong bảng giá @(current.Name.ToLower())..." style="padding-left:2.4rem; height:40px; border-radius:10px; border:1px solid #E8E0D6;">
           </div>
-          <a class="link-arrow" href="/bang-gia">Xem bảng giá tất cả <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <button id="priceFilterBtn" class="btn btn-primary" type="button" style="height:40px; padding:0 1.2rem; border-radius:10px; white-space:nowrap;"><i class="bi bi-funnel-fill" aria-hidden="true"></i> Lọc</button>
         </div>
 
         <div class="price-board">
-          <div class="price-board-head reveal">
+          <div class="price-board-head reveal d-none d-md-flex">
             <span class="price-updated">
               <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
               Cập nhật <strong>@DateTime.Today.ToString("dd/MM/yyyy")</strong> — @Model.Items.Count loại, giá theo thực tế từng lô
@@ -122,19 +129,21 @@
               <tbody>
                 @foreach (var item in Model.Items)
                 {
-                  <tr>
+                  <tr class="position-relative">
                     <td class="mat-name">
-                      <span class="mat-thumb">
-                        <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="96" height="72" loading="lazy">
-                      </span>
-                      <span class="mat-name-text">
-                        <strong>@item.Name.Replace("Thu mua ", string.Empty)</strong>
-                        <small>@item.CategoryName</small>
-                      </span>
+                      <a class="mat-name-link d-flex align-items-center gap-3 text-decoration-none text-reset stretched-link" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">
+                        <span class="mat-thumb">
+                          <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="96" height="72" loading="lazy">
+                        </span>
+                        <span class="mat-name-text">
+                          <strong>@item.Name.Replace("Thu mua ", string.Empty)</strong>
+                          <small>@item.CategoryName</small>
+                        </span>
+                      </a>
                     </td>
                     <td class="mat-type">@(string.IsNullOrWhiteSpace(item.ShortDescription) ? "Liên hệ mô tả hàng để báo giá chính xác." : item.ShortDescription)</td>
-                    <td class="text-end"><span class="price-value">@item.PriceText</span></td>
-                    <td class="text-end"><a class="link-arrow" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a></td>
+                    <td class="text-end"><span class="price-value position-relative" style="z-index: 2;">@item.PriceText</span></td>
+                    <td class="text-end"><a class="link-arrow position-relative" style="z-index: 2;" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">Xem chi tiết <i class="bi bi-arrow-right" aria-hidden="true"></i></a></td>
                   </tr>
                 }
               </tbody>
@@ -145,14 +154,52 @@
             <button class="btn btn-primary" type="button" data-quote-open>
               <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình chốt giá @(current.Name.ToLower())
             </button>
-            <a class="btn btn-outline-dark" href="tel:0974640626">
-              <i class="bi bi-telephone-fill" aria-hidden="true"></i>Gọi 0974 640 626
+            <a class="btn btn-outline-dark" href="tel:0985565323">
+              <i class="bi bi-telephone-fill" aria-hidden="true"></i>Gọi 0985565323
             </a>
           </div>
         </div>
       }
     </div>
   </section>
+  <script>
+    (function(){
+      var search = document.getElementById('catSearch');
+      var select = document.getElementById('catGroupFilter');
+      var btn = document.getElementById('catFilterBtn');
+      var priceSearch = document.getElementById('priceSearch');
+      var priceBtn = document.getElementById('priceFilterBtn');
+      function doFilter(){
+        var q = (search && search.value || '').toLowerCase().trim();
+        var g = select ? select.value : '';
+        if (g && g !== '@(current?.Slug ?? "")') {
+          location.href = g ? '/phe-lieu/nhom/' + g : '/phe-lieu/nhom';
+          return;
+        }
+        document.querySelectorAll('.scrap-card-grid .scrap-card').forEach(function(card){
+          var name = (card.textContent || '').toLowerCase();
+          var ok = !q || name.indexOf(q) !== -1;
+          card.style.display = ok ? '' : 'none';
+        });
+      }
+      function doPriceFilter(){
+        var q = (priceSearch && priceSearch.value || '').toLowerCase().trim();
+        document.querySelectorAll('.price-board tbody tr').forEach(function(tr){
+          if(tr.classList.contains('price-section-row')) return;
+          var txt = (tr.textContent || '').toLowerCase();
+          var ok = !q || txt.indexOf(q) !== -1;
+          tr.style.display = ok ? '' : 'none';
+        });
+      }
+      if(btn) btn.addEventListener('click', doFilter);
+      if(search) search.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); doFilter(); }});
+      if(search) search.addEventListener('input', function(){ if(!search.value) doFilter(); });
+      if(select) select.addEventListener('change', doFilter);
+      if(priceBtn) priceBtn.addEventListener('click', doPriceFilter);
+      if(priceSearch) priceSearch.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); doPriceFilter(); }});
+      if(priceSearch) priceSearch.addEventListener('input', function(){ doPriceFilter(); });
+    })();
+  </script>
 
   <section class="cta-final" aria-labelledby="cat-cta-title">
     <div class="cta-final-bg" aria-hidden="true">
@@ -167,8 +214,8 @@
           <button class="btn btn-primary btn-lg" type="button" data-quote-open>
             <i class="bi bi-camera-fill" aria-hidden="true"></i>Gửi hình nhận giá
           </button>
-          <a class="btn btn-outline-light btn-lg" href="tel:0974640626">
-            <i class="bi bi-telephone-fill" aria-hidden="true"></i>0974 640 626
+          <a class="btn btn-outline-light btn-lg" href="tel:0985565323">
+            <i class="bi bi-telephone-fill" aria-hidden="true"></i>0985565323
           </a>
         </div>
       </div>

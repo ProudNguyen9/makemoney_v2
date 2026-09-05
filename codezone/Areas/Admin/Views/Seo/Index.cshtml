@@ -84,7 +84,7 @@
             <span class="small @(seo.RobotsFollow ? "text-success" : "text-muted")">@(seo.RobotsFollow ? "Follow" : "Nofollow")</span>
           </td>
           <td>
-            <span class="badge-status @(seo.Status == "active" ? "st-published" : "st-draft")">@seo.Status</span>
+            <span class="badge-status @(seo.Status == "active" ? "st-published" : "st-draft")">@(seo.Status == "active" ? "Đang hoạt động" : "Tạm tắt")</span>
           </td>
           <td class="text-end">
             <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#@detailsId" aria-expanded="false" aria-controls="@detailsId">

@@ -140,6 +140,7 @@
           }
           <span class="form-label-tech">Ảnh đại diện (4:3)</span>
           @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 800×600, tự chuyển WebP", "ThumbFile", false))
+          @* Tạm ẩn slot Banner 16:10 (giao diện public chi tiết chỉ dùng ảnh đại diện 4:3). Bỏ comment để mở lại:
           @if (!string.IsNullOrWhiteSpace(Model.CurrentBannerUrl))
           {
             <div class="mb-2 mt-3">
@@ -152,6 +153,7 @@
           }
           <span class="form-label-tech mt-3">Ảnh banner (16:10)</span>
           @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Partials/_UploadDrop.cshtml", new codezone.Areas.Admin.ViewModels.UploadDropViewModel("Tải ảnh lên", "PNG, JPG — tối thiểu 1600×1000, tự chuyển WebP", "BannerFile", false))
+          *@
         </div>
       </div>
 
@@ -167,7 +169,8 @@
             <option value="draft" selected="@(Model.Status != "published")">Ẩn</option>
           </select>
           <label class="form-label-tech mt-3" for="scrapOrder">Vị trí hiển thị</label>
-          <input class="form-control" id="scrapOrder" name="SortOrder" type="number" min="1" max="9999" value="@Model.SortOrder" title="1 = đầu danh sách. Lưu sẽ tự dồn vị trí các loại khác.">
+          <input class="form-control" id="scrapOrder" name="SortOrder" type="number" min="0" max="9999" value="@Math.Max(Model.SortOrder, 1)" title="1 = đầu danh sách. Nhập nhỏ hơn 1 sẽ tự về vị trí đầu. Lưu sẽ tự dồn vị trí các loại khác.">
+          <span class="text-danger small" asp-validation-for="SortOrder"></span>
           <p class="small text-muted mt-1 mb-0">Số nhỏ hiện trước. Lưu sẽ tự động chèn vào đúng vị trí và đánh lại số liên tục (không trùng).</p>
         </div>
       </div>

@@ -29,6 +29,18 @@ public sealed record AdminScrapListViewModel(
     public AdminPaginationViewModel Pager => new(Page, 20, TotalCount, (int)Math.Ceiling(TotalCount / 20.0));
 }
 
+public sealed record AdminScrapCategoryListViewModel(
+    IReadOnlyList<AdminScrapCategoryRowDto> Items);
+
+public sealed record AdminScrapCategoryRowDto(
+    int Id,
+    string Name,
+    string Slug,
+    string? Description,
+    string Status,
+    int SortOrder,
+    int ItemCount);
+
 public sealed record AdminArticleListViewModel(
     IReadOnlyList<AdminCategoryOptionDto> Categories,
     IReadOnlyList<AdminPostRowDto> Items,
@@ -131,7 +143,15 @@ public sealed record AdminSettingsViewModel(
     string FaviconUrl,
     string PriceUpdatedText,
     string ResponseTimeText,
-    string CacheMinutes);
+    string CacheMinutes,
+    string SmtpHost,
+    int SmtpPort,
+    bool SmtpEnableSsl,
+    string SmtpUserName,
+    bool SmtpHasPassword,
+    string SmtpFromEmail,
+    string SmtpFromName,
+    string SmtpToEmail);
 
 public sealed record AdminMediaListViewModel(
     IReadOnlyList<AdminMediaGroupOptionDto> GroupOptions,
@@ -198,6 +218,23 @@ public sealed record AdminLeadRowDto(
     string CustomerName,
     string Phone,
     string? Zalo,
+    string? ScrapType,
+    string? QuantityText,
+    string? Area,
+    string? Message,
+    string SourceForm,
+    string? SourceUrl,
+    string Status,
+    DateTime CreatedAt,
+    IReadOnlyList<string> ImageUrls);
+
+public sealed record AdminLeadDetailDto(
+    int Id,
+    string Code,
+    string CustomerName,
+    string Phone,
+    string? Zalo,
+    string? Email,
     string? ScrapType,
     string? QuantityText,
     string? Area,

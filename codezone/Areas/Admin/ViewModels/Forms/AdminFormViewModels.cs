@@ -64,6 +64,26 @@ public sealed class ScrapItemFormViewModel
     public IReadOnlyList<AdminCategoryOptionDto> Categories { get; set; } = Array.Empty<AdminCategoryOptionDto>();
 }
 
+public sealed class ScrapCategoryFormViewModel
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Vui lòng nhập tên nhóm phế liệu.")]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(255)]
+    public string? Slug { get; set; }
+
+    public string? Description { get; set; }
+
+    [Range(0, 9999)]
+    public int SortOrder { get; set; }
+
+    [MaxLength(30)]
+    public string Status { get; set; } = "published";
+}
+
 public sealed class PriceBulkRowInput
 {
     public int PriceId { get; set; }
@@ -195,6 +215,18 @@ public sealed class PostFormViewModel
     [MaxLength(120)]
     public string? AuthorName { get; set; }
 
+    [MaxLength(255)]
+    public string? SeoKeywords { get; set; }
+
+    /// <summary>Khóa bản nháp tự lưu: "post-{id}" hoặc "new-{guid}".</summary>
+    public string? AutosaveKey { get; set; }
+
+    public DateTime? AutosavedAtUtc { get; set; }
+
+    public bool RestoredFromAutosave { get; set; }
+
+    public DateTime? UpdatedAtUtc { get; set; }
+
     public List<int> LinkedProductIds { get; set; } = new();
 
     public IReadOnlyList<AdminLinkedProductDto> ProductOptions { get; set; } = Array.Empty<AdminLinkedProductDto>();
@@ -247,6 +279,37 @@ public sealed class HomepageSettingsFormViewModel
 
     [MaxLength(80)]
     public string? ResponseTimeText { get; set; }
+}
+
+public sealed class SmtpSettingsFormViewModel
+{
+    [Required]
+    [MaxLength(160)]
+    public string Host { get; set; } = string.Empty;
+
+    [Range(1, 65535)]
+    public int Port { get; set; } = 587;
+
+    public bool EnableSsl { get; set; } = true;
+
+    [MaxLength(160)]
+    public string? UserName { get; set; }
+
+    [MaxLength(200)]
+    public string? Password { get; set; }
+
+    [Required]
+    [EmailAddress]
+    [MaxLength(160)]
+    public string FromEmail { get; set; } = string.Empty;
+
+    [MaxLength(160)]
+    public string? FromName { get; set; }
+
+    [Required]
+    [EmailAddress]
+    [MaxLength(200)]
+    public string ToEmail { get; set; } = string.Empty;
 }
 
 public sealed class FaviconFormViewModel

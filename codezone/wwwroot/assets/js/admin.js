@@ -188,14 +188,75 @@
   }
 
   /* ---------------------------------------------------------------
-   * Form tự submit khi đổi control (switch bật/tắt...)
+   * Tự động sinh Slug tiếng Việt chuẩn khi gõ Tiêu đề / Tên
    * --------------------------------------------------------------- */
-  function initAutoSubmit() {
-    document.querySelectorAll('form[data-autosubmit]').forEach(function (form) {
-      form.querySelectorAll('input, select').forEach(function (control) {
-        control.addEventListener('change', function () {
-          form.submit();
-        });
+  function toSlug(str) {
+    if (!str) return '';
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[đĐ]/g, 'd')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  function initAutoSlug() {
+    var titleInputs = document.querySelectorAll('#articleTitle, #scrapName, #serviceTitle, #projectTitle, #locationName, input[name="Title"], input[name="Name"]');
+    titleInputs.forEach(function (titleInput) {
+      var form = titleInput.closest('form');
+      if (!form) return;
+      var slugInput = form.querySelector('#articleSlug, #scrapSlug, #serviceSlug, #projectSlug, #locationSlug, input[name="Slug"]');
+      if (!slugInput) return;
+
+      var userTouched = Boolean(slugInput.value && slugInput.value.trim());
+      slugInput.addEventListener('input', function () {
+        userTouched = Boolean(slugInput.value.trim());
+      });
+
+      titleInput.addEventListener('input', function () {
+        if (!userTouched || !slugInput.value.trim()) {
+          slugInput.value = toSlug(titleInput.value);
+        }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+   * Chống double-submit khi bấm nút Lưu form
+   * --------------------------------------------------------------- */
+  function initPreventDoubleSubmit() {
+    document.querySelectorAll('form').forEach(function (form) {
+      form.addEventListener('submit', function (e) {
+        if (form.dataset.submitting === 'true') {
+          e.preventDefault();
+          return;
+        }
+        var submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        if (submitButtons.length > 0) {
+          setTimeout(function () {
+            form.dataset.submitting = 'true';
+            submitButtons.forEach(function (btn) {
+              btn.disabled = true;
+            });
+          }, 50);
+        }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+   * Bắt lỗi tải ảnh media preview
+   * --------------------------------------------------------------- */
+  function initMediaErrorHandling() {
+    document.querySelectorAll('.media-setting-preview img').forEach(function (img) {
+      img.addEventListener('error', function () {
+        img.classList.add('is-error');
+      });
+      img.addEventListener('load', function () {
+        img.classList.remove('is-error');
       });
     });
   }
@@ -210,5 +271,8 @@
     initUploadPreview();
     initRowRemove();
     initAutoSubmit();
+    initAutoSlug();
+    initPreventDoubleSubmit();
+    initMediaErrorHandling();
   });
 })();

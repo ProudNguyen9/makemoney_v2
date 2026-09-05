@@ -1,3 +1,4 @@
+@model ScrapWebsite.ViewModels.ContactViewModel
 @{
     ViewData["Title"] = "Liên hệ";
 }
@@ -75,8 +76,55 @@
 
         <div class="col-lg-7 reveal">
           <div class="quote-panel">
+            @if (Model.IsSubmitted)
+            {
+              <div class="alert alert-success" role="status">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                Đã gửi yêu cầu liên hệ — chúng tôi sẽ phản hồi trong [30 phút] làm việc. Cảm ơn bạn!
+              </div>
+            }
+
+            <h3 class="quote-panel-title">Gửi yêu cầu liên hệ</h3>
+            <p class="quote-panel-sub">Điền thông tin, chúng tôi gọi lại trong [30 phút]. Muốn báo giá nhanh kèm hình? Dùng form bên dưới.</p>
+
+            <!-- CONTACT FORM START (LEAD-001: SourceForm = contact) -->
+            <form action="/contact" method="post" novalidate>
+              @Html.AntiForgeryToken()
+              <div asp-validation-summary="All" class="alert alert-danger"></div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="ctName">Họ tên<span class="required-mark">*</span></label>
+                  <input class="form-control" id="ctName" name="Name" type="text" value="@Model.Request.Name" required maxlength="100" placeholder="VD: Nguyễn Văn A">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="ctPhone">Số điện thoại<span class="required-mark">*</span></label>
+                  <input class="form-control" id="ctPhone" name="Phone" type="tel" value="@Model.Request.Phone" required maxlength="30" placeholder="VD: 0985565323">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="ctEmail">Email</label>
+                  <input class="form-control" id="ctEmail" name="Email" type="email" value="@Model.Request.Email" maxlength="255" placeholder="email@congty.vn">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-tech" for="ctArea">Khu vực</label>
+                  <input class="form-control" id="ctArea" name="Area" type="text" value="@Model.Request.Area" maxlength="160" placeholder="VD: Biên Hòa, Đồng Nai">
+                </div>
+                <div class="col-12">
+                  <label class="form-label-tech" for="ctMessage">Nội dung<span class="required-mark">*</span></label>
+                  <textarea class="form-control" id="ctMessage" name="Message" rows="4" required placeholder="Mô tả loại phế liệu, số lượng ước tính, địa chỉ...">@Model.Request.Message</textarea>
+                </div>
+                <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+                  <button class="btn btn-primary btn-lg" type="submit">
+                    <i class="bi bi-send-fill" aria-hidden="true"></i>Gửi yêu cầu liên hệ
+                  </button>
+                  <span class="small text-muted">Thông tin của bạn chỉ dùng để liên hệ báo giá.</span>
+                </div>
+              </div>
+            </form>
+            <!-- CONTACT FORM END -->
+
+            <hr class="my-4">
+
             <h3 class="quote-panel-title">Gửi hình — nhận báo giá nhanh</h3>
-            <p class="quote-panel-sub">Điền thông tin, chúng tôi gọi lại chốt giá trong [30 phút].</p>
 
             <!-- QUICK QUOTE FORM START -->
             @await Html.PartialAsync("~/Views/Shared/Partials/Public/_QuickQuoteForm.cshtml", new codezone.ViewModels.Shared.QuickQuoteFormViewModel(IdSuffix: "contact", ShowTitle: false))

@@ -1855,19 +1855,18 @@ body.admin-body {
 .media-setting-fallback {
   position: absolute;
   inset: 0;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   color: #64748B;
   font-size: 0.8125rem;
   font-weight: 600;
-  opacity: 0;
   pointer-events: none;
 }
 
 .media-setting-preview img.is-error + .media-setting-fallback {
-  opacity: 1;
+  display: flex;
 }
 
 .media-setting-body {

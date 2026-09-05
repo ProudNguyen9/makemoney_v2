@@ -3,6 +3,8 @@
     var seo = ViewData["Seo"] as SeoDto;
     var title = seo?.Title ?? ViewData["Title"]?.ToString() ?? "ScrapWebsite";
     var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
+    // SEO-002: hậu tố tiêu đề lấy từ setting seo.site_title (fallback: tên công ty), không hardcode.
+    var siteTitle = string.IsNullOrWhiteSpace(chrome.SiteTitle) ? chrome.CompanyName : chrome.SiteTitle;
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -10,7 +12,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <partial name="_Seo" model="seo" />
-    <title>@title - ScrapWebsite</title>
+    <title>@title - @siteTitle</title>
     <link rel="icon" href="@chrome.FaviconUrl" type="image/png" />
     <link rel="apple-touch-icon" href="~/assets/images/imported/brand/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,7 +24,7 @@
     <link rel="stylesheet" href="~/assets/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/responsive.css" asp-append-version="true" />
 </head>
-<body class="has-mobilebar">
+<body class="has-mobilebar @(ViewData["BodyClass"] ?? "")">
     @await Component.InvokeAsync("Header")
 
     @RenderBody()

@@ -29,7 +29,8 @@ public sealed class SiteChromeService : ISiteChromeService
         "contact.purchase_areas",
         "brand.default_hero_image",
         "brand.default_cta_image",
-        "home.response_time_text"
+        "home.response_time_text",
+        "seo.site_title"
     ];
 
     private readonly AppDbContext _dbContext;
@@ -54,8 +55,8 @@ public sealed class SiteChromeService : ISiteChromeService
                 .Select(setting => new { setting.Key, setting.Value })
                 .ToDictionaryAsync(setting => setting.Key, setting => setting.Value ?? string.Empty, cancellationToken);
 
-            var companyName = Get(settings, "site.name", "Thành Trung");
-            var hotline = Get(settings, "contact.phone", "0974640626");
+            var companyName = Get(settings, "site.name", "Phế Liệu Minh Đức");
+            var hotline = Get(settings, "contact.phone", "0985565323");
             var zalo = Get(settings, "contact.zalo", hotline);
             var zaloHref = ToZaloHref(zalo);
             var address = Get(settings, "contact.address", "Hóc Môn, TP. Hồ Chí Minh");
@@ -64,7 +65,7 @@ public sealed class SiteChromeService : ISiteChromeService
                 CompanyName: companyName,
                 Hotline: hotline,
                 HotlineHref: ToPhoneHref(hotline),
-                Email: Get(settings, "contact.email", "phelieuthanhtrung@gmail.com"),
+                Email: Get(settings, "contact.email", "phelieuminhduc@gmail.com"),
                 Zalo: zalo,
                 ZaloHref: zaloHref,
                 MessengerHref: ToMessengerHref(Get(settings, "social.facebook", string.Empty)),
@@ -78,7 +79,10 @@ public sealed class SiteChromeService : ISiteChromeService
                 PurchaseAreas: Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
                 DefaultHeroImage: Get(settings, "brand.default_hero_image", "/assets/images/imported/brand/banner-1.jpg"),
                 DefaultCtaImage: Get(settings, "brand.default_cta_image", "/assets/images/imported/brand/banner-3.jpg"),
-                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"));
+                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"))
+            {
+                SiteTitle = Get(settings, "seo.site_title", string.Empty)
+            };
         })!;
     }
 

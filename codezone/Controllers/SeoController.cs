@@ -31,11 +31,13 @@ public class SeoController : Controller
             .Select(seo => NormalizeRoute(seo.RoutePath!))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var blockedEntities = blockedSeo
-            .Where(seo => seo.EntityId.HasValue)
-            .Select(seo => $"{seo.EntityType}:{seo.EntityId}")
+            .Where(seo => seo.EntityId.HasValue && !string.IsNullOrWhiteSpace(seo.EntityType))
+            .Select(seo => $"{seo.EntityType!.Trim().ToLowerInvariant()}:{seo.EntityId}")
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        bool IsBlockedEntity(string entityType, int entityId) => blockedEntities.Contains($"{entityType}:{entityId}");
+        bool IsBlockedEntity(string entityType, int entityId) =>
+            blockedEntities.Contains($"{entityType.Trim().ToLowerInvariant()}:{entityId}");
+
         void Add(string route, DateTime? lastModified = null, string changeFrequency = "weekly", decimal priority = 0.5m)
         {
             route = NormalizeRoute(route);
@@ -73,52 +75,52 @@ public class SeoController : Controller
         Add("/lien-he", DateTime.UtcNow, "monthly", 0.6m);
 
         var scrapItems = await _dbContext.ScrapItems.AsNoTracking()
-            .Where(item => item.Status == Published)
+            .Where(item => (item.Status == Published || item.Status == "Published") && item.DeletedAt == null)
             .Select(item => new { item.Id, item.Slug, item.UpdatedAt, item.PublishedAt })
             .ToListAsync(cancellationToken);
         foreach (var item in scrapItems)
         {
-            if (IsBlockedEntity("ScrapItem", item.Id)) continue;
+            if (IsBlockedEntity("ScrapItem", item.Id) || IsBlockedEntity("scrap", item.Id)) continue;
             Add($"/phe-lieu/{item.Slug}", item.UpdatedAt != default ? item.UpdatedAt : item.PublishedAt, "weekly", 0.8m);
         }
 
         var posts = await _dbContext.Posts.AsNoTracking()
-            .Where(post => post.Status == Published && post.DeletedAt == null)
+            .Where(post => (post.Status == Published || post.Status == "Published") && post.DeletedAt == null)
             .Select(post => new { post.Id, post.Slug, post.UpdatedAt, post.PublishedAt })
             .ToListAsync(cancellationToken);
         foreach (var post in posts)
         {
-            if (IsBlockedEntity("Post", post.Id)) continue;
+            if (IsBlockedEntity("Post", post.Id) || IsBlockedEntity("article", post.Id) || IsBlockedEntity("news", post.Id)) continue;
             Add($"/tin-tuc/{post.Slug}", post.UpdatedAt != default ? post.UpdatedAt : post.PublishedAt, "weekly", 0.7m);
         }
 
         var services = await _dbContext.Services.AsNoTracking()
-            .Where(service => service.Status == Published && service.DeletedAt == null)
+            .Where(service => (service.Status == Published || service.Status == "Published") && service.DeletedAt == null)
             .Select(service => new { service.Id, service.Slug, service.UpdatedAt, service.PublishedAt, service.CreatedAt })
             .ToListAsync(cancellationToken);
         foreach (var service in services)
         {
-            if (IsBlockedEntity("Service", service.Id)) continue;
+            if (IsBlockedEntity("Service", service.Id) || IsBlockedEntity("service", service.Id)) continue;
             Add($"/dich-vu/{service.Slug}", service.UpdatedAt ?? service.PublishedAt ?? service.CreatedAt, "weekly", 0.7m);
         }
 
         var locations = await _dbContext.Locations.AsNoTracking()
-            .Where(location => location.Status == Published && location.DeletedAt == null)
+            .Where(location => (location.Status == Published || location.Status == "Published") && location.DeletedAt == null)
             .Select(location => new { location.Id, location.Slug, location.UpdatedAt, location.PublishedAt, location.CreatedAt })
             .ToListAsync(cancellationToken);
         foreach (var location in locations)
         {
-            if (IsBlockedEntity("Location", location.Id)) continue;
+            if (IsBlockedEntity("Location", location.Id) || IsBlockedEntity("location", location.Id)) continue;
             Add($"/khu-vuc/{location.Slug}", location.UpdatedAt ?? location.PublishedAt ?? location.CreatedAt, "weekly", 0.6m);
         }
 
         var projects = await _dbContext.Projects.AsNoTracking()
-            .Where(project => project.Status == Published && project.DeletedAt == null)
+            .Where(project => (project.Status == Published || project.Status == "Published") && project.DeletedAt == null)
             .Select(project => new { project.Id, project.Slug, project.UpdatedAt, project.PublishedAt, project.CreatedAt })
             .ToListAsync(cancellationToken);
         foreach (var project in projects)
         {
-            if (IsBlockedEntity("Project", project.Id)) continue;
+            if (IsBlockedEntity("Project", project.Id) || IsBlockedEntity("project", project.Id)) continue;
             Add($"/du-an/{project.Slug}", project.UpdatedAt ?? project.PublishedAt ?? project.CreatedAt, "monthly", 0.6m);
         }
 
@@ -140,7 +142,7 @@ public class SeoController : Controller
 
     [HttpGet("robots.txt")]
     public IActionResult Robots()
-        => Content($"User-agent: *\nAllow: /\nSitemap: {BaseUrl}/sitemap.xml\n", "text/plain; charset=utf-8");
+        => Content($"User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: {BaseUrl}/sitemap.xml\n", "text/plain; charset=utf-8");
 
     private static string NormalizeRoute(string route)
     {

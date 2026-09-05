@@ -6,6 +6,6 @@ public class CapabilityController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        return NotFound();
     }
 }

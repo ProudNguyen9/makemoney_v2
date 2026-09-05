@@ -31,6 +31,7 @@
     <div class="header-inner">
       <a class="brand" href="/" aria-label="Trang chủ @Model.CompanyName">
         <img class="brand-logo" src="@Model.LogoUrl" asp-append-version="true" alt="Logo @Model.CompanyName" width="1140" height="572">
+        <span class="brand-mobile-title">Phế liệu <strong>Minh Đức</strong></span>
       </a>
 
       <!-- DESKTOP NAV START -->
@@ -42,7 +43,6 @@
             <a class="nav-link" href="/gioi-thieu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Giới thiệu</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="/gioi-thieu">Về chúng tôi</a></li>
-              <li><a class="dropdown-item" href="/nang-luc">Năng lực</a></li>
               <li><a class="dropdown-item" href="/du-an">Dự án</a></li>
             </ul>
           </li>
@@ -83,6 +83,13 @@
         <i class="bi bi-camera-fill" aria-hidden="true"></i>Nhận báo giá
       </button>
 
+      <a class="header-hotline-mobile d-lg-none" href="@Model.HotlineHref" aria-label="Tư vấn hỗ trợ @Model.Hotline">
+        <i class="bi bi-telephone" aria-hidden="true"></i>
+        <span>
+          <small>Tư vấn hỗ trợ</small>
+          <strong>@Model.Hotline</strong>
+        </span>
+      </a>
       <button class="header-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"
               aria-controls="mobileMenu" aria-expanded="false" aria-label="Mở menu">
         <i class="bi bi-list" aria-hidden="true"></i>
@@ -97,6 +104,7 @@
   <div class="offcanvas-header mobile-menu-head p-0">
     <span class="d-inline-flex align-items-center gap-2" id="mobileMenuLabel">
       <img class="brand-logo" src="@Model.LogoUrl" asp-append-version="true" alt="Logo @Model.CompanyName" width="1140" height="572">
+      <span class="brand-mobile-title">Phế liệu <strong>Minh Đức</strong></span>
     </span>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng menu"></button>
   </div>
@@ -112,7 +120,6 @@
           </button>
           <ul class="mobile-sub">
             <li><a href="/gioi-thieu">Về chúng tôi</a></li>
-            <li><a href="/nang-luc">Năng lực</a></li>
             <li><a href="/du-an">Dự án</a></li>
           </ul>
         </li>

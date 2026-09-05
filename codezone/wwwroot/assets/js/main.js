@@ -107,13 +107,65 @@
     var btn = document.querySelector('.back-top');
     if (!btn) return;
 
+    var reduceMotion =
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var onScroll = function () {
       btn.classList.toggle('show', window.scrollY > 560);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
+    // Native scrollTo({behavior:'smooth'}) hay bị hủy giữa đường trên mobile,
+    // còn html đang có CSS scroll-behavior:smooth (main.css) khiến MỖI lời gọi
+    // scrollTo() lại sinh thêm một animation bị ngắt liên tục → trang "giụt"
+    // tại chỗ. Giải pháp: tắt scroll-behavior trong lúc animate thủ công rAF.
+    var rafId = 0;
+    var cleanup = function () {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      document.documentElement.style.scrollBehavior = '';
+    };
+    var cancel = function () {
+      if (rafId) cleanup();
+    };
+    ['touchstart', 'wheel'].forEach(function (ev) {
+      window.addEventListener(ev, cancel, { passive: true });
+    });
+
+    var animateToTop = function () {
+      cleanup();
+
+      var startY = window.scrollY || window.pageYOffset || 0;
+      if (startY <= 0) return;
+
+      document.documentElement.style.scrollBehavior = 'auto';
+
+      var duration = 450;
+      var startTime = null;
+      var easeOutCubic = function (t) { return 1 - Math.pow(1 - t, 3); };
+
+      var tick = function (ts) {
+        if (!rafId) return;
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        window.scrollTo(0, Math.round(startY * (1 - easeOutCubic(progress))));
+        if (progress < 1) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          cleanup();
+        }
+      };
+      rafId = requestAnimationFrame(tick);
+    };
+
     btn.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (reduceMotion) {
+        cleanup();
+        window.scrollTo(0, 0);
+        return;
+      }
+      animateToTop();
     });
   }
 
@@ -181,6 +233,86 @@
    * Bootstrap: khởi tạo tooltip/toast nếu có trong trang (no-op nếu chưa dùng)
    * --------------------------------------------------------------- */
 
+  /* ---------------------------------------------------------------
+   * Custom select — design chung cho mọi combobox trong .cat-filter-bar.
+   * Native select bị ẩn (CSS), JS tự dựng .custom-select đi kèm,
+   * đồng bộ value + dispatch change để filter cũ vẫn chạy.
+   * Fix chữ Việt bị che: line-height 1.5 + padding 2px 0 cho .cs-text.
+   * --------------------------------------------------------------- */
+  function initCustomSelects() {
+    document.querySelectorAll('.cat-filter-bar select').forEach(function (select) {
+      if (select.dataset.csEnhanced) return;
+      // Nếu đã có custom đi kèm (markup thủ công) thì bỏ qua
+      if (select.nextElementSibling && select.nextElementSibling.classList &&
+          select.nextElementSibling.classList.contains('custom-select')) {
+        select.dataset.csEnhanced = '1';
+        select.style.display = 'none';
+        return;
+      }
+      select.dataset.csEnhanced = '1';
+      select.style.display = 'none';
+
+      var wrap = document.createElement('div');
+      wrap.className = 'custom-select';
+      var trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'cs-trigger';
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      var label = document.createElement('span');
+      label.className = 'cs-text';
+      var caret = document.createElement('i');
+      caret.className = 'bi bi-chevron-down';
+      caret.setAttribute('aria-hidden', 'true');
+      trigger.appendChild(label);
+      trigger.appendChild(caret);
+      var list = document.createElement('ul');
+      list.className = 'cs-options';
+      list.setAttribute('role', 'listbox');
+      wrap.appendChild(trigger);
+      wrap.appendChild(list);
+      select.after(wrap);
+
+      function syncLabel() {
+        var opt = select.options[select.selectedIndex];
+        var txt = opt ? opt.textContent : '';
+        label.textContent = txt;
+        trigger.setAttribute('title', txt);
+        trigger.setAttribute('aria-label', txt);
+        list.querySelectorAll('li').forEach(function (li) {
+          li.classList.toggle('active', li.dataset.value === select.value);
+        });
+      }
+
+      Array.from(select.options).forEach(function (opt) {
+        var li = document.createElement('li');
+        li.textContent = opt.textContent;
+        li.setAttribute('title', opt.textContent);
+        li.dataset.value = opt.value;
+        li.setAttribute('role', 'option');
+        li.addEventListener('click', function () {
+          select.value = opt.value;
+          syncLabel();
+          wrap.classList.remove('open');
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        list.appendChild(li);
+      });
+      syncLabel();
+
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        document.querySelectorAll('.custom-select.open').forEach(function (o) {
+          if (o !== wrap) o.classList.remove('open');
+        });
+        wrap.classList.toggle('open');
+      });
+      document.addEventListener('click', function (e) {
+        if (!wrap.contains(e.target)) wrap.classList.remove('open');
+      });
+      select.addEventListener('cs:sync', syncLabel);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initStickyHeader();
     initReveal();
@@ -189,5 +321,6 @@
     initAnchorNav();
     initYear();
     initCatCarousel();
+    initCustomSelects();
   });
 })();

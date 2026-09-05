@@ -23,4 +23,7 @@ public sealed record SiteChromeViewModel(
     string ResponseTimeText)
 {
     public IReadOnlyList<CategoryGroupCardDto> ScrapCategories { get; init; } = [];
+
+    /// <summary>SEO-002: hậu tố &lt;title&gt; lấy từ setting seo.site_title thay vì hardcode.</summary>
+    public string SiteTitle { get; init; } = string.Empty;
 }

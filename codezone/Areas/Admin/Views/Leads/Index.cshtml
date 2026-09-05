@@ -25,7 +25,7 @@
 }
 
 <div class="admin-page-head">
-  <h1>Yêu cầu báo giá<small>Lead gửi từ popup báo giá trên website</small></h1>
+  <h1>Yêu cầu báo giá<small>Yêu cầu gửi từ popup báo giá trên website</small></h1>
 </div>
 
 <form class="admin-filter leads-filter" action="/admin/leads" method="get">
@@ -77,7 +77,7 @@
         }
     }
   </select>
-  <input class="form-control" name="query" type="search" value="@Model.Query" placeholder="Tìm SĐT, tên, Zalo, ghi chú…" aria-label="Tìm lead">
+  <input class="form-control" name="query" type="search" value="@Model.Query" placeholder="Tìm SĐT, tên, Zalo, ghi chú…" aria-label="Tìm yêu cầu">
   <button class="btn btn-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Tìm</button>
   <a class="btn btn-outline-dark" href="/admin/leads">Xóa lọc</a>
 </form>
@@ -108,7 +108,7 @@
         @foreach (var lead in Model.Items)
         {
           <tr data-lead-row="@lead.Id">
-            <td><strong>@lead.Code</strong></td>
+            <td><strong><a class="text-decoration-none" href="/admin/leads/detail/@lead.Id" title="Xem chi tiết @lead.Code">@lead.Code</a></strong></td>
             <td>
               <strong>@lead.CustomerName</strong>
               <small class="d-block text-muted"><a href="tel:@lead.Phone">@lead.Phone</a>@(string.IsNullOrWhiteSpace(lead.Zalo) ? "" : $" · Zalo: {lead.Zalo}")</small>
@@ -305,6 +305,19 @@
             status.textContent = 'Đã liên hệ';
           }
           form.remove();
+
+          // Cập nhật số lượng lead mới trên sidebar
+          document.querySelectorAll('.admin-sidebar a[href*="/admin/leads"] .badge, .at-user-meta .badge').forEach(badge => {
+            let current = parseInt(badge.textContent, 10);
+            if (!isNaN(current) && current > 0) {
+              current -= 1;
+              if (current === 0) {
+                badge.style.display = 'none';
+              } else {
+                badge.textContent = current.toString();
+              }
+            }
+          });
         } catch (error) {
           alert(error.message || 'Không cập nhật được trạng thái.');
           if (button) {
