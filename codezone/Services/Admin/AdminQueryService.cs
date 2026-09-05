@@ -49,7 +49,7 @@ public sealed class AdminQueryService :
             .FirstOrDefaultAsync(cancellationToken);
 
         var latestPosts = await QueryPostRows(_dbContext.Posts.AsNoTracking()
-                .OrderByDescending(post => post.PublishedAt)
+                .OrderByDescending(post => post.DeletedAt ?? post.UpdatedAt)
                 .ThenByDescending(post => post.Id))
             .Take(4)
             .ToListAsync(cancellationToken);
@@ -873,7 +873,8 @@ public sealed class AdminQueryService :
             !string.IsNullOrWhiteSpace(settings.GetValueOrDefault("smtp.password")),
             Get(settings, "smtp.from_email", _smtpFallback.FromEmail),
             Get(settings, "smtp.from_name", _smtpFallback.FromName),
-            Get(settings, "smtp.to_email", Get(settings, "contact.email", _smtpFallback.ToEmail ?? string.Empty)));
+            Get(settings, "smtp.to_email", Get(settings, "contact.email", _smtpFallback.ToEmail ?? string.Empty)),
+            Get(settings, "media.hotline_overlay_color", string.Empty));
     }
 
     public async Task<AdminMediaListViewModel> GetMediaListAsync(string? group, string? query, CancellationToken cancellationToken)

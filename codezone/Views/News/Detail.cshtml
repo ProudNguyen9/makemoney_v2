@@ -1,6 +1,20 @@
 @model NewsDetailViewModel?
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
+@using System.Net
+@using System.Text.RegularExpressions
 @{
     ViewData["Title"] = Model?.Seo.Title ?? "Chi tiết bài viết";
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
+    var contentImageRegex = new Regex("<img\\b[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    string WithHotlineOverlay(string? html)
+    {
+        if (string.IsNullOrWhiteSpace(html))
+        {
+            return string.Empty;
+        }
+        return contentImageRegex.Replace(html, match =>
+            $"<span class=\"article-media\">{match.Value}<span class=\"materials-phone-overlay\" aria-hidden=\"true\">{WebUtility.HtmlEncode(chrome.Hotline)}</span></span>");
+    }
 }
 
 @if (Model is null)
@@ -22,15 +36,9 @@
       <ol class="breadcrumb-line">
         <li><a href="/">Trang chủ</a></li>
         <li><a href="/tin-tuc">Tin tức</a></li>
+        <li aria-current="page">@Model.Post.Title</li>
       </ol>
       <h1>@Model.Post.Title</h1>
-      @if (Model.Post.IsDraft)
-      {
-        <div class="alert alert-warning d-inline-flex align-items-center gap-2 py-2 px-3 mb-2">
-          <i class="bi bi-pencil-square" aria-hidden="true"></i>
-          <span><strong>Bản nháp</strong> – bài này chưa xuất bản, chỉ admin đăng nhập mới xem được.</span>
-        </div>
-      }
       <div class="article-meta">
         <span class="article-cat">@Model.Post.CategoryName</span>
         <span><i class="bi bi-calendar3" aria-hidden="true"></i> <time datetime="@Model.Post.PublishedAt.ToString("yyyy-MM-dd")">@Model.Post.PublishedAt.ToString("dd/MM/yyyy")</time></span>
@@ -42,7 +50,9 @@
   <article class="section section--paper pt-0">
     <div class="container container-narrow mx-auto">
       <div class="article-body">
-        @Html.Raw(Model.Post.ContentHtml ?? $"<p>{Model.Post.Excerpt}</p>")
+        @Html.Raw(WithHotlineOverlay(Model.Post.ContentHtml) is { Length: > 0 } contentHtml
+            ? contentHtml
+            : $"<p>{Model.Post.Excerpt}</p>")
       </div>
     </div>
   </article>
@@ -106,23 +116,3 @@
     </section>
   }
 </main>
-
-@section Schema {
-<!script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "NewsArticle",
-  "headline": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Post.Title))",
-  "image": [
-    "@(Model.Post.CoverImage != null ? (Model.Post.CoverImage.StartsWith("http") ? Model.Post.CoverImage : $"{Context.Request.Scheme}://{Context.Request.Host}{Model.Post.CoverImage}") : "")"
-  ],
-  "datePublished": "@Model.Post.PublishedAt.ToString("o")",
-  "dateModified": "@Model.Post.PublishedAt.ToString("o")",
-  "author": [{
-    "@@type": "Person",
-    "name": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(string.IsNullOrWhiteSpace(Model.Post.AuthorName) ? "Phế Liệu Minh Đức" : Model.Post.AuthorName))"
-  }],
-  "description": "@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Post.Excerpt ?? Model.Post.Title))"
-}
-</!script>
-}

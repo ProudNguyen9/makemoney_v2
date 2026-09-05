@@ -1,7 +1,9 @@
 @model ScrapCategoryPageViewModel
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = Model.Seo.Title;
     var current = Model.Current;
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 <main>
   <section class="page-hero" aria-label="Danh mục phế liệu thu mua">
@@ -64,6 +66,7 @@
             <a class="scrap-card" href="/phe-lieu/nhom/@group.Slug" aria-label="@group.Name — @group.ItemCount loại phế liệu">
               <span class="scrap-card-media">
                 <img src="@AssetHelper.NormalizePath(group.ImageUrl)" alt="@group.Name" width="400" height="300" loading="lazy">
+                <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
               </span>
               <span class="scrap-card-body">
                 <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @group.ItemCount loại</span>

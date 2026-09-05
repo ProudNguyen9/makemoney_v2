@@ -1,5 +1,7 @@
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = "Tìm kiếm";
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 
 <main>
@@ -35,6 +37,7 @@
             <a class="news-row" href="/phe-lieu/danh-muc">
               <span class="news-row-media">
                 <img src="~/assets/images/scrap/scrap-copper.svg" alt="Phế liệu đồng đỏ sạch chuẩn bị cân" width="600" height="338" loading="lazy">
+                <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
               </span>
               <span class="news-row-body">
                 <span class="news-meta">
@@ -49,6 +52,7 @@
             <a class="news-row" href="/phe-lieu/danh-muc">
               <span class="news-row-media">
                 <img src="~/assets/images/scrap/scrap-cable.svg" alt="Dây điện và cáp đồng cũ xếp thành cuộn" width="600" height="338" loading="lazy">
+                <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
               </span>
               <span class="news-row-body">
                 <span class="news-meta">

@@ -55,6 +55,22 @@
             <input class="form-control" id="setAreas" name="PurchaseAreas" type="text" value="@Model.PurchaseAreas" maxlength="300">
             <small class="text-muted">Nhập các khu vực cách nhau bằng dấu phẩy.</small>
           </div>
+          <div class="col-md-6">
+            <label class="form-label-tech">Màu SĐT overlay trên ảnh</label>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <span class="hop-color-btn" title="Bấm để chọn màu">
+                <span class="hop-color-dot" id="setHotlineOverlayDot"></span>
+                <span class="hop-color-text">Chọn màu</span>
+                <i class="bi bi-palette2" aria-hidden="true"></i>
+                <input type="color" id="setHotlineOverlayColorPicker" value="@(string.IsNullOrWhiteSpace(Model.HotlineOverlayColor) ? "#E4570F" : Model.HotlineOverlayColor)" aria-label="Chọn màu SĐT overlay trên ảnh">
+              </span>
+              <button type="button" class="hop-color-reset" id="setHotlineOverlayReset" title="Trả về màu cam mặc định">
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Mặc định
+              </button>
+            </div>
+            <input type="hidden" id="setHotlineOverlayColor" name="HotlineOverlayColor" value="@Model.HotlineOverlayColor">
+            <small class="text-muted">Bấm "Chọn màu" để đổi màu số điện thoại hiển thị trên các ảnh (card, bài viết). "Mặc định" trả về màu cam chủ đạo.</small>
+          </div>
         </div>
         <hr class="my-4">
         <h3 class="form-label-tech mb-3">Liên hệ nhanh</h3>
@@ -157,3 +173,27 @@
     </div>
   </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var picker = document.getElementById('setHotlineOverlayColorPicker');
+            var hidden = document.getElementById('setHotlineOverlayColor');
+            var dot = document.getElementById('setHotlineOverlayDot');
+            var reset = document.getElementById('setHotlineOverlayReset');
+            if (!picker || !hidden || !dot || !reset) return;
+            var DEFAULT_COLOR = '#E4570F';
+            function applyDot(value) { dot.style.background = value || DEFAULT_COLOR; }
+            picker.addEventListener('input', function () {
+                hidden.value = this.value;
+                applyDot(this.value);
+            });
+            reset.addEventListener('click', function () {
+                hidden.value = '';
+                picker.value = DEFAULT_COLOR;
+                applyDot('');
+            });
+            applyDot(hidden.value);
+        })();
+    </script>
+}

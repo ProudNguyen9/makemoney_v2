@@ -863,6 +863,7 @@ public sealed class AdminCommandService :
         await UpsertSettingAsync("contact.email", form.Email, "contact", "Email", cancellationToken);
         await UpsertSettingAsync("contact.working_hours", form.WorkingHours, "contact", "Giờ làm việc", cancellationToken);
         await UpsertSettingAsync("contact.purchase_areas", form.PurchaseAreas, "contact", "Khu vực thu mua", cancellationToken);
+        await UpsertSettingAsync("media.hotline_overlay_color", NormalizeHotlineOverlayColor(form.HotlineOverlayColor), "media", "Màu số điện thoại overlay trên ảnh", cancellationToken);
         await UpsertSettingAsync("social.facebook", form.Facebook, "social", "Messenger/Facebook", cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -1278,6 +1279,19 @@ public sealed class AdminCommandService :
     {
         var trimmed = value?.Trim();
         return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+    }
+
+    /// <summary>Chỉ chấp nhận màu hex #RGB/#RRGGBB/#RRGGBBAA để nhúng thẳng vào CSS công khai.</summary>
+    private static string? NormalizeHotlineOverlayColor(string? value)
+    {
+        var trimmed = value?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return null;
+        }
+        return System.Text.RegularExpressions.Regex.IsMatch(trimmed, "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$")
+            ? trimmed.ToLowerInvariant()
+            : null;
     }
 
     private static bool IsValidEmail(string? value)

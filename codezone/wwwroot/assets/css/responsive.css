@@ -354,8 +354,14 @@
   /* ---- Bảng giá: mỗi dòng thành một thẻ dễ đọc trên mobile ---- */
   .price-board .table-price,
   .price-page .price-board--all .table-price {
+    display: block !important;
+    width: 100% !important;
     border: 0 !important;
     background: transparent !important;
+  }
+  .price-board .table-price tbody,
+  .price-page .price-board--all .table-price tbody {
+    display: block !important;
   }
   .price-board .table-price thead,
   .price-page .price-board--all .table-price thead {

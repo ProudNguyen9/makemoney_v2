@@ -296,6 +296,9 @@ public sealed class CompanySettingsFormViewModel
     [MaxLength(300)]
     public string? PurchaseAreas { get; set; }
 
+    [MaxLength(20)]
+    public string? HotlineOverlayColor { get; set; }
+
     [MaxLength(300)]
     public string? Facebook { get; set; }
 }

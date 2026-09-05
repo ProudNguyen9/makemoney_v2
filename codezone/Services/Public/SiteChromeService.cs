@@ -30,6 +30,7 @@ public sealed class SiteChromeService : ISiteChromeService
         "brand.default_hero_image",
         "brand.default_cta_image",
         "home.response_time_text",
+        "media.hotline_overlay_color",
         "seo.site_title"
     ];
 
@@ -79,7 +80,8 @@ public sealed class SiteChromeService : ISiteChromeService
                 PurchaseAreas: Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
                 DefaultHeroImage: Get(settings, "brand.default_hero_image", "/assets/images/imported/brand/banner-1.jpg"),
                 DefaultCtaImage: Get(settings, "brand.default_cta_image", "/assets/images/imported/brand/banner-3.jpg"),
-                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"))
+                ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"),
+                HotlineOverlayColor: NormalizeHexColor(Get(settings, "media.hotline_overlay_color", string.Empty)) ?? string.Empty)
             {
                 SiteTitle = Get(settings, "seo.site_title", string.Empty)
             };
@@ -91,6 +93,19 @@ public sealed class SiteChromeService : ISiteChromeService
         return settings.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
             ? value.Trim()
             : fallback;
+    }
+
+    /// <summary>Chỉ cho phép màu hex #RGB/#RRGGBB/#RRGGBBAA vì giá trị được nhúng thẳng vào CSS công khai.</summary>
+    private static string? NormalizeHexColor(string? value)
+    {
+        var trimmed = value?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return null;
+        }
+        return System.Text.RegularExpressions.Regex.IsMatch(trimmed, "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$")
+            ? trimmed.ToLowerInvariant()
+            : null;
     }
 
     private static string ToPhoneHref(string phone)

@@ -54,10 +54,36 @@
           {
             <tr>
               <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
-              <td><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></td>
+              <td>
+                @if (post.DeletedAt.HasValue)
+                {
+                  <span>@post.Title</span>
+                }
+                else if (post.Status == "published")
+                {
+                  <a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a>
+                }
+                else
+                {
+                  <a href="/admin/articles/Form/@post.Id">@post.Title</a>
+                }
+              </td>
               <td>@post.CategoryName</td>
-              <td><span class="badge-status @(post.Status == "published" ? "st-published" : "st-draft")">@(post.Status == "published" ? "Đã xuất bản" : "Bản nháp")</span></td>
-              <td>@(post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
+              <td>
+                @if (post.DeletedAt.HasValue)
+                {
+                  <span class="badge-status st-draft">Đã xóa</span>
+                }
+                else if (post.Status == "published")
+                {
+                  <span class="badge-status st-published">Đã xuất bản</span>
+                }
+                else
+                {
+                  <span class="badge-status st-draft">Bản nháp</span>
+                }
+              </td>
+              <td>@(post.DeletedAt?.ToString("dd/MM/yyyy") ?? post.PublishedAt?.ToString("dd/MM/yyyy") ?? "Chưa đăng")</td>
             </tr>
           }
           </tbody>

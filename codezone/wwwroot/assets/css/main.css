@@ -1728,6 +1728,15 @@ textarea.form-control {
 .footer-site .footer-brand .footer-cert .cert-chip i {
   color: #F5B301;
 }
+.footer-site .footer-brand .footer-cert a.cert-chip {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.footer-site .footer-brand .footer-cert a.cert-chip:hover {
+  color: #F5B301;
+  border-color: #F5B301;
+}
 .footer-site .footer-col-title {
   font-family: "Oswald", "Be Vietnam Pro", Arial, sans-serif;
   font-size: 0.875rem;
@@ -1781,6 +1790,7 @@ textarea.form-control {
 }
 .footer-site .footer-contact li a {
   color: var(--on-dark-muted);
+  overflow-wrap: anywhere;
 }
 .footer-site .footer-contact li a:hover {
   color: #F5B301;
@@ -4214,6 +4224,19 @@ textarea.form-control {
   border-radius: 4px;
   margin: 0.5rem 0 1rem;
 }
+.article-body .article-media {
+  display: block;
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.5rem auto 1rem;
+}
+.article-body .article-media img {
+  margin: 0;
+}
+.article-body .article-media .materials-phone-overlay {
+  font-size: clamp(0.82rem, 1.65vw, 1.55rem);
+}
 .article-body figcaption {
   font-size: 0.8125rem;
   color: #66707A;
@@ -5721,11 +5744,70 @@ textarea.form-control {
   transform: translateY(-4px);
 }
 .scrap-card-media {
+  position: relative;
   display: block;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #F4F1E9;
 }
+
+/* Direct hotline text overlay used on high-intent image cards. */
+.materials-phone-overlay {
+  position: absolute;
+  z-index: 3;
+  right: clamp(0.5rem, 1.25vw, 0.85rem);
+  left: auto;
+  bottom: clamp(0.5rem, 2vw, 0.85rem);
+  transform: none;
+  color: var(--hotline-overlay-color, var(--c-primary));
+  font-family: "Arial Black", "Roboto", var(--font-heading), sans-serif;
+  font-size: clamp(0.82rem, 1.65vw, 1.55rem);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-align: right;
+  -webkit-font-smoothing: auto;
+  -webkit-text-stroke: 0;
+  text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  user-select: none;
+}
+
+.scrap-hero .materials-phone-overlay {
+  font-size: clamp(1rem, 2.1vw, 1.65rem);
+}
+
+.service-card .materials-phone-overlay {
+  font-size: clamp(0.82rem, 1.65vw, 1.55rem);
+}
+
+.linked-products .materials-phone-overlay,
+.news-rows .materials-phone-overlay {
+  font-size: clamp(0.68rem, 1.25vw, 1.05rem);
+}
+
+@media (max-width: 575.98px) {
+  .materials-phone-overlay {
+    right: 0.45rem;
+    bottom: 0.45rem;
+    font-size: 0.86rem;
+  }
+
+  .scrap-hero .materials-phone-overlay {
+    font-size: clamp(0.86rem, 4vw, 1.15rem);
+  }
+
+  .service-card .materials-phone-overlay {
+    font-size: 0.86rem;
+  }
+
+  .linked-products .materials-phone-overlay,
+  .news-rows .materials-phone-overlay {
+    font-size: 0.75rem;
+  }
+}
+
 .scrap-card-media img {
   width: 100%;
   height: 100%;
@@ -5986,6 +6068,7 @@ textarea.form-control {
   margin: 0 auto;
 }
 .detail-gallery .dg-item {
+  position: relative;
   grid-column: span 4;
   margin: 0;
   border: 1px solid var(--c-border);

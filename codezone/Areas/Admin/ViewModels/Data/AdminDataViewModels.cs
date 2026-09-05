@@ -151,7 +151,8 @@ public sealed record AdminSettingsViewModel(
     bool SmtpHasPassword,
     string SmtpFromEmail,
     string SmtpFromName,
-    string SmtpToEmail);
+    string SmtpToEmail,
+    string HotlineOverlayColor);
 
 public sealed record AdminMediaListViewModel(
     IReadOnlyList<AdminMediaGroupOptionDto> GroupOptions,

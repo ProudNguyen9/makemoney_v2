@@ -20,7 +20,8 @@ public sealed record SiteChromeViewModel(
     string PurchaseAreas,
     string DefaultHeroImage,
     string DefaultCtaImage,
-    string ResponseTimeText)
+    string ResponseTimeText,
+    string HotlineOverlayColor = "")
 {
     public IReadOnlyList<CategoryGroupCardDto> ScrapCategories { get; init; } = [];
 

@@ -60,7 +60,22 @@
       {
         <tr>
           <td><span class="ta-title"><img src="@(string.IsNullOrWhiteSpace(post.CoverImage) ? "/assets/images/imported/brand/banner-1.jpg" : post.CoverImage)" alt="@post.Title" width="56" height="42" loading="lazy"></span></td>
-          <td><span class="ta-title"><a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a></span></td>
+          <td>
+            <span class="ta-title">
+              @if (Model.IsTrashView)
+              {
+                <span>@post.Title</span>
+              }
+              else if (post.Status == "published")
+              {
+                <a href="/tin-tuc/@post.Slug" target="_blank" rel="noopener">@post.Title</a>
+              }
+              else
+              {
+                <a href="/admin/articles/Form/@post.Id">@post.Title</a>
+              }
+            </span>
+          </td>
           <td>@post.CategoryName</td>
           <td>
             <div class="d-flex align-items-center gap-2">

@@ -1,7 +1,9 @@
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = "Dự án";
     var projects = (IReadOnlyList<ScrapWebsite.Controllers.ProjectCardDto>)(ViewData["Projects"] ?? Array.Empty<ScrapWebsite.Controllers.ProjectCardDto>());
     var projectTypes = (List<string>)(ViewData["ProjectTypes"] ?? new List<string>());
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 
 <main>
@@ -63,6 +65,7 @@
           <article class="project-row reveal @(flip ? "project-row--flip" : null)" data-name="@project.item.Title.ToLower()" data-type="@(project.item.ProjectType?.ToLower() ?? "")">
             <div class="project-row-media">
               <img src="@(string.IsNullOrWhiteSpace(project.item.CoverImage) ? "/assets/images/projects/project-01-cover.svg" : project.item.CoverImage)" alt="@project.item.Title" width="1200" height="750" loading="lazy">
+              <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
               @if (!string.IsNullOrWhiteSpace(project.item.ProjectType))
               {
                 <span class="pr-badge tag-min tag-min--dark">@project.item.ProjectType</span>

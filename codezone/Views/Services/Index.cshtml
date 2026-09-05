@@ -1,9 +1,11 @@
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = "Dịch vụ";
     var services = (IReadOnlyList<ScrapWebsite.Controllers.ServiceCardDto>)(ViewData["Services"] ?? Array.Empty<ScrapWebsite.Controllers.ServiceCardDto>());
     var pager = (ScrapWebsite.ViewModels.Public.NumberedPageDto<ScrapWebsite.Controllers.ServiceCardDto>)(ViewData["Pager"]
         ?? new ScrapWebsite.ViewModels.Public.NumberedPageDto<ScrapWebsite.Controllers.ServiceCardDto>(services, 1, 9, services.Count, 1));
     var serviceFaq = (codezone.ViewModels.Shared.FaqAccordionViewModel)(ViewData["Faq"] ?? new codezone.ViewModels.Shared.FaqAccordionViewModel("faqServices", []));
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 
 <main>
@@ -108,6 +110,7 @@
               <a href="/dich-vu/@service.item.Slug" tabindex="-1" aria-hidden="true" style="display:block; width:100%; height:100%;">
                 <img src="@coverImg" alt="@service.item.Title" width="600" height="380" loading="lazy">
               </a>
+              <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
               <div class="service-card-badge-wrap">
                 <span class="service-card-num">#@no</span>
                 <span class="service-card-tag"><i class="bi bi-patch-check-fill" aria-hidden="true"></i> @badgeText</span>

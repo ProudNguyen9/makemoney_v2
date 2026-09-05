@@ -1,6 +1,8 @@
 @model NewsIndexViewModel
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = Model.Seo.Title;
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
     var featured = Model.Page.Items.FirstOrDefault();
     var rest = Model.Page.Items.ToList();
     if (rest.Count > 0)
@@ -48,6 +50,7 @@
         <a class="news-feature-hero reveal mb-5" asp-area="" asp-controller="News" asp-action="Detail" asp-route-slug="@featured.Slug" data-name="@featured.Title.ToLower()" data-category="@featured.CategoryName.ToLower()">
           <span class="nfh-media">
             <img src="@AssetHelper.NormalizePath(featured.CoverImage)" alt="@featured.Title" width="1200" height="675" loading="lazy">
+            <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
           </span>
           <span class="nfh-body">
             <span class="news-meta">

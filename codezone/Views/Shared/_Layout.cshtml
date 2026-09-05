@@ -25,6 +25,10 @@
     <link rel="stylesheet" href="~/assets/vendor/swiper-bundle.min.css" />
     <link rel="stylesheet" href="~/assets/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/responsive.css" asp-append-version="true" />
+    @if (!string.IsNullOrWhiteSpace(chrome.HotlineOverlayColor))
+    {
+        <style>:root { --hotline-overlay-color: @chrome.HotlineOverlayColor; }</style>
+    }
 </head>
 <body class="has-mobilebar @(ViewData["BodyClass"] ?? "")">
     @await Component.InvokeAsync("Header")

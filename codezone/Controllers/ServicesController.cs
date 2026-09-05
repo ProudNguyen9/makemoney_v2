@@ -47,7 +47,9 @@ public class ServicesController : Controller
                 service.Title,
                 service.Slug,
                 service.Excerpt,
-                service.CoverImage))
+                service.CoverImage,
+                service.IconCss,
+                service.IsFeatured))
             .ToListAsync(cancellationToken);
 
         var pager = new NumberedPageDto<ServiceCardDto>(
@@ -122,6 +124,6 @@ public class ServicesController : Controller
     }
 }
 
-public sealed record ServiceCardDto(int Id, string Title, string Slug, string? Excerpt, string? CoverImage);
+public sealed record ServiceCardDto(int Id, string Title, string Slug, string? Excerpt, string? CoverImage, string? IconCss, bool IsFeatured);
 
 public sealed record ServiceDetailDto(int Id, string Title, string Slug, string? Excerpt, string? ContentHtml, string? CoverImage, string? SeoKeywords = null);

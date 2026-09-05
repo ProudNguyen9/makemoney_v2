@@ -1,6 +1,8 @@
 @model ScrapDetailViewModel?
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @{
     ViewData["Title"] = Model?.Seo.Title ?? "Chi tiết phế liệu";
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
 }
 
 @if (Model is null)
@@ -27,6 +29,7 @@
       <div class="scrap-hero-grid">
         <div class="scrap-hero-media">
           <img src="@AssetHelper.NormalizePath(Model.Item.ImageUrl)" alt="@Model.Item.Name" width="1200" height="750" loading="lazy">
+          <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
         </div>
         <div class="scrap-hero-info">
           <span class="tech-label">@Model.Item.CategoryName</span>
@@ -63,6 +66,7 @@
           {
             <figure class="dg-item">
               <img src="@AssetHelper.NormalizePath(image.ImageUrl)" alt="@shortName" width="600" height="450" loading="lazy">
+              <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
             </figure>
           }
         </div>
@@ -85,6 +89,7 @@
           <a class="scrap-card" asp-area="" asp-controller="Scrap" asp-action="Detail" asp-route-slug="@item.Slug">
             <span class="scrap-card-media">
               <img src="@AssetHelper.NormalizePath(item.ImageUrl)" alt="@item.Name" width="400" height="300" loading="lazy">
+              <partial name="~/Views/Shared/Partials/Public/_MediaHotlineOverlay.cshtml" model="chrome.Hotline" />
             </span>
             <span class="scrap-card-body">
               <span class="scrap-card-cat"><i class="bi bi-tag-fill" aria-hidden="true"></i> @item.CategoryName</span>

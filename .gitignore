@@ -19,3 +19,8 @@ pnpm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local database backup & generated test output
+databasehihi.bak
+*.bak
+tools/test-results.json
