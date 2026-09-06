@@ -31,7 +31,11 @@ public sealed class SiteChromeService : ISiteChromeService
         "brand.default_cta_image",
         "home.response_time_text",
         "media.hotline_overlay_color",
-        "seo.site_title"
+        "seo.site_title",
+        "seo.default_description",
+        "seo.default_og_title",
+        "seo.default_og_image",
+        "contact.whatsapp"
     ];
 
     private readonly AppDbContext _dbContext;
@@ -60,6 +64,8 @@ public sealed class SiteChromeService : ISiteChromeService
             var hotline = Get(settings, "contact.phone", "0985565323");
             var zalo = Get(settings, "contact.zalo", hotline);
             var zaloHref = ToZaloHref(zalo);
+            var whatsapp = Get(settings, "contact.whatsapp", hotline);
+            var whatsappHref = ToWhatsAppHref(whatsapp);
             var address = Get(settings, "contact.address", "Hóc Môn, TP. Hồ Chí Minh");
 
             return new SiteChromeViewModel(
@@ -83,7 +89,12 @@ public sealed class SiteChromeService : ISiteChromeService
                 ResponseTimeText: Get(settings, "home.response_time_text", "30 phút"),
                 HotlineOverlayColor: NormalizeHexColor(Get(settings, "media.hotline_overlay_color", string.Empty)) ?? string.Empty)
             {
-                SiteTitle = Get(settings, "seo.site_title", string.Empty)
+                SiteTitle = Get(settings, "seo.site_title", string.Empty),
+                DefaultDescription = Get(settings, "seo.default_description", "Thu mua phế liệu tận nơi giá cao, cân minh bạch, thanh toán nhanh."),
+                DefaultOgTitle = Get(settings, "seo.default_og_title", string.Empty),
+                DefaultOgImage = Get(settings, "seo.default_og_image", Get(settings, "site.default_og_image", "/assets/images/imported/brand/banner-1.jpg")),
+                WhatsApp = whatsapp,
+                WhatsAppHref = whatsappHref
             };
         })!;
     }
@@ -124,6 +135,37 @@ public sealed class SiteChromeService : ISiteChromeService
 
         var digits = new string(zalo.Where(char.IsDigit).ToArray());
         return string.IsNullOrWhiteSpace(digits) ? "#" : $"https://zalo.me/{digits}";
+    }
+
+    private static string ToWhatsAppHref(string whatsapp)
+    {
+        if (string.IsNullOrWhiteSpace(whatsapp))
+        {
+            return "#";
+        }
+
+        if (whatsapp.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            whatsapp.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return whatsapp;
+        }
+
+        var digits = new string(whatsapp.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrWhiteSpace(digits))
+        {
+            return "#";
+        }
+
+        if (digits.StartsWith("0"))
+        {
+            digits = "84" + digits[1..];
+        }
+        else if (!digits.StartsWith("84") && digits.Length <= 10)
+        {
+            digits = "84" + digits;
+        }
+
+        return $"https://wa.me/{digits}";
     }
 
     private static string ToMessengerHref(string value)

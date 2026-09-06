@@ -38,6 +38,11 @@
   --on-dark-muted: #9AA3AE;
 }
 
+.validation-summary-valid,
+.validation-summary-valid.alert {
+  display: none !important;
+}
+
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
@@ -1662,6 +1667,15 @@ textarea.form-control {
 }
 .floating-contact .fc-zalo {
   color: #fff;
+}
+.floating-contact .fc-whatsapp {
+  background: #25d366;
+  color: #25d366;
+  animation-delay: 0.54s;
+}
+.floating-contact .fc-whatsapp i {
+  color: #fff;
+  font-size: 1.5rem;
 }
 
 @keyframes floating-pulse {

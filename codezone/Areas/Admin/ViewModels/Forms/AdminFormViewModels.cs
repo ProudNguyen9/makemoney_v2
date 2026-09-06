@@ -301,6 +301,9 @@ public sealed class CompanySettingsFormViewModel
 
     [MaxLength(300)]
     public string? Facebook { get; set; }
+
+    [MaxLength(80)]
+    public string? WhatsApp { get; set; }
 }
 
 public sealed class HomepageSettingsFormViewModel

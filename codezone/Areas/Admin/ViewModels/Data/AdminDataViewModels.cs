@@ -138,6 +138,7 @@ public sealed record AdminSettingsViewModel(
     string WorkingHours,
     string PurchaseAreas,
     string Facebook,
+    string WhatsApp,
     string LogoUrl,
     string FooterLogoUrl,
     string FaviconUrl,

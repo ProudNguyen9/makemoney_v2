@@ -27,4 +27,14 @@ public sealed record SiteChromeViewModel(
 
     /// <summary>SEO-002: hậu tố &lt;title&gt; lấy từ setting seo.site_title thay vì hardcode.</summary>
     public string SiteTitle { get; init; } = string.Empty;
+
+    public string DefaultDescription { get; init; } = string.Empty;
+
+    public string DefaultOgTitle { get; init; } = string.Empty;
+
+    public string DefaultOgImage { get; init; } = string.Empty;
+
+    public string WhatsApp { get; init; } = string.Empty;
+
+    public string WhatsAppHref { get; init; } = string.Empty;
 }

@@ -90,7 +90,10 @@
             <!-- CONTACT FORM START (LEAD-001: SourceForm = contact) -->
             <form action="/contact" method="post" novalidate>
               @Html.AntiForgeryToken()
-              <div asp-validation-summary="All" class="alert alert-danger"></div>
+              @if (!ViewData.ModelState.IsValid)
+              {
+                <div asp-validation-summary="All" class="alert alert-danger"></div>
+              }
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label-tech" for="ctName">Họ tên<span class="required-mark">*</span></label>

@@ -75,10 +75,15 @@
         <hr class="my-4">
         <h3 class="form-label-tech mb-3">Liên hệ nhanh</h3>
         <div class="row g-3">
-          <div class="col-12">
+          <div class="col-md-6">
             <label class="form-label-tech" for="setFacebook">Messenger / Facebook</label>
-            <input class="form-control" id="setFacebook" name="Facebook" type="url" value="@Model.Facebook" maxlength="300" placeholder="https://m.me/... hoặc https://facebook.com/...">
+            <input class="form-control" id="setFacebook" name="Facebook" type="text" value="@Model.Facebook" maxlength="300" placeholder="https://m.me/... hoặc https://facebook.com/...">
             <small class="text-muted">Dùng cho nút Messenger nổi trên website.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-tech" for="setWhatsapp">WhatsApp</label>
+            <input class="form-control" id="setWhatsapp" name="WhatsApp" type="text" value="@Model.WhatsApp" maxlength="80" placeholder="0985565323 hoặc https://wa.me/...">
+            <small class="text-muted">Dùng cho nút WhatsApp nổi trên website (mặc định lấy theo hotline nếu để trống).</small>
           </div>
         </div>
       </form>

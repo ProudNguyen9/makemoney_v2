@@ -850,7 +850,33 @@ public sealed class AdminCommandService :
             await UpsertSettingAsync("seo.default_og_image", form.DefaultOgImage, "seo", "Ảnh OG mặc định", cancellationToken);
         }
 
+        var ogSetting = await _dbContext.SiteSettings.FirstOrDefaultAsync(item => item.Key == "seo.default_og_image", cancellationToken);
+        var ogImageUrl = ogSetting?.Value;
+
+        var homeSeo = await _dbContext.SeoMetadata.FirstOrDefaultAsync(item => item.RoutePath == "/", cancellationToken);
+        if (homeSeo is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(form.SiteTitle))
+            {
+                homeSeo.SeoTitle = form.SiteTitle;
+            }
+            if (!string.IsNullOrWhiteSpace(form.DefaultDescription))
+            {
+                homeSeo.MetaDescription = form.DefaultDescription;
+            }
+            if (!string.IsNullOrWhiteSpace(form.DefaultOgTitle))
+            {
+                homeSeo.OgTitle = form.DefaultOgTitle;
+            }
+            if (!string.IsNullOrWhiteSpace(ogImageUrl))
+            {
+                homeSeo.OgImage = ogImageUrl;
+            }
+        }
+
         await _dbContext.SaveChangesAsync(cancellationToken);
+        _cache.Remove(SiteChromeCacheKey);
+        _cache.Remove(PublicPageContentCacheKey);
     }
 
     public async Task SaveCompanySettingsAsync(CompanySettingsFormViewModel form, CancellationToken cancellationToken)
@@ -865,6 +891,7 @@ public sealed class AdminCommandService :
         await UpsertSettingAsync("contact.purchase_areas", form.PurchaseAreas, "contact", "Khu vực thu mua", cancellationToken);
         await UpsertSettingAsync("media.hotline_overlay_color", NormalizeHotlineOverlayColor(form.HotlineOverlayColor), "media", "Màu số điện thoại overlay trên ảnh", cancellationToken);
         await UpsertSettingAsync("social.facebook", form.Facebook, "social", "Messenger/Facebook", cancellationToken);
+        await UpsertSettingAsync("contact.whatsapp", form.WhatsApp, "contact", "WhatsApp", cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         _cache.Remove(SiteChromeCacheKey);

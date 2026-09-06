@@ -13,8 +13,12 @@
         ? $"{baseUrl}/assets/images/imported/brand/logo.png"
         : (chrome.LogoUrl.StartsWith("http") ? chrome.LogoUrl : $"{baseUrl}{chrome.LogoUrl}");
         
-    var ogImage = !string.IsNullOrWhiteSpace(seo?.OgImage)
-        ? (seo.OgImage.StartsWith("http") ? seo.OgImage : $"{baseUrl}{seo.OgImage}")
+    var rawOg = !string.IsNullOrWhiteSpace(seo?.OgImage)
+        ? seo.OgImage
+        : (!string.IsNullOrWhiteSpace(chrome.DefaultOgImage) ? chrome.DefaultOgImage : chrome.LogoUrl);
+
+    var ogImage = !string.IsNullOrWhiteSpace(rawOg)
+        ? (rawOg.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? rawOg : $"{baseUrl}{(rawOg.StartsWith('/') ? "" : "/")}{rawOg}")
         : logoUrl;
         
     var companyName = string.IsNullOrWhiteSpace(chrome.CompanyName) ? "Thu Mua Phế Liệu Minh Đức" : chrome.CompanyName;

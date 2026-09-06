@@ -860,6 +860,7 @@ public sealed class AdminQueryService :
             Get(settings, "contact.working_hours", "T2-CN: 7:00 - 20:00"),
             Get(settings, "contact.purchase_areas", "TP.HCM, Bình Dương, Đồng Nai"),
             Get(settings, "social.facebook", ""),
+            Get(settings, "contact.whatsapp", Get(settings, "contact.phone", "0985565323")),
             Get(settings, "site.logo", "/assets/images/imported/brand/logo.png"),
             Get(settings, "site.footer_logo", "/assets/images/imported/brand/logo-footer.png"),
             Get(settings, "site.favicon", "/favicon.ico"),

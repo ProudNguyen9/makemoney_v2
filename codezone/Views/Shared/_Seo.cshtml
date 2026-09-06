@@ -1,18 +1,50 @@
+@inject ScrapWebsite.Services.Interfaces.ISiteChromeService SiteChromeService
 @model SeoDto?
-<meta name="description" content="@(Model?.Description ?? "Website thu mua phe lieu.")" />
+@{
+    var chrome = await SiteChromeService.GetAsync(Context.RequestAborted);
+    var request = Context.Request;
+    var baseUrl = $"{request.Scheme}://{request.Host}";
+
+    var description = !string.IsNullOrWhiteSpace(Model?.Description) 
+        ? Model.Description 
+        : (!string.IsNullOrWhiteSpace(chrome.DefaultDescription) ? chrome.DefaultDescription : "Thu mua phế liệu tận nơi giá cao, cân minh bạch, thanh toán nhanh.");
+
+    var ogTitle = !string.IsNullOrWhiteSpace(Model?.OgTitle)
+        ? Model.OgTitle
+        : (!string.IsNullOrWhiteSpace(Model?.Title) ? Model.Title : (!string.IsNullOrWhiteSpace(chrome.DefaultOgTitle) ? chrome.DefaultOgTitle : (string.IsNullOrWhiteSpace(chrome.SiteTitle) ? chrome.CompanyName : chrome.SiteTitle)));
+
+    var ogDescription = !string.IsNullOrWhiteSpace(Model?.OgDescription)
+        ? Model.OgDescription
+        : description;
+
+    var rawOgImage = !string.IsNullOrWhiteSpace(Model?.OgImage) && !Model.OgImage.Contains("seo-og-image.png") && !Model.OgImage.Contains("banner-1.jpg")
+        ? Model.OgImage
+        : (!string.IsNullOrWhiteSpace(chrome.DefaultOgImage) ? chrome.DefaultOgImage : (!string.IsNullOrWhiteSpace(Model?.OgImage) ? Model.OgImage : chrome.LogoUrl));
+
+    var ogImage = !string.IsNullOrWhiteSpace(rawOgImage)
+        ? (rawOgImage.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || rawOgImage.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? rawOgImage
+            : $"{baseUrl}{(rawOgImage.StartsWith('/') ? "" : "/")}{rawOgImage}")
+        : string.Empty;
+
+    var canonicalUrl = !string.IsNullOrWhiteSpace(Model?.CanonicalUrl)
+        ? (Model.CanonicalUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || Model.CanonicalUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            ? Model.CanonicalUrl
+            : $"{baseUrl}{(Model.CanonicalUrl.StartsWith('/') ? "" : "/")}{Model.CanonicalUrl}")
+        : $"{baseUrl}{request.Path}";
+}
+<meta name="description" content="@description" />
 @if (!string.IsNullOrWhiteSpace(Model?.Keywords))
 {
     <meta name="keywords" content="@Model.Keywords" />
 }
-@if (!string.IsNullOrWhiteSpace(Model?.CanonicalUrl))
-{
-    <link rel="canonical" href="@Model.CanonicalUrl" />
-}
+<link rel="canonical" href="@canonicalUrl" />
 <meta name="robots" content="@((Model?.RobotsIndex ?? true) ? "index" : "noindex"),@((Model?.RobotsFollow ?? true) ? "follow" : "nofollow")" />
 <meta property="og:type" content="@(Model?.OgType ?? "website")" />
-<meta property="og:title" content="@(Model?.OgTitle ?? Model?.Title ?? "ScrapWebsite")" />
-<meta property="og:description" content="@(Model?.OgDescription ?? Model?.Description ?? "Website thu mua phe lieu.")" />
-@if (!string.IsNullOrWhiteSpace(Model?.OgImage))
+<meta property="og:url" content="@canonicalUrl" />
+<meta property="og:title" content="@ogTitle" />
+<meta property="og:description" content="@ogDescription" />
+@if (!string.IsNullOrWhiteSpace(ogImage))
 {
-    <meta property="og:image" content="@Model.OgImage" />
+    <meta property="og:image" content="@ogImage" />
 }
